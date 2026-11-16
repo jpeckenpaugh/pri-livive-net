@@ -367,6 +367,16 @@ export function mountApp({ root, store, config, coloringData, coloringController
         </div>
       </div>
     `;
+
+    if (savedFocus) {
+      const restored = root.querySelector(`#${savedFocus.id}`);
+      if (restored) {
+        restored.focus();
+        if (typeof savedFocus.start === 'number' && typeof savedFocus.end === 'number') {
+          restored.setSelectionRange(savedFocus.start, savedFocus.end);
+        }
+      }
+    }
   }
 
   function render(state) {
@@ -377,6 +387,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const stageSvg = isBallroom
       ? renderBallroomSvg(state.ballroom, ballroomConfig, state.princess, config)
       : renderPaperDollSvg(state.princess, config, { powerBurst: powerBurstActive });
+
+    const activeEl = document.activeElement;
+    const savedFocus =
+      activeEl && (activeEl.id === 'princess-name-input' || activeEl.id === 'pet-name-input')
+        ? { id: activeEl.id, start: activeEl.selectionStart, end: activeEl.selectionEnd }
+        : null;
 
     root.innerHTML = `
       <div class="studio-shell">
@@ -422,6 +438,16 @@ export function mountApp({ root, store, config, coloringData, coloringController
         </main>
       </div>
     `;
+
+    if (savedFocus) {
+      const restored = root.querySelector(`#${savedFocus.id}`);
+      if (restored) {
+        restored.focus();
+        if (typeof savedFocus.start === 'number' && typeof savedFocus.end === 'number') {
+          restored.setSelectionRange(savedFocus.start, savedFocus.end);
+        }
+      }
+    }
   }
 
   root.addEventListener('input', (event) => {
