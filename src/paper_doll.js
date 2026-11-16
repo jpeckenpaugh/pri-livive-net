@@ -176,7 +176,7 @@ export function renderPetSvg(petId, petName = '', x = 248, y = 376) {
       </g>`
     : '';
 
-  return `<g id="layer-pet" class="pet-companion" transform="translate(${x}, ${y})">${body}${label}</g>`;
+  return `<g id="layer-pet" transform="translate(${x}, ${y})"><g class="pet-companion">${body}${label}</g></g>`;
 }
 
 function renderCharacterTypeBackLayer(characterTypeId) {
