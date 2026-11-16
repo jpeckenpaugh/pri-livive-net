@@ -316,3 +316,37 @@ test('Phase 6: normalizeState migrates older saves without episodes and preserve
   });
   assert.deepEqual(preserved.episodes, { completed: ['new-princess-at-school'] });
 });
+
+test('Phase 7: normalizeState migrates older saves without pals/activeCharacterId and normalizes pals', () => {
+  const migrated = normalizeState({ version: 1, princess: { name: 'Princess Luna' } });
+  assert.equal(migrated.activeCharacterId, 'main');
+  assert.deepEqual(migrated.pals, {});
+
+  const invalidActive = normalizeState({
+    version: 1,
+    activeCharacterId: 'nonexistent-pal',
+    pals: {}
+  });
+  assert.equal(invalidActive.activeCharacterId, 'main');
+
+  const preserved = normalizeState({
+    version: 1,
+    activeCharacterId: 'maya',
+    pals: {
+      maya: {
+        id: 'maya',
+        unlocked: true,
+        name: 'Princess Maya',
+        hairstyle: 'braided-crown',
+        makeup: { lipstick: 'rose-pink' }
+      }
+    }
+  });
+  assert.equal(preserved.activeCharacterId, 'maya');
+  assert.equal(preserved.pals.maya.id, 'maya');
+  assert.equal(preserved.pals.maya.unlocked, true);
+  assert.equal(preserved.pals.maya.name, 'Princess Maya');
+  assert.equal(preserved.pals.maya.hairstyle, 'braided-crown');
+  assert.equal(preserved.pals.maya.makeup.lipstick, 'rose-pink');
+  assert.equal(preserved.pals.maya.makeup.blush, 'none');
+});

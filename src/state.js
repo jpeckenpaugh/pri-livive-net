@@ -4,6 +4,7 @@ export const SAVE_DEBOUNCE_MS = 300;
 export const DEFAULT_STATE = {
   version: 1,
   activeTab: 'profile',
+  activeCharacterId: 'main',
   muted: false,
   princess: {
     name: 'Princess Tamara of Starlight Castle',
@@ -74,7 +75,8 @@ export const DEFAULT_STATE = {
   },
   episodes: {
     completed: []
-  }
+  },
+  pals: {}
 };
 
 function pickRandom(items, rng = Math.random) {
@@ -139,6 +141,73 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function normalizePrincess(rawPrincess) {
+  const base = clone(DEFAULT_STATE.princess);
+  if (!rawPrincess || typeof rawPrincess !== 'object') {
+    return base;
+  }
+  const p = rawPrincess;
+  const strFields = [
+    'name',
+    'skinTone',
+    'hairstyle',
+    'hairColor',
+    'gown',
+    'gownColor',
+    'tiara',
+    'tiaraMetal',
+    'tiaraGem',
+    'tiaraSizeId',
+    'tiaraEffectId',
+    'handheld',
+    'necklace',
+    'wings',
+    'characterTypeId',
+    'powerId',
+    'petId',
+    'petColorId',
+    'petAccessoryId',
+    'shoesId',
+    'shoeColorId'
+  ];
+  for (const key of strFields) {
+    if (typeof p[key] === 'string' && p[key].trim().length > 0) {
+      base[key] = p[key];
+    }
+  }
+  if (typeof p.petName === 'string') {
+    base.petName = p.petName.slice(0, 24);
+  }
+  if (p.gownMode === 'preset' || p.gownMode === 'custom') {
+    base.gownMode = p.gownMode;
+  }
+  if (p.customGown && typeof p.customGown === 'object') {
+    const cgFields = [
+      'bodiceId',
+      'skirtId',
+      'sleevesId',
+      'waistTrimId',
+      'patternId',
+      'skirtColor',
+      'bodiceColor',
+      'trimColor'
+    ];
+    for (const cgKey of cgFields) {
+      if (typeof p.customGown[cgKey] === 'string' && p.customGown[cgKey].trim().length > 0) {
+        base.customGown[cgKey] = p.customGown[cgKey];
+      }
+    }
+  }
+  if (p.makeup && typeof p.makeup === 'object') {
+    for (const mKey of ['lipstick', 'blush', 'eyeshadow', 'faceGems']) {
+      if (typeof p.makeup[mKey] === 'string') {
+        base.makeup[mKey] = p.makeup[mKey];
+      }
+    }
+  }
+  return base;
+}
+
 export function normalizeState(raw) {
   const base = clone(DEFAULT_STATE);
   if (!raw || typeof raw !== 'object') {
@@ -153,64 +222,23 @@ export function normalizeState(raw) {
   }
 
   if (raw.princess && typeof raw.princess === 'object') {
-    const p = raw.princess;
-    const strFields = [
-      'name',
-      'skinTone',
-      'hairstyle',
-      'hairColor',
-      'gown',
-      'gownColor',
-      'tiara',
-      'tiaraMetal',
-      'tiaraGem',
-      'tiaraSizeId',
-      'tiaraEffectId',
-      'handheld',
-      'necklace',
-      'wings',
-      'characterTypeId',
-      'powerId',
-      'petId',
-      'petColorId',
-      'petAccessoryId',
-      'shoesId',
-      'shoeColorId'
-    ];
-    for (const key of strFields) {
-      if (typeof p[key] === 'string' && p[key].trim().length > 0) {
-        base.princess[key] = p[key];
-      }
+    base.princess = normalizePrincess(raw.princess);
+  }
+
+  if (raw.pals && typeof raw.pals === 'object' && !Array.isArray(raw.pals)) {
+    for (const [palId, rawPal] of Object.entries(raw.pals)) {
+      if (!rawPal || typeof rawPal !== 'object') continue;
+      base.pals[palId] = {
+        ...normalizePrincess(rawPal),
+        id: typeof rawPal.id === 'string' && rawPal.id.trim().length > 0 ? rawPal.id : palId,
+        unlocked: Boolean(rawPal.unlocked)
+      };
     }
-    if (typeof p.petName === 'string') {
-      base.princess.petName = p.petName.slice(0, 24);
-    }
-    if (p.gownMode === 'preset' || p.gownMode === 'custom') {
-      base.princess.gownMode = p.gownMode;
-    }
-    if (p.customGown && typeof p.customGown === 'object') {
-      const cgFields = [
-        'bodiceId',
-        'skirtId',
-        'sleevesId',
-        'waistTrimId',
-        'patternId',
-        'skirtColor',
-        'bodiceColor',
-        'trimColor'
-      ];
-      for (const cgKey of cgFields) {
-        if (typeof p.customGown[cgKey] === 'string' && p.customGown[cgKey].trim().length > 0) {
-          base.princess.customGown[cgKey] = p.customGown[cgKey];
-        }
-      }
-    }
-    if (p.makeup && typeof p.makeup === 'object') {
-      for (const mKey of ['lipstick', 'blush', 'eyeshadow', 'faceGems']) {
-        if (typeof p.makeup[mKey] === 'string') {
-          base.princess.makeup[mKey] = p.makeup[mKey];
-        }
-      }
+  }
+
+  if (typeof raw.activeCharacterId === 'string' && raw.activeCharacterId.trim().length > 0) {
+    if (raw.activeCharacterId === 'main' || base.pals[raw.activeCharacterId]) {
+      base.activeCharacterId = raw.activeCharacterId;
     }
   }
 
@@ -370,4 +398,25 @@ export function createStore(initialState = null, storage = globalThis.localStora
       return saveStateImmediate(state, storage);
     }
   };
+}
+
+export function getActiveCharacter(state) {
+  if (state?.activeCharacterId && state.activeCharacterId !== 'main' && state.pals?.[state.activeCharacterId]) {
+    return state.pals[state.activeCharacterId];
+  }
+  return state?.princess;
+}
+
+export function updateActiveCharacter(state, updater) {
+  const id = state?.activeCharacterId;
+  if (id && id !== 'main' && state?.pals?.[id]) {
+    const current = state.pals[id];
+    const next = typeof updater === 'function' ? updater(current) : { ...current, ...updater };
+    state.pals[id] = { ...current, ...next };
+    return state.pals[id];
+  }
+  const current = state.princess;
+  const next = typeof updater === 'function' ? updater(current) : { ...current, ...updater };
+  state.princess = { ...current, ...next };
+  return state.princess;
 }

@@ -3,7 +3,7 @@ import { renderColoringPageSvg, addStroke, undoStroke, clearDrawings } from './c
 import { renderBallroomSvg, PRINCE_OUTFIT_COLORS } from './ballroom.js';
 import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from './piano.js';
 import { generateRoyalName } from './names.js';
-import { createInitialState } from './state.js';
+import { createInitialState, getActiveCharacter, updateActiveCharacter } from './state.js';
 import { announcePrincess, speakText } from './speech.js';
 import {
   getEpisodeById,
@@ -32,7 +32,8 @@ const TABS = [
   { id: 'ballroom', icon: '🏰', label: 'Ballroom' },
   { id: 'coloring', icon: '🎨', label: 'Coloring' },
   { id: 'academy', icon: '🏫', label: 'Academy' },
-  { id: 'episodes', icon: '📖', label: 'Episodes' }
+  { id: 'episodes', icon: '📖', label: 'Episodes' },
+  { id: 'pals', icon: '👭', label: 'Pals' }
 ];
 
 function escapeHtml(str) {
@@ -217,7 +218,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const sceneSvg = renderEpisodeSceneSvg(episode, beats.length - 1, state.princess, config, {
         mayaMood: ending?.mayaMood || 'happy',
         reactionType: ending?.reactionType || 'celebrate',
-        mayaPrincess: episodeSession.mayaPrincess
+        mayaPrincess: state.pals?.maya || episodeSession.mayaPrincess
       });
       const rewardBadge = episodeSession.justEarnedStars > 0
         ? `<div class="episode-reward-pill">⭐ +${episodeSession.justEarnedStars} Royal Stars Earned!</div>`
@@ -251,17 +252,24 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const choice = episodeSession.selectedChoice;
     const mayaMood = choice ? choice.mayaMood : 'neutral';
     const reactionType = choice ? choice.reactionType : 'none';
-    if (!episodeSession.mayaPrincess) {
-      episodeSession.mayaPrincess = {
+    if (episode.id === 'new-princess-at-school' && !state.pals?.maya) {
+      const rolledMaya = {
+        id: 'maya',
+        unlocked: false,
         ...createInitialState(config).princess,
         name: 'Princess Maya',
         petId: 'none'
       };
+      store.update((s) => {
+        s.pals = { ...(s.pals || {}), maya: rolledMaya };
+        return s;
+      });
+      state = store.getState();
     }
     const sceneSvg = renderEpisodeSceneSvg(episode, episodeSession.beatIndex, state.princess, config, {
       mayaMood,
       reactionType,
-      mayaPrincess: episodeSession.mayaPrincess
+      mayaPrincess: state.pals?.maya || episodeSession.mayaPrincess
     });
     const displayText = choice ? choice.reactionText : beat.story;
 
@@ -464,7 +472,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
   }
 
   function renderTabPanel(state) {
-    const p = state.princess;
+    const p = getActiveCharacter(state);
     const palettes = config.palettes;
     const items = config.items;
 
@@ -789,7 +797,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
               ${charTypes
                 .map(
                   (ct) =>
-                    `<button type="button" class="option-btn ${ct.id === state.princess.characterTypeId ? 'is-active' : ''}" data-princess-field="characterTypeId" data-value="${ct.id}">${ct.icon || ''} ${escapeHtml(ct.name)}</button>`
+                    `<button type="button" class="option-btn ${ct.id === p.characterTypeId ? 'is-active' : ''}" data-princess-field="characterTypeId" data-value="${ct.id}">${ct.icon || ''} ${escapeHtml(ct.name)}</button>`
                 )
                 .join('')}
             </div>
@@ -800,7 +808,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
               ${powers
                 .map(
                   (pw) =>
-                    `<button type="button" class="option-btn ${pw.id === state.princess.powerId ? 'is-active' : ''}" data-princess-field="powerId" data-value="${pw.id}">${pw.icon || ''} ${escapeHtml(pw.name)}</button>`
+                    `<button type="button" class="option-btn ${pw.id === p.powerId ? 'is-active' : ''}" data-princess-field="powerId" data-value="${pw.id}">${pw.icon || ''} ${escapeHtml(pw.name)}</button>`
                 )
                 .join('')}
             </div>
@@ -814,14 +822,14 @@ export function mountApp({ root, store, config, coloringData, coloringController
               ${pets
                 .map(
                   (pet) =>
-                    `<button type="button" class="option-btn ${pet.id === state.princess.petId ? 'is-active' : ''}" data-princess-field="petId" data-value="${pet.id}">${pet.icon || ''} ${escapeHtml(pet.name)}</button>`
+                    `<button type="button" class="option-btn ${pet.id === p.petId ? 'is-active' : ''}" data-princess-field="petId" data-value="${pet.id}">${pet.icon || ''} ${escapeHtml(pet.name)}</button>`
                 )
                 .join('')}
             </div>
           </div>
           <div class="panel-section">
             <label class="section-title" for="pet-name-input">Pet Name</label>
-            <input id="pet-name-input" class="text-input" type="text" maxlength="24" placeholder="Name your pet..." value="${escapeHtml(state.princess.petName || '')}" />
+            <input id="pet-name-input" class="text-input" type="text" maxlength="24" placeholder="Name your pet..." value="${escapeHtml(p.petName || '')}" />
           </div>
           <div class="panel-section">
             <h3 class="section-title">Pet Color</h3>
@@ -829,7 +837,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
               ${(config.petColors || [])
                 .map(
                   (c) =>
-                    `<button type="button" class="swatch-btn ${c.id === state.princess.petColorId ? 'is-active' : ''}" data-princess-field="petColorId" data-value="${c.id}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex || 'linear-gradient(135deg, #F2CC8F 50%, #F5D0C5 50%)'}"></button>`
+                    `<button type="button" class="swatch-btn ${c.id === p.petColorId ? 'is-active' : ''}" data-princess-field="petColorId" data-value="${c.id}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex || 'linear-gradient(135deg, #F2CC8F 50%, #F5D0C5 50%)'}"></button>`
                 )
                 .join('')}
             </div>
@@ -840,7 +848,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
               ${(config.petAccessories || [])
                 .map(
                   (acc) =>
-                    `<button type="button" class="option-btn ${acc.id === state.princess.petAccessoryId ? 'is-active' : ''}" data-princess-field="petAccessoryId" data-value="${acc.id}">${acc.icon || ''} ${escapeHtml(acc.label)}</button>`
+                    `<button type="button" class="option-btn ${acc.id === p.petAccessoryId ? 'is-active' : ''}" data-princess-field="petAccessoryId" data-value="${acc.id}">${acc.icon || ''} ${escapeHtml(acc.label)}</button>`
                 )
                 .join('')}
             </div>
@@ -851,6 +859,39 @@ export function mountApp({ root, store, config, coloringData, coloringController
         return renderAcademyTab(state);
       case 'episodes':
         return renderEpisodesTab(state);
+      case 'pals': {
+        const unlockedPals = Object.values(state.pals || {}).filter((pal) => pal && pal.unlocked);
+        const activeId = state.activeCharacterId || 'main';
+        return `
+          <div class="control-group">
+            <div class="group-title">👭 Princess Pals</div>
+            <p class="group-hint">Choose which princess you want to dress up and customize!</p>
+            <div class="pals-list" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+              <div class="pal-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,0.75);border:2px solid ${activeId === 'main' ? '#ff70a6' : 'rgba(255,112,166,0.2)'};">
+                <div>
+                  <div style="font-weight:700;">👑 ${escapeHtml(state.princess.name)}</div>
+                  <div style="font-size:0.82rem;opacity:0.75;">My Princess</div>
+                </div>
+                <button type="button" class="${activeId === 'main' ? 'primary-btn' : 'pill-btn'}" data-select-character="main">
+                  ${activeId === 'main' ? '✨ Customizing' : 'Customize'}
+                </button>
+              </div>
+              ${unlockedPals.map((pal) => `
+                <div class="pal-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,0.75);border:2px solid ${activeId === pal.id ? '#ff70a6' : 'rgba(255,112,166,0.2)'};">
+                  <div>
+                    <div style="font-weight:700;">🌸 ${escapeHtml(pal.name)}</div>
+                    <div style="font-size:0.82rem;opacity:0.75;">Princess Pal</div>
+                  </div>
+                  <button type="button" class="${activeId === pal.id ? 'primary-btn' : 'pill-btn'}" data-select-character="${escapeHtml(pal.id)}">
+                    ${activeId === pal.id ? '✨ Customizing' : 'Customize'}
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+            ${unlockedPals.length === 0 ? `<p class="group-hint" style="margin-top:12px;">Complete Episode 1 with kindness to welcome Princess Maya as your first Princess Pal!</p>` : ''}
+          </div>
+        `;
+      }
       default:
         return '';
     }
@@ -917,9 +958,11 @@ export function mountApp({ root, store, config, coloringData, coloringController
     pianoPlayer.setMuted(state.muted);
     const isColoring = state.activeTab === 'coloring';
     const isBallroom = state.activeTab === 'ballroom';
+    const activeChar = getActiveCharacter(state);
+    const isEditingPal = Boolean(state.activeCharacterId && state.activeCharacterId !== 'main' && state.pals?.[state.activeCharacterId]);
     const stageSvg = isBallroom
-      ? renderBallroomSvg(state.ballroom, ballroomConfig, state.princess, config)
-      : renderPaperDollSvg(state.princess, config, { powerBurst: powerBurstActive });
+      ? renderBallroomSvg(state.ballroom, ballroomConfig, activeChar, config)
+      : renderPaperDollSvg(activeChar, config, { powerBurst: powerBurstActive });
 
     const activeEl = document.activeElement;
     const savedFocus =
@@ -945,7 +988,13 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
         <main class="studio-main ${isColoring ? 'is-coloring-mode' : ''}">
           <section class="stage-card ${isBallroom ? 'is-ballroom-mode' : ''}" aria-label="Princess Stage">
-            <div class="princess-banner">${escapeHtml(state.princess.name)}</div>
+            <div class="princess-banner">${escapeHtml(activeChar.name)}</div>
+            ${isEditingPal ? `
+              <div class="editing-pal-badge" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px;font-size:0.85rem;">
+                <span style="background:rgba(255,112,166,0.18);color:#b81d65;padding:3px 10px;border-radius:999px;font-weight:700;">👭 Editing Pal: ${escapeHtml(activeChar.name)}</span>
+                <button type="button" class="pill-btn" data-select-character="main" style="padding:2px 10px;font-size:0.8rem;">Back to My Princess</button>
+              </div>
+            ` : ''}
             <div class="doll-stage ${isBallroom ? 'is-ballroom-stage' : 'gentle-breathe'}">
               ${stageSvg}
               <div class="sparkle-burst-layer" aria-hidden="true">
@@ -988,12 +1037,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const target = event.target;
     if (target && target.id === 'princess-name-input') {
       store.update((s) => {
-        s.princess.name = target.value;
+        updateActiveCharacter(s, { name: target.value });
         return s;
       });
     } else if (target && target.id === 'pet-name-input') {
       store.update((s) => {
-        s.princess.petName = target.value;
+        updateActiveCharacter(s, { petName: target.value });
         return s;
       });
     }
@@ -1031,24 +1080,47 @@ export function mountApp({ root, store, config, coloringData, coloringController
         episodeSession.completed = true;
         const current = store.getState();
         const completedList = Array.isArray(current.episodes?.completed) ? current.episodes.completed : [];
-        if (episode && !completedList.includes(episode.id)) {
-          const reward = typeof episode.starReward === 'number' ? episode.starReward : 2;
-          episodeSession.justEarnedStars = reward;
+        const ending = episode ? resolveEpisodeEnding(episode, episodeSession.kindnessCount) : null;
+        const passedWelcoming = ending?.id === 'welcoming' || episodeSession.kindnessCount >= (episode?.kindnessThreshold ?? 3);
+        const shouldUnlockMaya = episode?.id === 'new-princess-at-school' && passedWelcoming && current.pals?.maya && !current.pals.maya.unlocked;
+        const shouldAwardEpisode = episode && !completedList.includes(episode.id);
+        if (shouldAwardEpisode || shouldUnlockMaya) {
+          const reward = shouldAwardEpisode ? (typeof episode.starReward === 'number' ? episode.starReward : 2) : 0;
+          if (reward > 0) {
+            episodeSession.justEarnedStars = reward;
+          }
           store.update((s) => {
-            s.academy = {
-              ...s.academy,
-              stars: (s.academy?.stars || 0) + reward
-            };
-            s.episodes = {
-              ...s.episodes,
-              completed: [...completedList, episode.id]
-            };
+            if (shouldAwardEpisode) {
+              s.academy = {
+                ...s.academy,
+                stars: (s.academy?.stars || 0) + reward
+              };
+              s.episodes = {
+                ...s.episodes,
+                completed: [...completedList, episode.id]
+              };
+            }
+            if (shouldUnlockMaya && s.pals?.maya) {
+              s.pals.maya.unlocked = true;
+            }
             return s;
           });
-          soundPlayer.playCue('royal-fanfare');
+          if (shouldAwardEpisode) {
+            soundPlayer.playCue('royal-fanfare');
+          }
         }
       }
       render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.selectCharacter) {
+      const charId = btn.dataset.selectCharacter;
+      store.update((s) => {
+        s.activeCharacterId = charId;
+        return s;
+      });
+      soundPlayer.playCue('sparkle-select');
       return;
     }
 
@@ -1289,7 +1361,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const mode = btn.dataset.gownMode === 'custom' ? 'custom' : 'preset';
       soundPlayer.playCue('ui-click');
       store.update((s) => {
-        s.princess.gownMode = mode;
+        updateActiveCharacter(s, { gownMode: mode });
         return s;
       });
       return;
@@ -1300,7 +1372,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const value = btn.dataset.value;
       soundPlayer.playCue('dress-change');
       store.update((s) => {
-        s.princess.customGown[field] = value;
+        updateActiveCharacter(s, (c) => ({
+          customGown: { ...c.customGown, [field]: value }
+        }));
         return s;
       });
       return;
@@ -1311,7 +1385,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const hex = btn.dataset.colorHex;
       soundPlayer.playCue('dress-change');
       store.update((s) => {
-        s.princess.customGown[field] = hex;
+        updateActiveCharacter(s, (c) => ({
+          customGown: { ...c.customGown, [field]: hex }
+        }));
         return s;
       });
       return;
@@ -1322,7 +1398,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const value = btn.dataset.value;
       soundPlayer.playCue('dress-change');
       store.update((s) => {
-        s.princess[field] = value;
+        updateActiveCharacter(s, { [field]: value });
         return s;
       });
       return;
@@ -1382,7 +1458,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     if (action === 'announce') {
       const state = store.getState();
       soundPlayer.playCue('royal-fanfare');
-      announcePrincess(state.princess.name, { muted: state.muted });
+      announcePrincess(getActiveCharacter(store.getState()).name, { muted: state.muted });
       triggerSparkle();
       return;
     }
@@ -1391,7 +1467,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       soundPlayer.playCue('sparkle-chime');
       const nextName = generateRoyalName(config.royalNames);
       store.update((s) => {
-        s.princess.name = nextName;
+        updateActiveCharacter(s, { name: nextName });
         return s;
       });
       triggerSparkle();
@@ -1401,12 +1477,14 @@ export function mountApp({ root, store, config, coloringData, coloringController
     if (action === 'clear-makeup') {
       soundPlayer.playCue('makeup-clear');
       store.update((s) => {
-        s.princess.makeup = {
-          lipstick: 'none',
-          blush: 'none',
-          eyeshadow: 'none',
-          faceGems: 'none'
-        };
+        updateActiveCharacter(s, {
+          makeup: {
+            lipstick: 'none',
+            blush: 'none',
+            eyeshadow: 'none',
+            faceGems: 'none'
+          }
+        });
         return s;
       });
       return;
@@ -1516,7 +1594,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       if (btn.dataset[dataKey]) {
         soundPlayer.playCue(cue);
         store.update((s) => {
-          s.princess[stateKey] = btn.dataset[dataKey];
+          updateActiveCharacter(s, { [stateKey]: btn.dataset[dataKey] });
           return s;
         });
         triggerSparkle();
@@ -1604,7 +1682,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
       if (btn.dataset[dataKey]) {
         soundPlayer.playCue('makeup-apply');
         store.update((s) => {
-          s.princess.makeup[makeupKey] = btn.dataset[dataKey];
+          updateActiveCharacter(s, (c) => ({
+            makeup: { ...c.makeup, [makeupKey]: btn.dataset[dataKey] }
+          }));
           return s;
         });
         triggerSparkle();
