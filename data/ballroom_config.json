@@ -64,5 +64,66 @@
     { "id": "rose-garlands", "label": "Rose Garlands" },
     { "id": "lily-vases", "label": "Lily Vases" },
     { "id": "glowing-columns", "label": "Glowing Columns" }
+  ],
+  "guests": [
+    {
+      "id": "aria",
+      "label": "Fairy Aria",
+      "type": "fairy",
+      "skinHex": "#FCD5B5",
+      "hairHex": "#A855F7",
+      "outfitHex": "#F472B6",
+      "accentHex": "#FDE047"
+    },
+    {
+      "id": "zara",
+      "label": "Duchess Zara",
+      "type": "noble",
+      "skinHex": "#8D5524",
+      "hairHex": "#1E1B4B",
+      "outfitHex": "#C084FC",
+      "accentHex": "#FBBF24"
+    },
+    {
+      "id": "leo",
+      "label": "Sir Leo",
+      "type": "knight",
+      "skinHex": "#F1C27D",
+      "hairHex": "#B45309",
+      "outfitHex": "#60A5FA",
+      "accentHex": "#E2E8F0"
+    },
+    {
+      "id": "mei",
+      "label": "Lady Mei",
+      "type": "noble",
+      "skinHex": "#FFDBAC",
+      "hairHex": "#111827",
+      "outfitHex": "#34D399",
+      "accentHex": "#FEF08A"
+    },
+    {
+      "id": "mateo",
+      "label": "Prince Mateo",
+      "type": "noble",
+      "skinHex": "#C68642",
+      "hairHex": "#4B2E1E",
+      "outfitHex": "#FB7185",
+      "accentHex": "#FACC15"
+    },
+    {
+      "id": "celeste",
+      "label": "Angel Celeste",
+      "type": "angel",
+      "skinHex": "#FFE0BD",
+      "hairHex": "#FDE047",
+      "outfitHex": "#E0F2FE",
+      "accentHex": "#FACC15"
+    }
+  ],
+  "danceStyles": [
+    { "id": "waltz", "label": "Royal Waltz" },
+    { "id": "twirl", "label": "Twirl Party" },
+    { "id": "bounce", "label": "Bounce & Cheer" }
   ]
 }

@@ -298,6 +298,97 @@ function renderPrinceSvg(outfitColorId, skinHex = '#FCD5B5', hairHex = '#4B2E1E'
   `;
 }
 
+const GUEST_SLOTS = [
+  { x: 30, y: 270, scale: 0.72, shadowCx: 74, shadowCy: 432 },
+  { x: 520, y: 270, scale: 0.72, shadowCx: 564, shadowCy: 432 },
+  { x: 75, y: 292, scale: 0.76, shadowCx: 121, shadowCy: 462 },
+  { x: 472, y: 292, scale: 0.76, shadowCx: 518, shadowCy: 462 },
+  { x: 10, y: 305, scale: 0.8, shadowCx: 58, shadowCy: 484 },
+  { x: 538, y: 305, scale: 0.8, shadowCx: 586, shadowCy: 484 }
+];
+
+function renderGuestFigureSvg(guest) {
+  const skin = guest.skinHex || '#FCD5B5';
+  const hair = guest.hairHex || '#4B2E1E';
+  const outfit = guest.outfitHex || '#F472B6';
+  const accent = guest.accentHex || '#FDE047';
+  const type = guest.type || 'noble';
+
+  let backDetails = '';
+  let headAccessory = '';
+  if (type === 'fairy') {
+    backDetails = `
+      <ellipse cx="40" cy="108" rx="26" ry="14" fill="${accent}" opacity="0.55" transform="rotate(-22 40 108)"/>
+      <ellipse cx="80" cy="108" rx="26" ry="14" fill="${accent}" opacity="0.55" transform="rotate(22 80 108)"/>
+    `;
+    headAccessory = `<circle cx="60" cy="36" r="5" fill="${accent}"/>`;
+  } else if (type === 'angel') {
+    backDetails = `
+      <path d="M46 105 Q12 85 18 122 Q34 128 48 118 Z" fill="#FFFFFF" stroke="${accent}" stroke-width="1.5" opacity="0.9"/>
+      <path d="M74 105 Q108 85 102 122 Q86 128 72 118 Z" fill="#FFFFFF" stroke="${accent}" stroke-width="1.5" opacity="0.9"/>
+    `;
+    headAccessory = `<ellipse cx="60" cy="24" rx="16" ry="5" fill="none" stroke="${accent}" stroke-width="3"/>`;
+  } else if (type === 'knight') {
+    backDetails = `<path d="M42 92 L28 165 L92 165 L78 92 Z" fill="${outfit}" opacity="0.75"/>`;
+    headAccessory = `<path d="M45 40 Q60 22 75 40 Z" fill="${accent}"/>`;
+  } else {
+    headAccessory = `<path d="M46 40 L52 28 L60 35 L68 28 L74 40 Z" fill="${accent}"/>`;
+  }
+
+  return `
+    <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" aria-label="${guest.label || 'Royal Guest'}">
+      ${backDetails}
+      <!-- Gown / Tunic -->
+      <path d="M42 92 L78 92 L92 186 Q60 196 28 186 Z" fill="${outfit}" stroke="${accent}" stroke-width="2"/>
+      <!-- Sash / Belt -->
+      <rect x="40" y="132" width="40" height="7" rx="3" fill="${accent}"/>
+      <!-- Arms -->
+      <path d="M42 98 Q26 120 34 140" fill="none" stroke="${outfit}" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="34" cy="142" r="5" fill="${skin}"/>
+      <path d="M78 98 Q94 120 86 140" fill="none" stroke="${outfit}" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="86" cy="142" r="5" fill="${skin}"/>
+      <!-- Neck & Head -->
+      <rect x="54" y="76" width="12" height="18" rx="4" fill="${skin}"/>
+      <ellipse cx="60" cy="60" rx="20" ry="22" fill="${skin}"/>
+      <!-- Hair -->
+      <path d="M40 56 Q40 34 60 34 Q80 34 80 56 Q72 44 60 44 Q48 44 40 56 Z" fill="${hair}"/>
+      <!-- Eyes & Smile -->
+      <circle cx="52" cy="60" r="2.4" fill="#1F2937"/>
+      <circle cx="68" cy="60" r="2.4" fill="#1F2937"/>
+      <path d="M54 69 Q60 74 66 69" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round"/>
+      ${headAccessory}
+    </svg>
+  `;
+}
+
+function renderBallroomGuests(invitedGuestIds, ballroomConfig, isDancing, danceStyle) {
+  const guestsList = ballroomConfig?.guests || [];
+  if (!Array.isArray(invitedGuestIds) || invitedGuestIds.length === 0 || guestsList.length === 0) {
+    return '';
+  }
+  const guestMap = new Map(guestsList.map((g) => [g.id, g]));
+  const invited = invitedGuestIds.map((id) => guestMap.get(id)).filter(Boolean);
+  if (invited.length === 0) return '';
+
+  const danceClass = isDancing ? ` is-dancing dance-${danceStyle || 'waltz'}` : '';
+
+  return invited
+    .map((guest, idx) => {
+      const slot = GUEST_SLOTS[idx % GUEST_SLOTS.length];
+      const w = Math.round(120 * slot.scale);
+      const h = Math.round(220 * slot.scale);
+      return `
+        <g class="ballroom-guest-slot${danceClass}" data-guest-id="${guest.id}" style="transform-origin: ${slot.shadowCx}px ${slot.shadowCy}px;">
+          <ellipse cx="${slot.shadowCx}" cy="${slot.shadowCy}" rx="34" ry="8" fill="#000000" opacity="0.14"/>
+          <svg x="${slot.x}" y="${slot.y}" width="${w}" height="${h}" viewBox="0 0 120 220">
+            ${renderGuestFigureSvg(guest)}
+          </svg>
+        </g>
+      `;
+    })
+    .join('');
+}
+
 function renderDancingNotes() {
   return `
     <g class="ballroom-music-notes" aria-hidden="true">
@@ -318,6 +409,9 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
   const floor = findById(ballroomConfig?.floors, ballroomState?.floor);
   const decor = findById(ballroomConfig?.decors, ballroomState?.decor);
   const isDancing = Boolean(ballroomState?.dancing);
+  const danceStyle = ballroomState?.danceStyle || 'waltz';
+  const danceClass = isDancing ? ` is-dancing dance-${danceStyle}` : '';
+  const invitedGuests = Array.isArray(ballroomState?.invitedGuests) ? ballroomState.invitedGuests : [];
   const princeSkin = findById(princessConfig?.palettes?.skinTones, ballroomState?.princeSkinToneId);
   const princeHair = findById(princessConfig?.palettes?.hairColors, ballroomState?.princeHairColorId);
   const princeSkinHex = princeSkin?.hex || '#FCD5B5';
@@ -337,8 +431,9 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
       ${renderDecor(decor?.id)}
       ${renderBanners(bannerStyle?.id, bannerColor)}
       ${renderChandelier(chandelier?.id)}
+      ${renderBallroomGuests(invitedGuests, ballroomConfig, isDancing, danceStyle)}
       <!-- Composited Princess Paper-Doll -->
-      <g class="ballroom-princess-slot${isDancing ? ' is-dancing' : ''}">
+      <g class="ballroom-princess-slot${danceClass}">
         <ellipse cx="${princessShadowCx}" cy="468" rx="68" ry="14" fill="#000000" opacity="0.14"/>
         <svg x="${princessSlotX}" y="135" width="280" height="350" viewBox="0 0 320 400">
           ${princessSvg}
@@ -348,7 +443,7 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
         isDancing
           ? `
       <!-- Royal Prince Dance Partner -->
-      <g class="ballroom-prince-slot is-dancing" data-prince-outfit="${ballroomState?.princeOutfitColor || 'royal-blue'}" data-prince-skin="${ballroomState?.princeSkinToneId || 'peach'}" data-prince-hair="${ballroomState?.princeHairColorId || 'chestnut-brown'}">
+      <g class="ballroom-prince-slot${danceClass}" data-prince-outfit="${ballroomState?.princeOutfitColor || 'royal-blue'}" data-prince-skin="${ballroomState?.princeSkinToneId || 'peach'}" data-prince-hair="${ballroomState?.princeHairColorId || 'chestnut-brown'}">
         <ellipse cx="395" cy="468" rx="56" ry="13" fill="#000000" opacity="0.14"/>
         <svg x="285" y="148" width="220" height="340" viewBox="0 0 220 340">
           ${renderPrinceSvg(ballroomState?.princeOutfitColor, princeSkinHex, princeHairHex)}

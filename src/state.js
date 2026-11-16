@@ -59,7 +59,9 @@ export const DEFAULT_STATE = {
     dancing: false,
     princeOutfitColor: 'royal-blue',
     princeSkinToneId: 'peach',
-    princeHairColorId: 'chestnut-brown'
+    princeHairColorId: 'chestnut-brown',
+    invitedGuests: [],
+    danceStyle: 'waltz'
   },
   academy: {
     stars: 0,
@@ -234,6 +236,17 @@ export function normalizeState(raw) {
     }
     if (typeof b.dancing === 'boolean') {
       base.ballroom.dancing = b.dancing;
+    }
+    if (typeof b.danceStyle === 'string' && ['waltz', 'twirl', 'bounce'].includes(b.danceStyle)) {
+      base.ballroom.danceStyle = b.danceStyle;
+    }
+    if (Array.isArray(b.invitedGuests)) {
+      const seen = new Set();
+      base.ballroom.invitedGuests = b.invitedGuests.filter((id) => {
+        if (typeof id !== 'string' || id.trim().length === 0 || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
     }
   }
 

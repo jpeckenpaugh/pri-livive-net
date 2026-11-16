@@ -133,3 +133,17 @@ test('Pet Customization & Shoes: princess_config.json has petColors, petAccessor
   assert.ok(Array.isArray(config.items?.shoes) && config.items.shoes.length >= 5);
   assert.ok(Array.isArray(config.palettes?.shoeColors) && config.palettes.shoeColors.length >= 5);
 });
+
+test('Ballroom Guests & Dance Styles: ballroom_config.json has guests and danceStyles', () => {
+  const ballroom = readJson('data/ballroom_config.json');
+  assert.ok(Array.isArray(ballroom.guests) && ballroom.guests.length >= 6);
+  for (const guest of ballroom.guests) {
+    assert.ok(guest.id && guest.label && guest.type);
+    assert.ok(guest.skinHex && guest.hairHex && guest.outfitHex && guest.accentHex);
+  }
+  assert.ok(Array.isArray(ballroom.danceStyles) && ballroom.danceStyles.length >= 3);
+  assert.deepEqual(
+    ballroom.danceStyles.map((d) => d.id),
+    ['waltz', 'twirl', 'bounce']
+  );
+});

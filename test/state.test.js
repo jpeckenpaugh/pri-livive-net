@@ -247,3 +247,25 @@ test('Pet Customization & Shoes: normalizeState migrates older saves and preserv
   assert.equal(custom.princess.shoesId, 'sparkle-boots');
   assert.equal(custom.princess.shoeColorId, 'royal-pink');
 });
+
+test('Ballroom Guests & Dance Styles: normalizeState preserves invitedGuests and danceStyle and migrates older saves', () => {
+  const migrated = normalizeState({ version: 1, ballroom: { skyTheme: 'starlight-night' } });
+  assert.deepEqual(migrated.ballroom.invitedGuests, []);
+  assert.equal(migrated.ballroom.danceStyle, 'waltz');
+
+  const preserved = normalizeState({
+    version: 1,
+    ballroom: {
+      invitedGuests: ['aria', 'leo', 'aria', ''],
+      danceStyle: 'twirl'
+    }
+  });
+  assert.deepEqual(preserved.ballroom.invitedGuests, ['aria', 'leo']);
+  assert.equal(preserved.ballroom.danceStyle, 'twirl');
+
+  const invalidStyle = normalizeState({
+    version: 1,
+    ballroom: { danceStyle: 'unknown-style' }
+  });
+  assert.equal(invalidStyle.ballroom.danceStyle, 'waltz');
+});

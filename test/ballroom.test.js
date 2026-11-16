@@ -41,10 +41,10 @@ test('renderBallroomSvg renders the Prince and musical notes when dancing is tru
     princeOutfitColor: 'crimson'
   };
   const svg = renderBallroomSvg(dancingBallroom, ballroomConfig, DEFAULT_STATE.princess, princessConfig);
-  assert.ok(svg.includes('class="ballroom-prince-slot is-dancing"'));
+  assert.ok(svg.includes('ballroom-prince-slot is-dancing'));
   assert.ok(svg.includes('data-prince-outfit="crimson"'));
   assert.ok(svg.includes('class="ballroom-music-notes"'));
-  assert.ok(svg.includes('class="ballroom-princess-slot is-dancing"'));
+  assert.ok(svg.includes('ballroom-princess-slot is-dancing'));
 });
 
 test('renderBallroomSvg renders the Prince with custom princeSkinToneId and princeHairColorId', () => {
@@ -72,4 +72,23 @@ test('Phase 4: renderBallroomSvg includes the Princess pet companion when petId 
   );
   assert.ok(svg.includes('id="layer-pet"'));
   assert.ok(svg.includes('Sparky'));
+});
+
+test('renderBallroomSvg renders invited guests and applies danceStyle class when dancing', () => {
+  const svg = renderBallroomSvg(
+    {
+      ...DEFAULT_STATE.ballroom,
+      dancing: true,
+      danceStyle: 'twirl',
+      invitedGuests: ['aria', 'leo']
+    },
+    ballroomConfig,
+    DEFAULT_STATE.princess,
+    princessConfig
+  );
+  assert.ok(svg.includes('data-guest-id="aria"'));
+  assert.ok(svg.includes('data-guest-id="leo"'));
+  assert.ok(svg.includes('ballroom-guest-slot is-dancing dance-twirl'));
+  assert.ok(svg.includes('ballroom-princess-slot is-dancing dance-twirl'));
+  assert.ok(svg.includes('ballroom-prince-slot is-dancing dance-twirl'));
 });

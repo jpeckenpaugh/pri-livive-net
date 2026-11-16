@@ -68,6 +68,29 @@ export function mountApp({ root, store, config, coloringData, coloringController
   let powerBurstTimer = null;
   const pianoPlayer = createPianoPlayer();
   let activeSongId = null;
+  let danceMusicActive = false;
+
+  function playDanceLoop() {
+    if (!danceMusicActive) return;
+    pianoPlayer.playSong('royal-waltz', {
+      onDone: () => {
+        if (danceMusicActive) {
+          playDanceLoop();
+        }
+      }
+    });
+  }
+
+  function syncBallroomDanceMusic(state) {
+    const shouldPlay = Boolean(state?.ballroom?.dancing && !state?.muted);
+    if (shouldPlay && !danceMusicActive) {
+      danceMusicActive = true;
+      playDanceLoop();
+    } else if (!shouldPlay && danceMusicActive) {
+      danceMusicActive = false;
+      pianoPlayer.stopSong();
+    }
+  }
   let academySession = {
     subjectId: null,
     stepIndex: 0,
@@ -503,6 +526,22 @@ export function mountApp({ root, store, config, coloringData, coloringController
                   (c) =>
                     `<button type="button" class="swatch-btn ${c.id === b.princeHairColorId ? 'is-active' : ''}" data-ballroom-field="princeHairColorId" data-ballroom-value="${c.id}" title="Prince Hair: ${escapeHtml(c.label)}" aria-label="Prince Hair ${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`
                 )
+                .join('')}
+            </div>
+          </div>
+          ${renderBallroomOptions('Dance Style', 'danceStyle', ballroomConfig?.danceStyles)}
+          <div class="panel-section">
+            <h3>Invite Royal Guests</h3>
+            <div class="action-row" style="margin-bottom: 10px;">
+              <button type="button" class="option-btn" data-action="invite-all-guests">🎉 Invite Everyone</button>
+              <button type="button" class="option-btn" data-action="clear-guests">Clear Floor</button>
+            </div>
+            <div class="option-grid">
+              ${(ballroomConfig?.guests || [])
+                .map((g) => {
+                  const isInvited = Array.isArray(b.invitedGuests) && b.invitedGuests.includes(g.id);
+                  return `<button type="button" class="option-btn ${isInvited ? 'is-active' : ''}" data-action="toggle-guest" data-guest-id="${g.id}">${escapeHtml(g.label)}</button>`;
+                })
                 .join('')}
             </div>
           </div>
@@ -1054,10 +1093,11 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
     const action = btn.dataset.action;
     if (action === 'toggle-mute') {
-      store.update((s) => {
+      const next = store.update((s) => {
         s.muted = !s.muted;
         return s;
       });
+      syncBallroomDanceMusic(next);
       return;
     }
 
@@ -1167,11 +1207,47 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
     if (btn.dataset.action === 'toggle-dance') {
       soundPlayer.playCue('sparkle-chime');
-      store.update((s) => {
+      const next = store.update((s) => {
         s.ballroom.dancing = !s.ballroom.dancing;
         return s;
       });
+      syncBallroomDanceMusic(next);
       triggerSparkle();
+      return;
+    }
+
+    if (btn.dataset.action === 'toggle-guest' && btn.dataset.guestId) {
+      const guestId = btn.dataset.guestId;
+      soundPlayer.playCue('ui-click');
+      store.update((s) => {
+        const list = Array.isArray(s.ballroom.invitedGuests) ? s.ballroom.invitedGuests : [];
+        if (list.includes(guestId)) {
+          s.ballroom.invitedGuests = list.filter((id) => id !== guestId);
+        } else {
+          s.ballroom.invitedGuests = [...list, guestId];
+        }
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.action === 'invite-all-guests') {
+      soundPlayer.playCue('sparkle-chime');
+      const allIds = (ballroomConfig?.guests || []).map((g) => g.id);
+      store.update((s) => {
+        s.ballroom.invitedGuests = allIds;
+        return s;
+      });
+      triggerSparkle();
+      return;
+    }
+
+    if (btn.dataset.action === 'clear-guests') {
+      soundPlayer.playCue('ui-click');
+      store.update((s) => {
+        s.ballroom.invitedGuests = [];
+        return s;
+      });
       return;
     }
 

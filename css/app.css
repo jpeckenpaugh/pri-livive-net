@@ -611,6 +611,69 @@ input {
   animation: royal-waltz-prince 2.6s ease-in-out infinite;
 }
 
+.ballroom-guest-slot.is-dancing.dance-waltz,
+.ballroom-princess-slot.is-dancing.dance-waltz,
+.ballroom-prince-slot.is-dancing.dance-waltz {
+  animation: dance-waltz 2.6s ease-in-out infinite;
+}
+
+.ballroom-guest-slot.is-dancing.dance-twirl,
+.ballroom-princess-slot.is-dancing.dance-twirl,
+.ballroom-prince-slot.is-dancing.dance-twirl {
+  animation: dance-twirl 1.8s ease-in-out infinite;
+}
+
+.ballroom-guest-slot.is-dancing.dance-bounce,
+.ballroom-princess-slot.is-dancing.dance-bounce,
+.ballroom-prince-slot.is-dancing.dance-bounce {
+  animation: dance-bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes dance-waltz {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -6px) rotate(3deg);
+  }
+  50% {
+    transform: translate(0, -10px) rotate(0deg);
+  }
+  75% {
+    transform: translate(-10px, -6px) rotate(-3deg);
+  }
+}
+
+@keyframes dance-twirl {
+  0%, 100% {
+    transform: scaleX(1) translateY(0);
+  }
+  25% {
+    transform: scaleX(0.35) translateY(-8px) rotate(-4deg);
+  }
+  50% {
+    transform: scaleX(-1) translateY(-12px);
+  }
+  75% {
+    transform: scaleX(0.35) translateY(-8px) rotate(4deg);
+  }
+}
+
+@keyframes dance-bounce {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  30% {
+    transform: translateY(-18px) scaleY(1.04);
+  }
+  50% {
+    transform: translateY(0) scaleY(0.95);
+  }
+  75% {
+    transform: translateY(-10px) scaleY(1.02);
+  }
+}
+
 .ballroom-music-notes .music-note {
   animation: float-music-note 2s ease-in-out infinite;
 }
