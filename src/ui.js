@@ -3,6 +3,7 @@ import { renderColoringPageSvg, addStroke, undoStroke, clearDrawings } from './c
 import { renderBallroomSvg, PRINCE_OUTFIT_COLORS } from './ballroom.js';
 import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from './piano.js';
 import { generateRoyalName } from './names.js';
+import { createInitialState } from './state.js';
 import { announcePrincess, speakText } from './speech.js';
 import {
   getEpisodeById,
@@ -213,9 +214,10 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
     if (episodeSession.completed) {
       const ending = resolveEpisodeEnding(episode, episodeSession.kindnessCount);
-      const sceneSvg = renderEpisodeSceneSvg(episode, beats.length - 1, state, config, {
+      const sceneSvg = renderEpisodeSceneSvg(episode, beats.length - 1, state.princess, config, {
         mayaMood: ending?.mayaMood || 'happy',
-        reactionType: ending?.reactionType || 'celebrate'
+        reactionType: ending?.reactionType || 'celebrate',
+        mayaPrincess: episodeSession.mayaPrincess
       });
       const rewardBadge = episodeSession.justEarnedStars > 0
         ? `<div class="episode-reward-pill">⭐ +${episodeSession.justEarnedStars} Royal Stars Earned!</div>`
@@ -249,9 +251,17 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const choice = episodeSession.selectedChoice;
     const mayaMood = choice ? choice.mayaMood : 'neutral';
     const reactionType = choice ? choice.reactionType : 'none';
-    const sceneSvg = renderEpisodeSceneSvg(episode, episodeSession.beatIndex, state, config, {
+    if (!episodeSession.mayaPrincess) {
+      episodeSession.mayaPrincess = {
+        ...createInitialState(config).princess,
+        name: 'Princess Maya',
+        petId: 'none'
+      };
+    }
+    const sceneSvg = renderEpisodeSceneSvg(episode, episodeSession.beatIndex, state.princess, config, {
       mayaMood,
-      reactionType
+      reactionType,
+      mayaPrincess: episodeSession.mayaPrincess
     });
     const displayText = choice ? choice.reactionText : beat.story;
 
