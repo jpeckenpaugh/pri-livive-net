@@ -4,7 +4,7 @@ import { createSoundPlayer } from './audio.js';
 import { mountApp } from './ui.js';
 
 async function loadJson(path) {
-  const res = await fetch(path);
+  const res = await fetch(path, { cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`Failed to load ${path}: ${res.status}`);
   }
