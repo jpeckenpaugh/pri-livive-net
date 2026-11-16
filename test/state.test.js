@@ -82,3 +82,22 @@ test('normalizeState preserves valid ballroom decor fields', () => {
   assert.equal(custom.ballroom.floor, 'rose-petal-aisle');
   assert.equal(custom.ballroom.decor, 'lily-vases');
 });
+
+test('normalizeState migrates Phase 2 saves without dancing/princeOutfitColor and preserves valid values', () => {
+  const migrated = normalizeState({
+    ballroom: {
+      skyTheme: 'crystal-ice'
+    }
+  });
+  assert.equal(migrated.ballroom.dancing, false);
+  assert.equal(migrated.ballroom.princeOutfitColor, 'royal-blue');
+
+  const custom = normalizeState({
+    ballroom: {
+      dancing: true,
+      princeOutfitColor: 'emerald'
+    }
+  });
+  assert.equal(custom.ballroom.dancing, true);
+  assert.equal(custom.ballroom.princeOutfitColor, 'emerald');
+});

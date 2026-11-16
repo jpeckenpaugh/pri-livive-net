@@ -36,7 +36,9 @@ export const DEFAULT_STATE = {
     bannerStyle: 'royal-swags',
     bannerColor: 'royal-pink',
     floor: 'marble-red-carpet',
-    decor: 'rose-garlands'
+    decor: 'rose-garlands',
+    dancing: false,
+    princeOutfitColor: 'royal-blue'
   }
 };
 
@@ -101,11 +103,14 @@ export function normalizeState(raw) {
 
   if (raw.ballroom && typeof raw.ballroom === 'object') {
     const b = raw.ballroom;
-    const bFields = ['skyTheme', 'chandelier', 'bannerStyle', 'bannerColor', 'floor', 'decor'];
+    const bFields = ['skyTheme', 'chandelier', 'bannerStyle', 'bannerColor', 'floor', 'decor', 'princeOutfitColor'];
     for (const key of bFields) {
       if (typeof b[key] === 'string' && b[key].trim().length > 0) {
         base.ballroom[key] = b[key];
       }
+    }
+    if (typeof b.dancing === 'boolean') {
+      base.ballroom.dancing = b.dancing;
     }
   }
 

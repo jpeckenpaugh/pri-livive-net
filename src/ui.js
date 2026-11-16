@@ -1,6 +1,7 @@
 import { renderPaperDollSvg } from './paper_doll.js';
 import { renderColoringPageSvg } from './coloring_book.js';
-import { renderBallroomSvg } from './ballroom.js';
+import { renderBallroomSvg, PRINCE_OUTFIT_COLORS } from './ballroom.js';
+import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from './piano.js';
 import { generateRoyalName } from './names.js';
 import { announcePrincess } from './speech.js';
 
@@ -52,7 +53,18 @@ function renderItemButtons(items, selectedId, dataAttr) {
 }
 
 export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig }) {
+  const pianoPlayer = createPianoPlayer();
+  let activeSongId = null;
   const sparkleLayer = () => root.querySelector('.sparkle-burst-layer');
+
+  function flashPianoKey(keyId, durationMs = 240) {
+    const keyEl = root.querySelector(`[data-piano-key="${keyId}"]`);
+    if (!keyEl) return;
+    keyEl.classList.add('is-pressed');
+    setTimeout(() => {
+      keyEl.classList.remove('is-pressed');
+    }, Math.min(450, Math.max(140, durationMs)));
+  }
 
   function triggerSparkle() {
     const layer = sparkleLayer();
@@ -172,6 +184,20 @@ export function mountApp({ root, store, config, coloringData, coloringController
           </div>
         `;
         return `
+          <div class="panel-section">
+            <h3>Dance with the Prince</h3>
+            <div class="action-row">
+              <button type="button" class="primary-btn ${b.dancing ? 'is-active' : ''}" data-action="toggle-dance">
+                ${b.dancing ? '💃 Dancing Together!' : '💃 Dance with the Prince'}
+              </button>
+            </div>
+            <div class="swatch-grid" style="margin-top: 10px;">
+              ${PRINCE_OUTFIT_COLORS.map(
+                (c) =>
+                  `<button type="button" class="swatch-btn ${c.id === b.princeOutfitColor ? 'is-active' : ''}" data-ballroom-field="princeOutfitColor" data-ballroom-value="${c.id}" title="${escapeHtml(c.label)}" aria-label="Prince ${escapeHtml(c.label)}" style="--swatch-bg: ${c.primary}"></button>`
+              ).join('')}
+            </div>
+          </div>
           ${renderBallroomOptions('Sky & Windows', 'skyTheme', ballroomConfig?.skyThemes)}
           ${renderBallroomOptions('Chandelier', 'chandelier', ballroomConfig?.chandeliers)}
           ${renderBallroomOptions('Banners & Drapes', 'bannerStyle', ballroomConfig?.bannerStyles)}
@@ -231,8 +257,55 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
   }
 
+  function renderPianoHtml() {
+    const whiteKeys = PIANO_KEYS.filter((k) => !k.isBlack);
+    const blackKeys = PIANO_KEYS.filter((k) => k.isBlack);
+    return `
+      <div class="royal-piano-card" aria-label="Royal Piano">
+        <div class="piano-header">
+          <span class="piano-title">🎹 Royal Piano</span>
+          <div class="piano-songs">
+            ${PRESET_SONGS.map(
+              (song) =>
+                `<button type="button" class="song-btn ${activeSongId === song.id ? 'is-active' : ''}" data-song-id="${song.id}">${song.icon} ${escapeHtml(song.label)}</button>`
+            ).join('')}
+            ${
+              activeSongId
+                ? `<button type="button" class="song-btn song-stop-btn" data-action="stop-song">⏹ Stop</button>`
+                : ''
+            }
+          </div>
+        </div>
+        <div class="piano-keyboard" role="group" aria-label="Piano Keys C4 to C5">
+          <div class="piano-whites">
+            ${whiteKeys
+              .map(
+                (k) =>
+                  `<button type="button" class="piano-key piano-key-white" data-piano-key="${k.id}" aria-label="${k.id}">
+                    <span class="piano-note-label">${k.label}</span>
+                    <span class="piano-key-hint">${k.keyHint}</span>
+                  </button>`
+              )
+              .join('')}
+          </div>
+          <div class="piano-blacks">
+            ${blackKeys
+              .map((k) => {
+                const leftPct = ((k.whiteIndex + 0.68) / whiteKeys.length) * 100;
+                return `<button type="button" class="piano-key piano-key-black" data-piano-key="${k.id}" style="left: ${leftPct.toFixed(2)}%" aria-label="${k.id}">
+                  <span class="piano-key-hint">${k.keyHint}</span>
+                </button>`;
+              })
+              .join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function render(state) {
     soundPlayer.setMuted(state.muted);
+    pianoPlayer.setMuted(state.muted);
     const isColoring = state.activeTab === 'coloring';
     const isBallroom = state.activeTab === 'ballroom';
     const stageSvg = isBallroom
@@ -263,6 +336,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
                 <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
               </div>
             </div>
+            ${isBallroom ? renderPianoHtml() : ''}
           </section>
 
           <section class="controls-card" aria-label="Customization Studio">
@@ -277,6 +351,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
             <div class="tab-panel">
               ${renderTabPanel(state)}
             </div>
+            ${isBallroom ? renderPianoHtml() : ''}
           </section>
         </main>
       </div>
@@ -448,6 +523,39 @@ export function mountApp({ root, store, config, coloringData, coloringController
       }
     }
 
+    if (btn.dataset.action === 'toggle-dance') {
+      soundPlayer.playCue('sparkle-chime');
+      store.update((s) => {
+        s.ballroom.dancing = !s.ballroom.dancing;
+        return s;
+      });
+      triggerSparkle();
+      return;
+    }
+
+    if (btn.dataset.songId) {
+      const songId = btn.dataset.songId;
+      activeSongId = songId;
+      render(store.getState());
+      pianoPlayer.playSong(songId, {
+        onNote: (keyId, durationMs) => {
+          flashPianoKey(keyId, durationMs);
+        },
+        onDone: () => {
+          activeSongId = null;
+          render(store.getState());
+        }
+      });
+      return;
+    }
+
+    if (btn.dataset.action === 'stop-song') {
+      pianoPlayer.stopSong();
+      activeSongId = null;
+      render(store.getState());
+      return;
+    }
+
     const makeupUpdates = [
       ['makeupLipstick', 'lipstick'],
       ['makeupBlush', 'blush'],
@@ -467,6 +575,27 @@ export function mountApp({ root, store, config, coloringData, coloringController
       }
     }
   });
+
+  root.addEventListener('pointerdown', (e) => {
+    const keyBtn = e.target.closest('[data-piano-key]');
+    if (!keyBtn) return;
+    const keyId = keyBtn.dataset.pianoKey;
+    pianoPlayer.playNote(keyId, 360);
+    flashPianoKey(keyId, 260);
+  });
+
+  if (typeof globalThis.addEventListener === 'function') {
+    globalThis.addEventListener('keydown', (e) => {
+      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (store.getState().activeTab !== 'ballroom') return;
+      const keyObj = getKeyByKeyboard(e.key);
+      if (!keyObj) return;
+      pianoPlayer.playNote(keyObj.id, 360);
+      flashPianoKey(keyObj.id, 260);
+    });
+  }
 
   store.subscribe(render);
   render(store.getState());

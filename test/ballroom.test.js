@@ -33,3 +33,16 @@ test('renderBallroomSvg reflects customized skyTheme, chandelier, bannerStyle, f
   assert.ok(svg.includes('data-floor="starry-dance-floor"'));
   assert.ok(svg.includes('data-decor="glowing-columns"'));
 });
+
+test('renderBallroomSvg renders the Prince and musical notes when dancing is true', () => {
+  const dancingBallroom = {
+    ...DEFAULT_STATE.ballroom,
+    dancing: true,
+    princeOutfitColor: 'crimson'
+  };
+  const svg = renderBallroomSvg(dancingBallroom, ballroomConfig, DEFAULT_STATE.princess, princessConfig);
+  assert.ok(svg.includes('class="ballroom-prince-slot is-dancing"'));
+  assert.ok(svg.includes('data-prince-outfit="crimson"'));
+  assert.ok(svg.includes('class="ballroom-music-notes"'));
+  assert.ok(svg.includes('class="ballroom-princess-slot is-dancing"'));
+});

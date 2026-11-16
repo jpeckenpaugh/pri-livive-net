@@ -413,3 +413,220 @@ input {
   border-radius: 18px;
   box-shadow: 0 10px 28px rgba(126, 34, 206, 0.14);
 }
+
+/* Phase 3: Royal Piano & Dance with the Prince */
+.royal-piano-card {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff8fc 0%, #f5ebff 100%);
+  border: 2px solid #e9d5ff;
+  box-shadow: 0 6px 18px rgba(107, 33, 168, 0.08);
+}
+
+.piano-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.piano-title {
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: #6b21a8;
+}
+
+.piano-songs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.song-btn {
+  border: 1.5px solid #d8b4fe;
+  background: #ffffff;
+  color: #581c87;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.15s ease;
+}
+
+.song-btn:hover {
+  background: #faf5ff;
+  transform: translateY(-1px);
+}
+
+.song-btn.is-active {
+  background: #9333ea;
+  border-color: #7e22ce;
+  color: #ffffff;
+}
+
+.song-stop-btn {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+.piano-keyboard {
+  position: relative;
+  width: 100%;
+  height: 118px;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.piano-whites {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  height: 100%;
+}
+
+.piano-key-white {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 6px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 85%, #e2e8f0 100%);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 0 0 8px 8px;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.08s ease;
+}
+
+.piano-key-white:active,
+.piano-key-white.is-pressed {
+  background: linear-gradient(180deg, #fdf2f8 0%, #fbcfe8 100%);
+  border-color: #ec4899;
+  transform: translateY(2px);
+}
+
+.piano-note-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+}
+
+.piano-key-hint {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.piano-blacks {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 62%;
+  pointer-events: none;
+}
+
+.piano-key-black {
+  position: absolute;
+  top: 0;
+  width: 8.2%;
+  height: 100%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px;
+  background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
+  border: 1.5px solid #020617;
+  border-radius: 0 0 6px 6px;
+  color: #e2e8f0;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.06s ease, background 0.08s ease;
+}
+
+.piano-key-black .piano-key-hint {
+  color: #cbd5e1;
+}
+
+.piano-key-black:active,
+.piano-key-black.is-pressed {
+  background: linear-gradient(180deg, #a855f7 0%, #6b21a8 100%);
+  transform: translateX(-50%) translateY(2px);
+}
+
+@keyframes royal-waltz-princess {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -4px) rotate(1.6deg);
+  }
+  50% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  75% {
+    transform: translate(-8px, -4px) rotate(-1.6deg);
+  }
+}
+
+@keyframes royal-waltz-prince {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-10px, -4px) rotate(-1.6deg);
+  }
+  50% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  75% {
+    transform: translate(8px, -4px) rotate(1.6deg);
+  }
+}
+
+@keyframes float-music-note {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(-14px) scale(1.12);
+    opacity: 1;
+  }
+}
+
+.ballroom-princess-slot.is-dancing {
+  transform-origin: 260px 460px;
+  animation: royal-waltz-princess 2.6s ease-in-out infinite;
+}
+
+.ballroom-prince-slot.is-dancing {
+  transform-origin: 395px 460px;
+  animation: royal-waltz-prince 2.6s ease-in-out infinite;
+}
+
+.ballroom-music-notes .music-note {
+  animation: float-music-note 2s ease-in-out infinite;
+}
+
+.ballroom-music-notes .note-2 {
+  animation-delay: 0.4s;
+}
+
+.ballroom-music-notes .note-3 {
+  animation-delay: 0.8s;
+}
+
+.ballroom-music-notes .note-4 {
+  animation-delay: 1.1s;
+}
+
+.ballroom-music-notes .note-5 {
+  animation-delay: 1.5s;
+}

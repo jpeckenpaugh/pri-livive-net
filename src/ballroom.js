@@ -251,6 +251,65 @@ function renderChandelier(chandelierId) {
   `;
 }
 
+export const PRINCE_OUTFIT_COLORS = [
+  { id: 'royal-blue', label: 'Royal Blue', primary: '#2563EB', dark: '#1E40AF', sash: '#FACC15' },
+  { id: 'crimson', label: 'Crimson', primary: '#DC2626', dark: '#991B1B', sash: '#FDE047' },
+  { id: 'emerald', label: 'Emerald', primary: '#059669', dark: '#065F46', sash: '#FDE047' },
+  { id: 'lavender', label: 'Lavender', primary: '#7C3AED', dark: '#5B21B6', sash: '#F9A8D4' },
+  { id: 'gold', label: 'Royal Gold', primary: '#D97706', dark: '#92400E', sash: '#FEF08A' }
+];
+
+function renderPrinceSvg(outfitColorId) {
+  const palette = findById(PRINCE_OUTFIT_COLORS, outfitColorId);
+  return `
+    <svg class="prince-svg" viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg" aria-label="Royal Prince">
+      <!-- Cape -->
+      <path d="M72 128 Q50 220 56 290 L164 290 Q170 220 148 128 Z" fill="${palette.dark}" opacity="0.9"/>
+      <!-- Legs & Boots -->
+      <rect x="84" y="220" width="20" height="72" rx="8" fill="#1F2937"/>
+      <rect x="116" y="220" width="20" height="72" rx="8" fill="#1F2937"/>
+      <path d="M80 282 L106 282 L106 300 Q92 304 76 298 Z" fill="#111827"/>
+      <path d="M114 282 L140 282 L144 298 Q128 304 114 300 Z" fill="#111827"/>
+      <!-- Royal Tunic -->
+      <path d="M74 128 L146 128 L154 226 Q110 236 66 226 Z" fill="${palette.primary}" stroke="#FACC15" stroke-width="2.5"/>
+      <!-- Sash -->
+      <path d="M82 128 L146 210 L132 220 L74 140 Z" fill="${palette.sash}" opacity="0.92"/>
+      <!-- Belt & Gold Buckle -->
+      <rect x="70" y="196" width="80" height="10" rx="4" fill="#111827"/>
+      <rect x="102" y="194" width="16" height="14" rx="3" fill="#FACC15"/>
+      <!-- Arms -->
+      <path d="M74 134 Q52 165 62 195" fill="none" stroke="${palette.primary}" stroke-width="15" stroke-linecap="round"/>
+      <circle cx="62" cy="197" r="7" fill="#FCD5B5"/>
+      <path d="M146 134 Q168 165 158 195" fill="none" stroke="${palette.primary}" stroke-width="15" stroke-linecap="round"/>
+      <circle cx="158" cy="197" r="7" fill="#FCD5B5"/>
+      <!-- Neck & Head -->
+      <rect x="101" y="106" width="18" height="24" rx="6" fill="#FCD5B5"/>
+      <ellipse cx="110" cy="84" rx="28" ry="31" fill="#FCD5B5"/>
+      <!-- Hair -->
+      <path d="M82 80 Q82 48 110 48 Q138 48 138 80 Q130 64 110 64 Q90 64 82 80 Z" fill="#4B2E1E"/>
+      <!-- Eyes & Smile -->
+      <circle cx="99" cy="84" r="3.2" fill="#1F2937"/>
+      <circle cx="121" cy="84" r="3.2" fill="#1F2937"/>
+      <path d="M101 97 Q110 104 119 97" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linecap="round"/>
+      <!-- Royal Crown -->
+      <path d="M86 55 L92 34 L103 46 L110 30 L117 46 L128 34 L134 55 Z" fill="#FACC15" stroke="#B45309" stroke-width="2"/>
+      <circle cx="110" cy="44" r="3.5" fill="#EF4444"/>
+    </svg>
+  `;
+}
+
+function renderDancingNotes() {
+  return `
+    <g class="ballroom-music-notes" aria-hidden="true">
+      <text x="195" y="175" font-size="24" fill="#FACC15" class="music-note note-1">♪</text>
+      <text x="425" y="160" font-size="26" fill="#F472B6" class="music-note note-2">♫</text>
+      <text x="315" y="135" font-size="22" fill="#A78BFA" class="music-note note-3">♪</text>
+      <text x="255" y="150" font-size="18" fill="#FDE047" class="music-note note-4">✦</text>
+      <text x="380" y="145" font-size="18" fill="#F9A8D4" class="music-note note-5">✦</text>
+    </g>
+  `;
+}
+
 export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, princessConfig) {
   const skyTheme = findById(ballroomConfig?.skyThemes, ballroomState?.skyTheme);
   const chandelier = findById(ballroomConfig?.chandeliers, ballroomState?.chandelier);
@@ -258,12 +317,15 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
   const bannerColor = findById(ballroomConfig?.bannerColors, ballroomState?.bannerColor);
   const floor = findById(ballroomConfig?.floors, ballroomState?.floor);
   const decor = findById(ballroomConfig?.decors, ballroomState?.decor);
+  const isDancing = Boolean(ballroomState?.dancing);
 
   const wallColor = skyTheme?.wall || '#F5EEFF';
   const princessSvg = renderPaperDollSvg(princessState, princessConfig);
+  const princessSlotX = isDancing ? 120 : 180;
+  const princessShadowCx = isDancing ? 260 : 320;
 
   return `
-    <svg class="ballroom-svg" viewBox="0 0 640 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Royal Ballroom Scene">
+    <svg class="ballroom-svg${isDancing ? ' is-dancing' : ''}" viewBox="0 0 640 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Royal Ballroom Scene">
       <!-- Ballroom Back Wall -->
       <rect x="0" y="0" width="640" height="335" fill="${wallColor}"/>
       ${renderSkyWindows(skyTheme)}
@@ -272,12 +334,26 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
       ${renderBanners(bannerStyle?.id, bannerColor)}
       ${renderChandelier(chandelier?.id)}
       <!-- Composited Princess Paper-Doll -->
-      <g class="ballroom-princess-slot">
-        <ellipse cx="320" cy="468" rx="68" ry="14" fill="#000000" opacity="0.14"/>
-        <svg x="180" y="135" width="280" height="350" viewBox="0 0 320 400">
+      <g class="ballroom-princess-slot${isDancing ? ' is-dancing' : ''}">
+        <ellipse cx="${princessShadowCx}" cy="468" rx="68" ry="14" fill="#000000" opacity="0.14"/>
+        <svg x="${princessSlotX}" y="135" width="280" height="350" viewBox="0 0 320 400">
           ${princessSvg}
         </svg>
       </g>
+      ${
+        isDancing
+          ? `
+      <!-- Royal Prince Dance Partner -->
+      <g class="ballroom-prince-slot is-dancing" data-prince-outfit="${ballroomState?.princeOutfitColor || 'royal-blue'}">
+        <ellipse cx="395" cy="468" rx="56" ry="13" fill="#000000" opacity="0.14"/>
+        <svg x="285" y="148" width="220" height="340" viewBox="0 0 220 340">
+          ${renderPrinceSvg(ballroomState?.princeOutfitColor)}
+        </svg>
+      </g>
+      ${renderDancingNotes()}
+      `
+          : ''
+      }
     </svg>
   `;
 }
