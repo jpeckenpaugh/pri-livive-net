@@ -1059,9 +1059,10 @@ export function mountApp({ root, store, config, coloringData, coloringController
         kindnessCount: 0,
         selectedChoice: null,
         completed: false,
-        justEarnedStars: 0
+        justEarnedStars: 0,
+        mayaPrincess: null
       };
-      soundPlayer.play('pop', store.getState().muted);
+      soundPlayer.playCue('ui-click');
       render(store.getState());
       return;
     }
