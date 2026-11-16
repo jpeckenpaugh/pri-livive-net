@@ -3,7 +3,12 @@ import { renderColoringPageSvg, addStroke, undoStroke, clearDrawings } from './c
 import { renderBallroomSvg, PRINCE_OUTFIT_COLORS } from './ballroom.js';
 import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from './piano.js';
 import { generateRoyalName } from './names.js';
-import { announcePrincess } from './speech.js';
+import { announcePrincess, speakText } from './speech.js';
+import {
+  getEpisodeById,
+  resolveEpisodeEnding,
+  renderEpisodeSceneSvg
+} from './episodes.js';
 import {
   getSubjectLessons,
   getLessonById,
@@ -25,7 +30,8 @@ const TABS = [
   { id: 'powers-pets', icon: '✨', label: 'Powers & Pets' },
   { id: 'ballroom', icon: '🏰', label: 'Ballroom' },
   { id: 'coloring', icon: '🎨', label: 'Coloring' },
-  { id: 'academy', icon: '🏫', label: 'Academy' }
+  { id: 'academy', icon: '🏫', label: 'Academy' },
+  { id: 'episodes', icon: '📖', label: 'Episodes' }
 ];
 
 function escapeHtml(str) {
@@ -64,7 +70,7 @@ function renderItemButtons(items, selectedId, dataAttr) {
   </div>`;
 }
 
-export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig, lessonsConfig }) {
+export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig, lessonsConfig, episodesConfig }) {
   let powerBurstActive = false;
   let powerBurstTimer = null;
   const pianoPlayer = createPianoPlayer();
@@ -105,6 +111,15 @@ export function mountApp({ root, store, config, coloringData, coloringController
     playedNotes: []
   };
   let academyAdvanceTimer = null;
+
+  let episodeSession = {
+    episodeId: episodesConfig?.episodes?.[0]?.id || 'new-princess-at-school',
+    beatIndex: 0,
+    kindnessCount: 0,
+    selectedChoice: null,
+    completed: false,
+    justEarnedStars: 0
+  };
 
   function clearAcademyAdvanceTimer() {
     if (academyAdvanceTimer) {
@@ -183,6 +198,97 @@ export function mountApp({ root, store, config, coloringData, coloringController
           <text x="-11" y="3" text-anchor="middle" font-size="9" font-weight="700" fill="#457b9d">W</text>
         </g>
       </svg>
+    `;
+  }
+
+  function renderEpisodesTab(state) {
+    if (!episodesConfig || !Array.isArray(episodesConfig.episodes) || episodesConfig.episodes.length === 0) {
+      return `<div class="panel-card"><p>Episodes are loading...</p></div>`;
+    }
+    const episode = getEpisodeById(episodesConfig, episodeSession.episodeId) || episodesConfig.episodes[0];
+    const beats = Array.isArray(episode.beats) ? episode.beats : [];
+    const totalBeats = beats.length + 1;
+    const stars = state.academy?.stars || 0;
+    const isAlreadyCompleted = Array.isArray(state.episodes?.completed) && state.episodes.completed.includes(episode.id);
+
+    if (episodeSession.completed) {
+      const ending = resolveEpisodeEnding(episode, episodeSession.kindnessCount);
+      const sceneSvg = renderEpisodeSceneSvg(episode, beats.length - 1, state, config, {
+        mayaMood: ending?.mayaMood || 'happy',
+        reactionType: ending?.reactionType || 'celebrate'
+      });
+      const rewardBadge = episodeSession.justEarnedStars > 0
+        ? `<div class="episode-reward-pill">⭐ +${episodeSession.justEarnedStars} Royal Stars Earned!</div>`
+        : isAlreadyCompleted
+          ? `<div class="episode-reward-pill">⭐ Episode Completed</div>`
+          : '';
+
+      return `
+        <div class="episode-player-card">
+          <div class="episode-header">
+            <div>
+              <h2 class="episode-title">📖 ${escapeHtml(episode.title)}</h2>
+              <p class="episode-subtitle">Beat ${totalBeats} of ${totalBeats} · ${escapeHtml(ending?.title || 'The End')}</p>
+            </div>
+            <div class="academy-stars-pill">⭐ ${stars} Stars</div>
+          </div>
+          <div class="episode-scene-wrap">${sceneSvg}</div>
+          <div class="episode-story-box">
+            ${rewardBadge}
+            <p class="episode-story-text">${escapeHtml(ending?.story || '')}</p>
+            <div class="episode-actions-row">
+              <button type="button" class="pill-btn" data-episode-read="${escapeHtml(ending?.story || '')}">🔊 Read Aloud</button>
+              <button type="button" class="primary-btn" data-episode-replay="true">🔄 Replay Episode</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const beat = beats[episodeSession.beatIndex] || beats[0];
+    const choice = episodeSession.selectedChoice;
+    const mayaMood = choice ? choice.mayaMood : 'neutral';
+    const reactionType = choice ? choice.reactionType : 'none';
+    const sceneSvg = renderEpisodeSceneSvg(episode, episodeSession.beatIndex, state, config, {
+      mayaMood,
+      reactionType
+    });
+    const displayText = choice ? choice.reactionText : beat.story;
+
+    return `
+      <div class="episode-player-card">
+        <div class="episode-header">
+          <div>
+            <h2 class="episode-title">📖 ${escapeHtml(episode.title)}</h2>
+            <p class="episode-subtitle">Beat ${episodeSession.beatIndex + 1} of ${totalBeats} · ${escapeHtml(beat.title)}</p>
+          </div>
+          <div class="academy-stars-pill">⭐ ${stars} Stars</div>
+        </div>
+        <div class="episode-scene-wrap">${sceneSvg}</div>
+        <div class="episode-story-box">
+          <p class="episode-story-text">${escapeHtml(displayText)}</p>
+          <div class="episode-read-row">
+            <button type="button" class="pill-btn" data-episode-read="${escapeHtml(displayText)}">🔊 Read Aloud</button>
+          </div>
+          ${
+            choice
+              ? `<div class="episode-continue-row">
+                  <button type="button" class="primary-btn" data-episode-continue="true">Continue ➔</button>
+                </div>`
+              : `<div class="episode-choices-grid">
+                  ${(beat.choices || [])
+                    .map(
+                      (c) => `
+                        <button type="button" class="episode-choice-btn" data-episode-choice="${escapeHtml(c.id)}">
+                          ${escapeHtml(c.label)}
+                        </button>
+                      `
+                    )
+                    .join('')}
+                </div>`
+          }
+        </div>
+      </div>
     `;
   }
 
@@ -733,6 +839,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
       }
       case 'academy':
         return renderAcademyTab(state);
+      case 'episodes':
+        return renderEpisodesTab(state);
       default:
         return '';
     }
@@ -884,6 +992,68 @@ export function mountApp({ root, store, config, coloringData, coloringController
   root.addEventListener('click', (event) => {
     const btn = event.target.closest('button, .coloring-region');
     if (!btn) return;
+
+    if (btn.dataset.episodeRead !== undefined) {
+      speakText(btn.dataset.episodeRead, { muted: store.getState().muted });
+      return;
+    }
+
+    if (btn.dataset.episodeChoice) {
+      const episode = getEpisodeById(episodesConfig, episodeSession.episodeId) || episodesConfig?.episodes?.[0];
+      const beat = episode?.beats?.[episodeSession.beatIndex];
+      const choice = beat?.choices?.find((c) => c.id === btn.dataset.episodeChoice);
+      if (choice) {
+        episodeSession.selectedChoice = choice;
+        episodeSession.kindnessCount += Number(choice.kindnessDelta || 0);
+        soundPlayer.play(choice.kindnessDelta > 0 ? 'sparkle' : 'pop', store.getState().muted);
+        render();
+      }
+      return;
+    }
+
+    if (btn.dataset.episodeContinue) {
+      const episode = getEpisodeById(episodesConfig, episodeSession.episodeId) || episodesConfig?.episodes?.[0];
+      const beats = episode?.beats || [];
+      episodeSession.selectedChoice = null;
+      if (episodeSession.beatIndex + 1 < beats.length) {
+        episodeSession.beatIndex += 1;
+      } else {
+        episodeSession.completed = true;
+        const current = store.getState();
+        const completedList = Array.isArray(current.episodes?.completed) ? current.episodes.completed : [];
+        if (episode && !completedList.includes(episode.id)) {
+          const reward = typeof episode.starReward === 'number' ? episode.starReward : 2;
+          episodeSession.justEarnedStars = reward;
+          store.setState({
+            academy: {
+              ...current.academy,
+              stars: (current.academy?.stars || 0) + reward
+            },
+            episodes: {
+              ...current.episodes,
+              completed: [...completedList, episode.id]
+            }
+          });
+          soundPlayer.play('sparkle', store.getState().muted);
+        }
+      }
+      render();
+      return;
+    }
+
+    if (btn.dataset.episodeReplay) {
+      episodeSession = {
+        episodeId: episodeSession.episodeId,
+        beatIndex: 0,
+        kindnessCount: 0,
+        selectedChoice: null,
+        completed: false,
+        justEarnedStars: 0
+      };
+      soundPlayer.play('pop', store.getState().muted);
+      render();
+      return;
+    }
 
     if (btn.dataset.academyLesson) {
       const lesson = getLessonById(lessonsConfig, btn.dataset.academyLesson);

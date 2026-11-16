@@ -306,3 +306,13 @@ test('Tiara Settings: normalizeState migrates older saves and preserves tiaraSiz
   assert.equal(preserved.princess.tiaraSizeId, 'grand');
   assert.equal(preserved.princess.tiaraEffectId, 'glow');
 });
+
+test('Phase 6: normalizeState migrates older saves without episodes and preserves valid episodes.completed', () => {
+  const migrated = normalizeState({ name: 'Princess Luna' });
+  assert.deepEqual(migrated.episodes, { completed: [] });
+
+  const preserved = normalizeState({
+    episodes: { completed: ['new-princess-at-school', 'new-princess-at-school', ''] }
+  });
+  assert.deepEqual(preserved.episodes, { completed: ['new-princess-at-school'] });
+});

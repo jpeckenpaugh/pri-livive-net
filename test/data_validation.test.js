@@ -179,3 +179,18 @@ test('Tiara Settings: princess_config.json has expanded tiaraMetals, tiaraGems, 
     ['none', 'twinkle', 'glow']
   );
 });
+
+test('Phase 6: episodes_config.json defines new-princess-at-school with 4 choice beats and ending', () => {
+  const episodesConfig = JSON.parse(
+    fs.readFileSync(new URL('../data/episodes_config.json', import.meta.url), 'utf8')
+  );
+  assert.ok(Array.isArray(episodesConfig.episodes));
+  const ep = episodesConfig.episodes.find((e) => e.id === 'new-princess-at-school');
+  assert.ok(ep);
+  assert.equal(ep.beats.length, 4);
+  for (const beat of ep.beats) {
+    assert.ok(Array.isArray(beat.choices) && beat.choices.length === 2);
+  }
+  assert.ok(ep.ending?.welcoming?.story);
+  assert.ok(ep.ending?.exclusionary?.story);
+});

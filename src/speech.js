@@ -56,7 +56,7 @@ export function pickBestVoice(voices) {
   return best;
 }
 
-export function announcePrincess(name, { muted = false } = {}) {
+export function speakText(text, { muted = false } = {}) {
   if (muted) return false;
   const synth = globalThis.speechSynthesis;
   const Utterance = globalThis.SpeechSynthesisUtterance;
@@ -66,8 +66,9 @@ export function announcePrincess(name, { muted = false } = {}) {
     if (typeof synth.cancel === 'function') {
       synth.cancel();
     }
-    const cleanName = (name || 'Princess Luna').trim();
-    const utterance = new Utterance(`Hear ye, hear ye! Presenting ${cleanName}!`);
+    const cleanText = String(text || '').trim();
+    if (!cleanText) return false;
+    const utterance = new Utterance(cleanText);
     if (typeof synth.getVoices === 'function') {
       const voice = pickBestVoice(synth.getVoices());
       if (voice) utterance.voice = voice;
@@ -79,4 +80,9 @@ export function announcePrincess(name, { muted = false } = {}) {
   } catch {
     return false;
   }
+}
+
+export function announcePrincess(name, { muted = false } = {}) {
+  const cleanName = (name || 'Princess Luna').trim();
+  return speakText(`Hear ye, hear ye! Presenting ${cleanName}!`, { muted });
 }

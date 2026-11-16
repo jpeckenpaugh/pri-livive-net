@@ -71,6 +71,9 @@ export const DEFAULT_STATE = {
   academy: {
     stars: 0,
     completedLessons: []
+  },
+  episodes: {
+    completed: []
   }
 };
 
@@ -274,6 +277,18 @@ export function normalizeState(raw) {
     if (Array.isArray(a.completedLessons)) {
       const seen = new Set();
       base.academy.completedLessons = a.completedLessons.filter((id) => {
+        if (typeof id !== 'string' || id.trim().length === 0 || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    }
+  }
+
+  if (raw.episodes && typeof raw.episodes === 'object') {
+    const ep = raw.episodes;
+    if (Array.isArray(ep.completed)) {
+      const seen = new Set();
+      base.episodes.completed = ep.completed.filter((id) => {
         if (typeof id !== 'string' || id.trim().length === 0 || seen.has(id)) return false;
         seen.add(id);
         return true;

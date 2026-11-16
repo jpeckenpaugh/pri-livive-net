@@ -1,0 +1,124 @@
+{
+  "episodes": [
+    {
+      "id": "new-princess-at-school",
+      "title": "The New Princess at School",
+      "subtitle": "A Royal Academy Story about Kindness",
+      "starReward": 2,
+      "mayaName": "Princess Maya",
+      "kindnessThreshold": 3,
+      "beats": [
+        {
+          "id": "courtyard-arrival",
+          "title": "Arrival at the Courtyard",
+          "backdrop": "courtyard",
+          "story": "It is a sunny morning at the Royal Academy! A new student, Princess Maya, stands near the courtyard fountain holding her satchel. She looks a little nervous.",
+          "choices": [
+            {
+              "id": "say-hello",
+              "label": "Wave and say hello!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Princess Maya smiles brightly! \"Thank you for saying hi! I was hoping to make a friend today.\""
+            },
+            {
+              "id": "ignore-her",
+              "label": "Ignore her and walk past",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Maya looks down at her shoes and hugs her satchel a little tighter."
+            }
+          ]
+        },
+        {
+          "id": "banquet-table",
+          "title": "The Banquet Table",
+          "backdrop": "banquet",
+          "story": "At lunchtime, the Grand Banquet Hall is filled with laughter and starberry tarts. Princess Maya carries her tray, looking for an open seat.",
+          "choices": [
+            {
+              "id": "invite-sit",
+              "label": "Invite her to sit next to you",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "\"Really? Thank you!\" Princess Maya sits down happily and shares a starberry tart."
+            },
+            {
+              "id": "seat-saved",
+              "label": "Say the seat is saved",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Maya nods quietly and walks to a quiet corner table all by herself."
+            }
+          ]
+        },
+        {
+          "id": "potion-lab",
+          "title": "Potion Lab Partners",
+          "backdrop": "potion-lab",
+          "story": "In afternoon Potion Lab, Professor Sparkle asks everyone to pick a partner to brew a shimmering rainbow elixir. Princess Maya doesn't have a partner yet.",
+          "choices": [
+            {
+              "id": "ask-partner",
+              "label": "Ask her to be your partner",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Together you stir the cauldron, and a burst of golden sparkles fills the air! \"We make a great team!\" Maya cheers."
+            },
+            {
+              "id": "leave-out",
+              "label": "Leave her out and pair with someone else",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Maya has to work alone at the back table, watching everyone else laugh together."
+            }
+          ]
+        },
+        {
+          "id": "dropped-spellbook",
+          "title": "The Dropped Spellbook",
+          "backdrop": "hallway",
+          "story": "After class in the hallway, Princess Maya trips over her hem and her heavy spellbook tumbles open across the floor.",
+          "choices": [
+            {
+              "id": "help-pick-up",
+              "label": "Help her pick up the spellbook",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "You kneel down and gather the pages together. \"You're so kind,\" Princess Maya says with a warm smile."
+            },
+            {
+              "id": "laugh-walk-away",
+              "label": "Laugh and walk away",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Maya's cheeks turn pink as she hurries to gather her pages alone."
+            }
+          ]
+        }
+      ],
+      "ending": {
+        "welcoming": {
+          "title": "A New Royal Friendship!",
+          "mayaMood": "happy",
+          "reactionType": "celebrate",
+          "story": "At the end of the day, Princess Maya beams with joy. Because you welcomed her, invited her to lunch, partnered with her, and helped her out, she feels right at home at the Royal Academy. Kindness makes every kingdom brighter!"
+        },
+        "exclusionary": {
+          "title": "A Quiet Reflection",
+          "mayaMood": "shy",
+          "reactionType": "reflect",
+          "story": "As the school bell rings, Princess Maya walks home quietly. Being new at school can feel lonely when others leave us out. Tomorrow is a brand-new day—even one small hello or helping hand can turn someone's whole day around!"
+        }
+      }
+    }
+  ]
+}
