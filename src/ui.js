@@ -96,6 +96,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     lessonId: null,
     stepIndex: 0,
     feedback: null,
+    pendingAdvance: null,
     completed: false,
     newlyAwarded: false,
     spellingTiles: [],
@@ -103,6 +104,15 @@ export function mountApp({ root, store, config, coloringData, coloringController
     usedTileIds: [],
     playedNotes: []
   };
+  let academyAdvanceTimer = null;
+
+  function clearAcademyAdvanceTimer() {
+    if (academyAdvanceTimer) {
+      clearTimeout(academyAdvanceTimer);
+      academyAdvanceTimer = null;
+    }
+    academySession.pendingAdvance = null;
+  }
   const sparkleLayer = () => root.querySelector('.sparkle-burst-layer');
 
   function speakWord(word) {
@@ -248,6 +258,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     let bodyHtml = '';
+    const isLocked = Boolean(academySession.pendingAdvance);
     if (lesson.type === 'quiz' || lesson.type === 'compass') {
       const questions = lesson.questions || [];
       const q = questions[academySession.stepIndex];
@@ -257,10 +268,13 @@ export function mountApp({ root, store, config, coloringData, coloringController
         <p class="academy-prompt">${escapeHtml(q.prompt)}</p>
         <div class="academy-options-grid">
           ${q.options
-            .map(
-              (opt) =>
-                `<button type="button" class="option-btn academy-opt-btn" data-academy-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`
-            )
+            .map((opt) => {
+              let stateClass = '';
+              if (academySession.pendingAdvance && academySession.pendingAdvance.selectedAnswer === opt) {
+                stateClass = academySession.pendingAdvance.isCorrect ? 'is-correct' : 'is-wrong';
+              }
+              return `<button type="button" class="option-btn academy-opt-btn ${stateClass}" data-academy-answer="${escapeHtml(opt)}" ${isLocked ? 'disabled' : ''}>${escapeHtml(opt)}</button>`;
+            })
             .join('')}
         </div>
       `;
@@ -273,7 +287,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
         <p class="academy-prompt">Hint: ${escapeHtml(entry.hint)}</p>
         <div class="academy-spell-controls">
           <button type="button" class="action-btn secondary" data-academy-hear-word="${escapeHtml(entry.word)}">Hear Word 🔊</button>
-          <button type="button" class="action-btn secondary" data-academy-clear-spell="true">Clear ↺</button>
+          <button type="button" class="action-btn secondary" data-academy-clear-spell="true" ${isLocked ? 'disabled' : ''}>Clear ↺</button>
         </div>
         <div class="academy-spell-slots">
           ${slots.map((ch) => `<span class="spell-slot ${ch !== '_' ? 'is-filled' : ''}">${escapeHtml(ch)}</span>`).join('')}
@@ -282,7 +296,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
           ${academySession.spellingTiles
             .map((tile) => {
               const used = academySession.usedTileIds.includes(tile.id);
-              return `<button type="button" class="spell-tile-btn ${used ? 'is-used' : ''}" data-academy-tile-id="${tile.id}" data-academy-tile-letter="${tile.letter}" ${used ? 'disabled' : ''}>${escapeHtml(tile.letter)}</button>`;
+              return `<button type="button" class="spell-tile-btn ${used ? 'is-used' : ''}" data-academy-tile-id="${tile.id}" data-academy-tile-letter="${tile.letter}" ${used || isLocked ? 'disabled' : ''}>${escapeHtml(tile.letter)}</button>`;
             })
             .join('')}
         </div>
@@ -296,7 +310,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
         <p class="academy-prompt">Listen to the ${mel.notes.length}-note melody, then echo it on the keys below!</p>
         <div class="academy-spell-controls">
           <button type="button" class="action-btn primary" data-academy-play-melody="true">Listen to Melody 🎵</button>
-          <button type="button" class="action-btn secondary" data-academy-clear-melody="true">Clear Notes ↺</button>
+          <button type="button" class="action-btn secondary" data-academy-clear-melody="true" ${isLocked ? 'disabled' : ''}>Clear Notes ↺</button>
         </div>
         <div class="academy-melody-dots">
           ${mel.notes
@@ -310,7 +324,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
           ${whiteKeys
             .map(
               (k) =>
-                `<button type="button" class="academy-piano-key" data-academy-note="${k.id}">${escapeHtml(k.label)}</button>`
+                `<button type="button" class="academy-piano-key" data-academy-note="${k.id}" ${isLocked ? 'disabled' : ''}>${escapeHtml(k.label)}</button>`
             )
             .join('')}
         </div>
@@ -875,10 +889,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const lesson = getLessonById(lessonsConfig, btn.dataset.academyLesson);
       if (lesson) {
         soundPlayer.playCue('ui-click');
+        clearAcademyAdvanceTimer();
         academySession = {
           lessonId: lesson.id,
           stepIndex: 0,
           feedback: null,
+          pendingAdvance: null,
           completed: false,
           newlyAwarded: false,
           spellingTiles: lesson.type === 'spelling' && lesson.words?.[0] ? shuffleLetters(lesson.words[0].word) : [],
@@ -893,6 +909,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
     if (btn.dataset.academyBack) {
       soundPlayer.playCue('ui-click');
+      clearAcademyAdvanceTimer();
       academySession.lessonId = null;
       academySession.feedback = null;
       render(store.getState());
@@ -900,32 +917,41 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyAnswer !== undefined) {
+      if (academySession.pendingAdvance) return;
       const lesson = getLessonById(lessonsConfig, academySession.lessonId);
       const questions = lesson?.questions || [];
       const q = questions[academySession.stepIndex];
       if (!q) return;
-      if (checkQuizAnswer(q, btn.dataset.academyAnswer)) {
-        soundPlayer.playCue('sparkle-magic');
-        if (academySession.stepIndex + 1 < questions.length) {
-          academySession.stepIndex += 1;
-          academySession.feedback = { ok: true, text: 'Sparkling job! ✨' };
-          render(store.getState());
-        } else {
-          academySession.completed = true;
-          academySession.feedback = null;
-          store.update((s) => {
-            const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
-            s.academy = { stars: res.stars, completedLessons: res.completedLessons };
-            academySession.newlyAwarded = res.newlyAwarded;
-            return s;
-          });
-          triggerSparkle();
+      const selectedAnswer = btn.dataset.academyAnswer;
+      const isCorrect = checkQuizAnswer(q, selectedAnswer);
+      soundPlayer.playCue(isCorrect ? 'sparkle-magic' : 'ui-click');
+      academySession.pendingAdvance = { selectedAnswer, isCorrect };
+      academySession.feedback = {
+        ok: isCorrect,
+        text: isCorrect ? '✅ Correct!' : '❌ Try again next time!'
+      };
+      render(store.getState());
+      academyAdvanceTimer = setTimeout(() => {
+        academyAdvanceTimer = null;
+        if (academySession.lessonId !== lesson.id) return;
+        academySession.pendingAdvance = null;
+        academySession.feedback = null;
+        if (isCorrect) {
+          if (academySession.stepIndex + 1 < questions.length) {
+            academySession.stepIndex += 1;
+          } else {
+            academySession.completed = true;
+            store.update((s) => {
+              const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
+              s.academy = { stars: res.stars, completedLessons: res.completedLessons };
+              academySession.newlyAwarded = res.newlyAwarded;
+              return s;
+            });
+            triggerSparkle();
+          }
         }
-      } else {
-        soundPlayer.playCue('ui-click');
-        academySession.feedback = { ok: false, text: 'Almost! Try another answer 💫' };
         render(store.getState());
-      }
+      }, 1000);
       return;
     }
 
@@ -935,6 +961,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyClearSpell) {
+      if (academySession.pendingAdvance) return;
       soundPlayer.playCue('ui-click');
       academySession.enteredLetters = [];
       academySession.usedTileIds = [];
@@ -944,6 +971,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyTileId) {
+      if (academySession.pendingAdvance) return;
       const lesson = getLessonById(lessonsConfig, academySession.lessonId);
       const words = lesson?.words || [];
       const entry = words[academySession.stepIndex];
@@ -953,30 +981,38 @@ export function mountApp({ root, store, config, coloringData, coloringController
       academySession.usedTileIds.push(btn.dataset.academyTileId);
 
       if (academySession.enteredLetters.length === entry.word.length) {
-        if (checkSpellingWord(entry.word, academySession.enteredLetters)) {
-          soundPlayer.playCue('sparkle-magic');
-          if (academySession.stepIndex + 1 < words.length) {
-            academySession.stepIndex += 1;
-            academySession.enteredLetters = [];
-            academySession.usedTileIds = [];
-            academySession.spellingTiles = shuffleLetters(words[academySession.stepIndex].word);
-            academySession.feedback = { ok: true, text: `Wonderful! You spelled ${entry.word}! ✨` };
-            render(store.getState());
-          } else {
-            academySession.completed = true;
-            academySession.feedback = null;
-            store.update((s) => {
-              const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
-              s.academy = { stars: res.stars, completedLessons: res.completedLessons };
-              academySession.newlyAwarded = res.newlyAwarded;
-              return s;
-            });
-            triggerSparkle();
+        const isCorrect = checkSpellingWord(entry.word, academySession.enteredLetters);
+        if (isCorrect) soundPlayer.playCue('sparkle-magic');
+        academySession.pendingAdvance = { isCorrect };
+        academySession.feedback = {
+          ok: isCorrect,
+          text: isCorrect ? '✅ Correct!' : '❌ Try again next time!'
+        };
+        render(store.getState());
+        academyAdvanceTimer = setTimeout(() => {
+          academyAdvanceTimer = null;
+          if (academySession.lessonId !== lesson.id) return;
+          academySession.pendingAdvance = null;
+          academySession.feedback = null;
+          if (isCorrect) {
+            if (academySession.stepIndex + 1 < words.length) {
+              academySession.stepIndex += 1;
+              academySession.enteredLetters = [];
+              academySession.usedTileIds = [];
+              academySession.spellingTiles = shuffleLetters(words[academySession.stepIndex].word);
+            } else {
+              academySession.completed = true;
+              store.update((s) => {
+                const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
+                s.academy = { stars: res.stars, completedLessons: res.completedLessons };
+                academySession.newlyAwarded = res.newlyAwarded;
+                return s;
+              });
+              triggerSparkle();
+            }
           }
-        } else {
-          academySession.feedback = { ok: false, text: 'Not quite! Tap Clear ↺ and try again.' };
           render(store.getState());
-        }
+        }, 1000);
       } else {
         academySession.feedback = null;
         render(store.getState());
@@ -998,6 +1034,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyClearMelody) {
+      if (academySession.pendingAdvance) return;
       soundPlayer.playCue('ui-click');
       academySession.playedNotes = [];
       academySession.feedback = null;
@@ -1006,6 +1043,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyNote) {
+      if (academySession.pendingAdvance) return;
       const lesson = getLessonById(lessonsConfig, academySession.lessonId);
       const melodies = lesson?.melodies || [];
       const mel = melodies[academySession.stepIndex];
@@ -1015,28 +1053,36 @@ export function mountApp({ root, store, config, coloringData, coloringController
       academySession.playedNotes.push(noteId);
 
       if (academySession.playedNotes.length === mel.notes.length) {
-        if (checkMelodyEcho(mel.notes, academySession.playedNotes)) {
-          soundPlayer.playCue('sparkle-magic');
-          if (academySession.stepIndex + 1 < melodies.length) {
-            academySession.stepIndex += 1;
-            academySession.playedNotes = [];
-            academySession.feedback = { ok: true, text: 'Bravo! Beautiful melody! 🎵' };
-            render(store.getState());
-          } else {
-            academySession.completed = true;
-            academySession.feedback = null;
-            store.update((s) => {
-              const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
-              s.academy = { stars: res.stars, completedLessons: res.completedLessons };
-              academySession.newlyAwarded = res.newlyAwarded;
-              return s;
-            });
-            triggerSparkle();
+        const isCorrect = checkMelodyEcho(mel.notes, academySession.playedNotes);
+        if (isCorrect) soundPlayer.playCue('sparkle-magic');
+        academySession.pendingAdvance = { isCorrect };
+        academySession.feedback = {
+          ok: isCorrect,
+          text: isCorrect ? '✅ Correct!' : '❌ Try again next time!'
+        };
+        render(store.getState());
+        academyAdvanceTimer = setTimeout(() => {
+          academyAdvanceTimer = null;
+          if (academySession.lessonId !== lesson.id) return;
+          academySession.pendingAdvance = null;
+          academySession.feedback = null;
+          if (isCorrect) {
+            if (academySession.stepIndex + 1 < melodies.length) {
+              academySession.stepIndex += 1;
+              academySession.playedNotes = [];
+            } else {
+              academySession.completed = true;
+              store.update((s) => {
+                const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
+                s.academy = { stars: res.stars, completedLessons: res.completedLessons };
+                academySession.newlyAwarded = res.newlyAwarded;
+                return s;
+              });
+              triggerSparkle();
+            }
           }
-        } else {
-          academySession.feedback = { ok: false, text: 'Close! Tap Clear Notes ↺ and listen again.' };
           render(store.getState());
-        }
+        }, 1000);
       } else {
         academySession.feedback = null;
         render(store.getState());

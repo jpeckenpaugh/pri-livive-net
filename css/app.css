@@ -283,6 +283,18 @@ input {
   color: var(--royal-purple);
 }
 
+.option-btn.is-correct {
+  background: #e3f9e5;
+  border-color: #2f9e44;
+  color: #1b652a;
+}
+
+.option-btn.is-wrong {
+  background: #ffe5e5;
+  border-color: #e03131;
+  color: #9c1f1f;
+}
+
 .coloring-actions {
   display: flex;
   gap: 10px;
