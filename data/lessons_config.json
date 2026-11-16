@@ -16,25 +16,45 @@
             {
               "id": "math-1",
               "prompt": "You found 4 ruby gems and 5 sapphire gems. How many gems in all?",
-              "options": ["7", "8", "9", "10"],
+              "options": [
+                "7",
+                "8",
+                "9",
+                "10"
+              ],
               "answer": "9"
             },
             {
               "id": "math-2",
               "prompt": "Each royal chest holds 3 gold coins. How many coins are in 4 chests?",
-              "options": ["7", "10", "12", "15"],
+              "options": [
+                "7",
+                "10",
+                "12",
+                "15"
+              ],
               "answer": "12"
             },
             {
               "id": "math-3",
               "prompt": "The princess has 6 diamond tiaras and gets 6 more. How many tiaras total?",
-              "options": ["10", "12", "14", "16"],
+              "options": [
+                "10",
+                "12",
+                "14",
+                "16"
+              ],
               "answer": "12"
             },
             {
               "id": "math-4",
               "prompt": "A dragon guards 5 piles of 5 coins each. How many coins is that?",
-              "options": ["20", "25", "30", "15"],
+              "options": [
+                "20",
+                "25",
+                "30",
+                "15"
+              ],
               "answer": "25"
             }
           ]
@@ -48,26 +68,202 @@
             {
               "id": "math2-1",
               "prompt": "A royal berry tart is cut into 2 equal halves. If you eat 1 piece, what fraction did you eat?",
-              "options": ["1/2", "1/3", "1/4", "2/2"],
+              "options": [
+                "1/2",
+                "1/3",
+                "1/4",
+                "2/2"
+              ],
               "answer": "1/2"
             },
             {
               "id": "math2-2",
               "prompt": "You have 12 sparkling gems to share equally between 3 princesses. How many gems does each get?",
-              "options": ["3", "4", "5", "6"],
+              "options": [
+                "3",
+                "4",
+                "5",
+                "6"
+              ],
               "answer": "4"
             },
             {
               "id": "math2-3",
               "prompt": "A golden crown cake is sliced into 4 equal quarters. How many quarters make a whole cake?",
-              "options": ["2", "3", "4", "8"],
+              "options": [
+                "2",
+                "3",
+                "4",
+                "8"
+              ],
               "answer": "4"
             },
             {
               "id": "math2-4",
               "prompt": "There are 16 starlight cookies shared equally among 4 friends. How many cookies does each friend get?",
-              "options": ["3", "4", "5", "6"],
+              "options": [
+                "3",
+                "4",
+                "5",
+                "6"
+              ],
               "answer": "4"
+            }
+          ]
+        },
+        {
+          "id": "math-3",
+          "title": "Royal Bakery Subtraction",
+          "subtitle": "Subtracting tarts, scones & treats!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "math3-1",
+              "prompt": "The royal baker made 24 strawberry tarts and served 9. How many tarts are left?",
+              "options": [
+                "13",
+                "15",
+                "16",
+                "17"
+              ],
+              "answer": "15"
+            },
+            {
+              "id": "math3-2",
+              "prompt": "There were 50 sugar cookies on a silver tray. Guests ate 18. How many remain?",
+              "options": [
+                "32",
+                "34",
+                "38",
+                "42"
+              ],
+              "answer": "32"
+            },
+            {
+              "id": "math3-3",
+              "prompt": "A giant castle cake has 36 slices. After 14 slices are shared, how many are left?",
+              "options": [
+                "20",
+                "22",
+                "24",
+                "26"
+              ],
+              "answer": "22"
+            },
+            {
+              "id": "math3-4",
+              "prompt": "You baked 45 honey scones and packed 27 into gift baskets. How many are left?",
+              "options": [
+                "16",
+                "18",
+                "22",
+                "28"
+              ],
+              "answer": "18"
+            }
+          ]
+        },
+        {
+          "id": "math-4",
+          "title": "Castle Clock & Time",
+          "subtitle": "Telling time & elapsed minutes!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "math4-1",
+              "prompt": "The royal ball starts at 6:00 PM and lasts 2 hours. What time does it end?",
+              "options": [
+                "7:00 PM",
+                "8:00 PM",
+                "9:00 PM",
+                "10:00 PM"
+              ],
+              "answer": "8:00 PM"
+            },
+            {
+              "id": "math4-2",
+              "prompt": "Tea time begins at 3:15 PM. How many minutes is it until 3:45 PM?",
+              "options": [
+                "15 minutes",
+                "20 minutes",
+                "30 minutes",
+                "45 minutes"
+              ],
+              "answer": "30 minutes"
+            },
+            {
+              "id": "math4-3",
+              "prompt": "How many minutes are in half an hour?",
+              "options": [
+                "15",
+                "20",
+                "30",
+                "60"
+              ],
+              "answer": "30"
+            },
+            {
+              "id": "math4-4",
+              "prompt": "A carriage ride starts at 10:30 AM and takes 45 minutes. When does it arrive?",
+              "options": [
+                "11:00 AM",
+                "11:15 AM",
+                "11:30 AM",
+                "11:45 AM"
+              ],
+              "answer": "11:15 AM"
+            }
+          ]
+        },
+        {
+          "id": "math-5",
+          "title": "Dragon Gem Patterns",
+          "subtitle": "Find the next number in the pattern!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "math5-1",
+              "prompt": "What comes next in the gem pattern: 3, 6, 9, 12, ___?",
+              "options": [
+                "14",
+                "15",
+                "16",
+                "18"
+              ],
+              "answer": "15"
+            },
+            {
+              "id": "math5-2",
+              "prompt": "Find the missing number: 5, 10, 15, 20, ___?",
+              "options": [
+                "22",
+                "24",
+                "25",
+                "30"
+              ],
+              "answer": "25"
+            },
+            {
+              "id": "math5-3",
+              "prompt": "The dragon counts down: 40, 35, 30, 25, ___?",
+              "options": [
+                "15",
+                "20",
+                "22",
+                "24"
+              ],
+              "answer": "20"
+            },
+            {
+              "id": "math5-4",
+              "prompt": "Each chest doubles its gems: 2, 4, 8, 16, ___?",
+              "options": [
+                "20",
+                "24",
+                "30",
+                "32"
+              ],
+              "answer": "32"
             }
           ]
         }
@@ -134,6 +330,90 @@
               "hint": "A winged horse that soars through the clouds"
             }
           ]
+        },
+        {
+          "id": "spelling-3",
+          "title": "Royal Wardrobe Words",
+          "subtitle": "Spell sparkling outfits & accessories!",
+          "type": "spelling",
+          "words": [
+            {
+              "id": "spell3-1",
+              "word": "VELVET",
+              "hint": "A soft, rich fabric used for royal capes"
+            },
+            {
+              "id": "spell3-2",
+              "word": "SLIPPER",
+              "hint": "A delicate shoe worn to the royal ball"
+            },
+            {
+              "id": "spell3-3",
+              "word": "RIBBON",
+              "hint": "A silky band tied in a pretty bow"
+            },
+            {
+              "id": "spell3-4",
+              "word": "PENDANT",
+              "hint": "A jewel hanging from a necklace"
+            }
+          ]
+        },
+        {
+          "id": "spelling-4",
+          "title": "Enchanted Garden",
+          "subtitle": "Spell magical flowers & trees!",
+          "type": "spelling",
+          "words": [
+            {
+              "id": "spell4-1",
+              "word": "BLOSSOM",
+              "hint": "A flower opening on a tree in spring"
+            },
+            {
+              "id": "spell4-2",
+              "word": "FOUNTAIN",
+              "hint": "A stone basin that sprays sparkling water"
+            },
+            {
+              "id": "spell4-3",
+              "word": "LANTERN",
+              "hint": "A glowing light hung along garden paths"
+            },
+            {
+              "id": "spell4-4",
+              "word": "WILLOW",
+              "hint": "A graceful tree with long drooping branches"
+            }
+          ]
+        },
+        {
+          "id": "spelling-5",
+          "title": "Starlight Kingdom",
+          "subtitle": "Spell celestial & sky-high words!",
+          "type": "spelling",
+          "words": [
+            {
+              "id": "spell5-1",
+              "word": "COMET",
+              "hint": "An icy space traveler with a glowing tail"
+            },
+            {
+              "id": "spell5-2",
+              "word": "GALAXY",
+              "hint": "A giant swirl of billions of stars"
+            },
+            {
+              "id": "spell5-3",
+              "word": "ECLIPSE",
+              "hint": "When the moon or Earth casts a shadow in space"
+            },
+            {
+              "id": "spell5-4",
+              "word": "NEBULA",
+              "hint": "A colorful cloud of dust and gas among the stars"
+            }
+          ]
         }
       ]
     },
@@ -152,25 +432,45 @@
             {
               "id": "sci-1",
               "prompt": "If you mix Red potion and Blue potion, what color do you get?",
-              "options": ["Green", "Purple", "Orange", "Yellow"],
+              "options": [
+                "Green",
+                "Purple",
+                "Orange",
+                "Yellow"
+              ],
               "answer": "Purple"
             },
             {
               "id": "sci-2",
               "prompt": "If you mix Yellow potion and Blue potion, what color appears?",
-              "options": ["Green", "Pink", "Brown", "Purple"],
+              "options": [
+                "Green",
+                "Pink",
+                "Brown",
+                "Purple"
+              ],
               "answer": "Green"
             },
             {
               "id": "sci-3",
               "prompt": "Where does a Coral Mermaid love to swim and live?",
-              "options": ["Snowy Mountain", "Ocean Reef", "Desert Dunes", "Cloudy Sky"],
+              "options": [
+                "Snowy Mountain",
+                "Ocean Reef",
+                "Desert Dunes",
+                "Cloudy Sky"
+              ],
               "answer": "Ocean Reef"
             },
             {
               "id": "sci-4",
               "prompt": "Which habitat is best for a Woodland Fairy and her fox friend?",
-              "options": ["Enchanted Forest", "Deep Sea", "Volcano", "Ice Cave"],
+              "options": [
+                "Enchanted Forest",
+                "Deep Sea",
+                "Volcano",
+                "Ice Cave"
+              ],
               "answer": "Enchanted Forest"
             }
           ]
@@ -184,26 +484,202 @@
             {
               "id": "sci2-1",
               "prompt": "When the Moon looks like a bright, complete circle in the night sky, what phase is it?",
-              "options": ["New Moon", "Full Moon", "Crescent Moon", "Half Moon"],
+              "options": [
+                "New Moon",
+                "Full Moon",
+                "Crescent Moon",
+                "Half Moon"
+              ],
               "answer": "Full Moon"
             },
             {
               "id": "sci2-2",
               "prompt": "What two things do you need in the sky to see a rainbow?",
-              "options": ["Snow and wind", "Sunlight and raindrops", "Clouds and stars", "Lightning and fog"],
+              "options": [
+                "Snow and wind",
+                "Sunlight and raindrops",
+                "Clouds and stars",
+                "Lightning and fog"
+              ],
               "answer": "Sunlight and raindrops"
             },
             {
               "id": "sci2-3",
               "prompt": "In which season do flowers bloom and baby birds hatch?",
-              "options": ["Winter", "Spring", "Autumn", "Midnight"],
+              "options": [
+                "Winter",
+                "Spring",
+                "Autumn",
+                "Midnight"
+              ],
               "answer": "Spring"
             },
             {
               "id": "sci2-4",
               "prompt": "When water freezes in the cold winter air, what does it turn into?",
-              "options": ["Steam", "Ice", "Clouds", "Rain"],
+              "options": [
+                "Steam",
+                "Ice",
+                "Clouds",
+                "Rain"
+              ],
               "answer": "Ice"
+            }
+          ]
+        },
+        {
+          "id": "science-3",
+          "title": "Royal Garden Plants",
+          "subtitle": "How flowers, roots & leaves grow!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "sci3-1",
+              "prompt": "Which part of a plant drinks up water from the soil?",
+              "options": [
+                "Leaves",
+                "Roots",
+                "Petals",
+                "Seeds"
+              ],
+              "answer": "Roots"
+            },
+            {
+              "id": "sci3-2",
+              "prompt": "What do green leaves use sunlight, water, and air to make?",
+              "options": [
+                "Food for the plant",
+                "Rocks",
+                "Rainclouds",
+                "Soil"
+              ],
+              "answer": "Food for the plant"
+            },
+            {
+              "id": "sci3-3",
+              "prompt": "Which insect helps flowers by carrying pollen from bloom to bloom?",
+              "options": [
+                "Bee",
+                "Earthworm",
+                "Spider",
+                "Snail"
+              ],
+              "answer": "Bee"
+            },
+            {
+              "id": "sci3-4",
+              "prompt": "What is inside a fruit or flower that can grow into a new plant?",
+              "options": [
+                "A pebble",
+                "A seed",
+                "A drop of dew",
+                "A thorn"
+              ],
+              "answer": "A seed"
+            }
+          ]
+        },
+        {
+          "id": "science-4",
+          "title": "Gemstones & Magnets",
+          "subtitle": "Explore crystals, rocks & magnetism!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "sci4-1",
+              "prompt": "Which of these objects will a magnet attract?",
+              "options": [
+                "Wooden spoon",
+                "Iron key",
+                "Glass marble",
+                "Silk ribbon"
+              ],
+              "answer": "Iron key"
+            },
+            {
+              "id": "sci4-2",
+              "prompt": "What are the two ends of a magnet called?",
+              "options": [
+                "North and South poles",
+                "East and West tips",
+                "Top and Bottom",
+                "Hot and Cold"
+              ],
+              "answer": "North and South poles"
+            },
+            {
+              "id": "sci4-3",
+              "prompt": "What happens when two North poles of magnets face each other?",
+              "options": [
+                "They push apart",
+                "They snap together",
+                "They melt",
+                "They glow"
+              ],
+              "answer": "They push apart"
+            },
+            {
+              "id": "sci4-4",
+              "prompt": "Which natural gemstone is known as the hardest mineral on Earth?",
+              "options": [
+                "Diamond",
+                "Chalk",
+                "Quartz",
+                "Amber"
+              ],
+              "answer": "Diamond"
+            }
+          ]
+        },
+        {
+          "id": "science-5",
+          "title": "Animal Kingdom Friends",
+          "subtitle": "Habitats, diets & animal groups!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "sci5-1",
+              "prompt": "Animals that have feathers, wings, and lay eggs are called what?",
+              "options": [
+                "Mammals",
+                "Birds",
+                "Reptiles",
+                "Amphibians"
+              ],
+              "answer": "Birds"
+            },
+            {
+              "id": "sci5-2",
+              "prompt": "What do we call an animal that only eats plants?",
+              "options": [
+                "Herbivore",
+                "Carnivore",
+                "Omnivore",
+                "Insect"
+              ],
+              "answer": "Herbivore"
+            },
+            {
+              "id": "sci5-3",
+              "prompt": "Why do some foxes and hares grow white fur in winter?",
+              "options": [
+                "To stay camouflaged in snow",
+                "To swim faster",
+                "To fly higher",
+                "To attract bees"
+              ],
+              "answer": "To stay camouflaged in snow"
+            },
+            {
+              "id": "sci5-4",
+              "prompt": "Which animal is a mammal even though it lives in the ocean?",
+              "options": [
+                "Dolphin",
+                "Goldfish",
+                "Octopus",
+                "Sea star"
+              ],
+              "answer": "Dolphin"
             }
           ]
         }
@@ -224,17 +700,29 @@
             {
               "id": "mel-1",
               "title": "Starlight Fanfare",
-              "notes": ["C4", "E4", "G4"]
+              "notes": [
+                "C4",
+                "E4",
+                "G4"
+              ]
             },
             {
               "id": "mel-2",
               "title": "Royal Waltz",
-              "notes": ["G4", "E4", "C4"]
+              "notes": [
+                "G4",
+                "E4",
+                "C4"
+              ]
             },
             {
               "id": "mel-3",
               "title": "Crown Chime",
-              "notes": ["C4", "G4", "C5"]
+              "notes": [
+                "C4",
+                "G4",
+                "C5"
+              ]
             }
           ]
         },
@@ -247,17 +735,149 @@
             {
               "id": "mel2-1",
               "title": "Grand Entrance",
-              "notes": ["C4", "E4", "G4", "C5"]
+              "notes": [
+                "C4",
+                "E4",
+                "G4",
+                "C5"
+              ]
             },
             {
               "id": "mel2-2",
               "title": "Moonlight Cascade",
-              "notes": ["G4", "E4", "D4", "C4"]
+              "notes": [
+                "G4",
+                "E4",
+                "D4",
+                "C4"
+              ]
             },
             {
               "id": "mel2-3",
               "title": "Castle March",
-              "notes": ["C4", "D4", "E4", "G4"]
+              "notes": [
+                "C4",
+                "D4",
+                "E4",
+                "G4"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "music-3",
+          "title": "Moonlight Chimes",
+          "subtitle": "Listen & echo gentle evening chimes!",
+          "type": "melody",
+          "melodies": [
+            {
+              "id": "mel3-1",
+              "title": "Silver Moon",
+              "notes": [
+                "E4",
+                "G4",
+                "B4",
+                "G4"
+              ]
+            },
+            {
+              "id": "mel3-2",
+              "title": "Nightingale Song",
+              "notes": [
+                "A4",
+                "G4",
+                "E4",
+                "C4"
+              ]
+            },
+            {
+              "id": "mel3-3",
+              "title": "Lantern Glow",
+              "notes": [
+                "D4",
+                "F4",
+                "A4",
+                "F4"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "music-4",
+          "title": "Castle Bell Echo",
+          "subtitle": "Echo the ringing tower bells!",
+          "type": "melody",
+          "melodies": [
+            {
+              "id": "mel4-1",
+              "title": "Tower Chime",
+              "notes": [
+                "C4",
+                "G4",
+                "E4",
+                "C5"
+              ]
+            },
+            {
+              "id": "mel4-2",
+              "title": "Courtyard Bell",
+              "notes": [
+                "G4",
+                "A4",
+                "B4",
+                "C5"
+              ]
+            },
+            {
+              "id": "mel4-3",
+              "title": "Midnight Toll",
+              "notes": [
+                "C5",
+                "G4",
+                "E4",
+                "C4"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "music-5",
+          "title": "Grand Ball Finale",
+          "subtitle": "Master 5-note royal melodies!",
+          "type": "melody",
+          "melodies": [
+            {
+              "id": "mel5-1",
+              "title": "Royal Procession",
+              "notes": [
+                "C4",
+                "D4",
+                "E4",
+                "G4",
+                "C5"
+              ]
+            },
+            {
+              "id": "mel5-2",
+              "title": "Crown Waltz",
+              "notes": [
+                "C5",
+                "B4",
+                "A4",
+                "G4",
+                "E4"
+              ]
+            },
+            {
+              "id": "mel5-3",
+              "title": "Starlight Finale",
+              "notes": [
+                "E4",
+                "G4",
+                "A4",
+                "G4",
+                "C5"
+              ]
             }
           ]
         }
@@ -278,25 +898,45 @@
             {
               "id": "geo-1",
               "prompt": "Look at the Starlight Kingdom map: Which place is to the NORTH?",
-              "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+              "options": [
+                "Crystal Castle",
+                "Whispering Woods",
+                "Coral Bay",
+                "Sunlit Meadow"
+              ],
               "answer": "Crystal Castle"
             },
             {
               "id": "geo-2",
               "prompt": "Which place lies to the SOUTH of the Royal Fountain?",
-              "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+              "options": [
+                "Crystal Castle",
+                "Whispering Woods",
+                "Coral Bay",
+                "Sunlit Meadow"
+              ],
               "answer": "Coral Bay"
             },
             {
               "id": "geo-3",
               "prompt": "If you travel EAST from the Royal Fountain, where do you arrive?",
-              "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+              "options": [
+                "Crystal Castle",
+                "Whispering Woods",
+                "Coral Bay",
+                "Sunlit Meadow"
+              ],
               "answer": "Sunlit Meadow"
             },
             {
               "id": "geo-4",
               "prompt": "Which enchanted place is to the WEST?",
-              "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+              "options": [
+                "Crystal Castle",
+                "Whispering Woods",
+                "Coral Bay",
+                "Sunlit Meadow"
+              ],
               "answer": "Whispering Woods"
             }
           ]
@@ -310,26 +950,202 @@
             {
               "id": "geo2-1",
               "prompt": "Which is the largest ocean on Earth?",
-              "options": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+              "options": [
+                "Atlantic Ocean",
+                "Indian Ocean",
+                "Pacific Ocean",
+                "Arctic Ocean"
+              ],
               "answer": "Pacific Ocean"
             },
             {
               "id": "geo2-2",
               "prompt": "How many continents are there on Earth?",
-              "options": ["5", "6", "7", "8"],
+              "options": [
+                "5",
+                "6",
+                "7",
+                "8"
+              ],
               "answer": "7"
             },
             {
               "id": "geo2-3",
               "prompt": "On a compass rose, which direction is directly opposite North?",
-              "options": ["East", "West", "South", "Northeast"],
+              "options": [
+                "East",
+                "West",
+                "South",
+                "Northeast"
+              ],
               "answer": "South"
             },
             {
               "id": "geo2-4",
               "prompt": "Which frozen continent sits at the very bottom of the globe?",
-              "options": ["Europe", "Antarctica", "Australia", "Africa"],
+              "options": [
+                "Europe",
+                "Antarctica",
+                "Australia",
+                "Africa"
+              ],
               "answer": "Antarctica"
+            }
+          ]
+        },
+        {
+          "id": "geography-3",
+          "title": "Mountains, Rivers & Valleys",
+          "subtitle": "Explore landforms across the kingdom!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "geo3-1",
+              "prompt": "What do we call a low area of land between two hills or mountains?",
+              "options": [
+                "A valley",
+                "An island",
+                "A plateau",
+                "A peninsula"
+              ],
+              "answer": "A valley"
+            },
+            {
+              "id": "geo3-2",
+              "prompt": "Which landform is completely surrounded by water on all sides?",
+              "options": [
+                "An island",
+                "A canyon",
+                "A desert",
+                "A mountain"
+              ],
+              "answer": "An island"
+            },
+            {
+              "id": "geo3-3",
+              "prompt": "A long, flowing body of fresh water that empties into a sea or lake is a ___?",
+              "options": [
+                "River",
+                "Glacier",
+                "Volcano",
+                "Dune"
+              ],
+              "answer": "River"
+            },
+            {
+              "id": "geo3-4",
+              "prompt": "What is the highest mountain in the world?",
+              "options": [
+                "Mount Everest",
+                "Mount Fuji",
+                "Kilimanjaro",
+                "Mont Blanc"
+              ],
+              "answer": "Mount Everest"
+            }
+          ]
+        },
+        {
+          "id": "geography-4",
+          "title": "Seasons Around the World",
+          "subtitle": "Weather, hemispheres & climate!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "geo4-1",
+              "prompt": "When it is summer in the Northern Hemisphere, what season is it in the Southern Hemisphere?",
+              "options": [
+                "Winter",
+                "Summer",
+                "Spring",
+                "Autumn"
+              ],
+              "answer": "Winter"
+            },
+            {
+              "id": "geo4-2",
+              "prompt": "Which imaginary line divides Earth into the Northern and Southern Hemispheres?",
+              "options": [
+                "The Equator",
+                "The Prime Meridian",
+                "The Tropic",
+                "The Horizon"
+              ],
+              "answer": "The Equator"
+            },
+            {
+              "id": "geo4-3",
+              "prompt": "Places near the Equator usually have what kind of weather all year?",
+              "options": [
+                "Warm and tropical",
+                "Freezing and icy",
+                "Always snowy",
+                "Dark for 6 months"
+              ],
+              "answer": "Warm and tropical"
+            },
+            {
+              "id": "geo4-4",
+              "prompt": "Which season brings falling leaves and cooler days in many kingdoms?",
+              "options": [
+                "Autumn",
+                "Summer",
+                "Spring",
+                "Monsoon"
+              ],
+              "answer": "Autumn"
+            }
+          ]
+        },
+        {
+          "id": "geography-5",
+          "title": "Famous Castles & Landmarks",
+          "subtitle": "Discover real-world wonders!",
+          "type": "quiz",
+          "questions": [
+            {
+              "id": "geo5-1",
+              "prompt": "In which country can you visit the Eiffel Tower?",
+              "options": [
+                "France",
+                "Italy",
+                "Spain",
+                "Japan"
+              ],
+              "answer": "France"
+            },
+            {
+              "id": "geo5-2",
+              "prompt": "The Great Wall, thousands of miles long, is located in which country?",
+              "options": [
+                "China",
+                "Egypt",
+                "Brazil",
+                "Canada"
+              ],
+              "answer": "China"
+            },
+            {
+              "id": "geo5-3",
+              "prompt": "Where are the ancient Great Pyramids of Giza found?",
+              "options": [
+                "Egypt",
+                "Greece",
+                "Peru",
+                "India"
+              ],
+              "answer": "Egypt"
+            },
+            {
+              "id": "geo5-4",
+              "prompt": "Neuschwanstein Castle, a fairytale palace in the Alps, is in which country?",
+              "options": [
+                "Germany",
+                "Australia",
+                "Mexico",
+                "Norway"
+              ],
+              "answer": "Germany"
             }
           ]
         }

@@ -18,7 +18,7 @@ const lessonsConfig = JSON.parse(fs.readFileSync(new URL('../data/lessons_config
 test('getSubjectById and getLessonById return matching entries or null', () => {
   const math = getSubjectById(lessonsConfig, 'math');
   assert.equal(math?.title, 'Royal Treasury');
-  assert.equal(getSubjectLessons(math).length, 2);
+  assert.equal(getSubjectLessons(math).length, 5);
   assert.equal(getSubjectById(lessonsConfig, 'nonexistent'), null);
 
   const math2 = getLessonById(lessonsConfig, 'math-2');
@@ -69,6 +69,6 @@ test('awardLessonStars awards stars once per lesson and getAcademyProgress summa
   const progress = getAcademyProgress(second, lessonsConfig);
   assert.equal(progress.stars, 6);
   assert.equal(progress.completedCount, 2);
-  assert.equal(progress.totalCount, 10);
-  assert.equal(progress.percent, 20);
+  assert.equal(progress.totalCount, 25);
+  assert.equal(progress.percent, 8);
 });

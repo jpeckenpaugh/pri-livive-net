@@ -106,7 +106,7 @@ test('Make Your Own Gown: princess_config.json has customGownOptions', () => {
   assert.ok(Array.isArray(opts.colors) && opts.colors.length >= 8);
 });
 
-test('Phase 5: lessons_config.json defines 5 valid subjects and 10 lessons for Royal Academy', () => {
+test('Phase 5: lessons_config.json defines 5 valid subjects and 25 lessons for Royal Academy', () => {
   const lessons = readJson('data/lessons_config.json');
   assert.equal(typeof lessons.starRewardPerLesson, 'number');
   assert.equal(lessons.subjects.length, 5);
@@ -116,11 +116,13 @@ test('Phase 5: lessons_config.json defines 5 valid subjects and 10 lessons for R
   );
 
   const allLessons = lessons.subjects.flatMap((s) => s.lessons || []);
-  assert.equal(allLessons.length, 10);
+  assert.equal(allLessons.length, 25);
   for (const subj of lessons.subjects) {
-    assert.equal(subj.lessons.length, 2);
+    assert.equal(subj.lessons.length, 5);
     assert.equal(subj.lessons[0].id, subj.id);
-    assert.equal(subj.lessons[1].id, `${subj.id}-2`);
+    for (let i = 1; i < 5; i += 1) {
+      assert.equal(subj.lessons[i].id, `${subj.id}-${i + 1}`);
+    }
   }
 
   const spelling = lessons.subjects.find((s) => s.id === 'spelling');
