@@ -1148,7 +1148,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
       ['tiaraGem', 'tiaraGem', 'sparkle-chime'],
       ['necklace', 'necklace', 'sparkle-chime'],
       ['handheld', 'handheld', 'sparkle-chime'],
-      ['wings', 'wings', 'sparkle-chime']
+      ['wings', 'wings', 'sparkle-chime'],
+      ['shoesid', 'shoesId', 'dress-change'],
+      ['shoecolorid', 'shoeColorId', 'dress-change']
     ];
 
     for (const [dataKey, stateKey, cue] of princessUpdates) {
