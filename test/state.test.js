@@ -55,3 +55,30 @@ test('createStore debounces autosave to priplay.save.v1 and flushSave persists i
   const saved = JSON.parse(storage.getItem(STORAGE_KEY));
   assert.equal(saved.princess.name, 'Queen Celeste');
 });
+
+test('normalizeState migrates Phase 1 saves without ballroom to default ballroom decor', () => {
+  const migrated = normalizeState({ version: 1, princess: { name: 'Princess Star' } });
+  assert.equal(migrated.princess.name, 'Princess Star');
+  assert.equal(migrated.ballroom.skyTheme, DEFAULT_STATE.ballroom.skyTheme);
+  assert.equal(migrated.ballroom.chandelier, DEFAULT_STATE.ballroom.chandelier);
+  assert.equal(migrated.ballroom.floor, DEFAULT_STATE.ballroom.floor);
+});
+
+test('normalizeState preserves valid ballroom decor fields', () => {
+  const custom = normalizeState({
+    ballroom: {
+      skyTheme: 'sunset-rose',
+      chandelier: 'golden-candelabra',
+      bannerStyle: 'velvet-curtains',
+      bannerColor: 'gold',
+      floor: 'rose-petal-aisle',
+      decor: 'lily-vases'
+    }
+  });
+  assert.equal(custom.ballroom.skyTheme, 'sunset-rose');
+  assert.equal(custom.ballroom.chandelier, 'golden-candelabra');
+  assert.equal(custom.ballroom.bannerStyle, 'velvet-curtains');
+  assert.equal(custom.ballroom.bannerColor, 'gold');
+  assert.equal(custom.ballroom.floor, 'rose-petal-aisle');
+  assert.equal(custom.ballroom.decor, 'lily-vases');
+});

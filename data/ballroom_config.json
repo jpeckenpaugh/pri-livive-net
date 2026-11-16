@@ -1,0 +1,68 @@
+{
+  "skyThemes": [
+    {
+      "id": "starlight-night",
+      "label": "Starlight Night",
+      "skyTop": "#1E1B4B",
+      "skyBottom": "#4338CA",
+      "wall": "#F5EEFF",
+      "wallTrim": "#D8B4FE",
+      "windowGlow": "#FEF08A"
+    },
+    {
+      "id": "sunset-rose",
+      "label": "Sunset Rose",
+      "skyTop": "#BE185D",
+      "skyBottom": "#FB923C",
+      "wall": "#FFF1F2",
+      "wallTrim": "#FBCFE8",
+      "windowGlow": "#FDE68A"
+    },
+    {
+      "id": "enchanted-dawn",
+      "label": "Enchanted Dawn",
+      "skyTop": "#A78BFA",
+      "skyBottom": "#FDE68A",
+      "wall": "#FAF5FF",
+      "wallTrim": "#E9D5FF",
+      "windowGlow": "#FFFBEB"
+    },
+    {
+      "id": "crystal-ice",
+      "label": "Crystal Ice",
+      "skyTop": "#0284C7",
+      "skyBottom": "#BAE6FD",
+      "wall": "#F0F9FF",
+      "wallTrim": "#BAE6FD",
+      "windowGlow": "#E0F2FE"
+    }
+  ],
+  "chandeliers": [
+    { "id": "crystal-chandelier", "label": "Crystal Chandelier" },
+    { "id": "golden-candelabra", "label": "Golden Candelabra" },
+    { "id": "fairy-lanterns", "label": "Fairy Lanterns" }
+  ],
+  "bannerStyles": [
+    { "id": "royal-swags", "label": "Royal Swags" },
+    { "id": "velvet-curtains", "label": "Velvet Curtains" },
+    { "id": "heart-pennants", "label": "Heart Pennants" }
+  ],
+  "bannerColors": [
+    { "id": "royal-pink", "label": "Royal Pink", "hex": "#F472B6", "shade": "#DB2777" },
+    { "id": "lavender", "label": "Lavender", "hex": "#C084FC", "shade": "#9333EA" },
+    { "id": "sky-blue", "label": "Sky Blue", "hex": "#60A5FA", "shade": "#2563EB" },
+    { "id": "gold", "label": "Royal Gold", "hex": "#FBBF24", "shade": "#D97706" },
+    { "id": "mint", "label": "Enchanted Mint", "hex": "#34D399", "shade": "#059669" },
+    { "id": "ruby", "label": "Ruby Red", "hex": "#FB7185", "shade": "#E11D48" }
+  ],
+  "floors": [
+    { "id": "marble-red-carpet", "label": "Marble & Red Carpet" },
+    { "id": "starry-dance-floor", "label": "Starry Dance Floor" },
+    { "id": "rose-petal-aisle", "label": "Rose Petal Aisle" }
+  ],
+  "decors": [
+    { "id": "rose-garlands", "label": "Rose Garlands" },
+    { "id": "lily-vases", "label": "Lily Vases" },
+    { "id": "glowing-columns", "label": "Glowing Columns" }
+  ]
+}

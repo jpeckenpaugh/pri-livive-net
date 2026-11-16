@@ -16,10 +16,11 @@ async function bootstrap() {
   if (!root) return;
 
   try {
-    const [config, coloringData, soundsMap] = await Promise.all([
+    const [config, coloringData, soundsMap, ballroomConfig] = await Promise.all([
       loadJson('./data/princess_config.json'),
       loadJson('./data/coloring_pages.json'),
-      loadJson('./data/sounds.json')
+      loadJson('./data/sounds.json'),
+      loadJson('./data/ballroom_config.json')
     ]);
 
     const store = createStore();
@@ -32,7 +33,8 @@ async function bootstrap() {
       config,
       coloringData,
       coloringController,
-      soundPlayer
+      soundPlayer,
+      ballroomConfig
     });
   } catch (err) {
     root.innerHTML = `<div class="error-banner">Oops! Could not open the Princess Studio. (${err.message})</div>`;

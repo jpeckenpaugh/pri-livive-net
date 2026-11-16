@@ -29,6 +29,14 @@ export const DEFAULT_STATE = {
     activePageId: 'royal-princess-ballgown',
     selectedColor: '#FF70A6',
     fillsByPage: {}
+  },
+  ballroom: {
+    skyTheme: 'starlight-night',
+    chandelier: 'crystal-chandelier',
+    bannerStyle: 'royal-swags',
+    bannerColor: 'royal-pink',
+    floor: 'marble-red-carpet',
+    decor: 'rose-garlands'
   }
 };
 
@@ -88,6 +96,16 @@ export function normalizeState(raw) {
     }
     if (raw.coloring.fillsByPage && typeof raw.coloring.fillsByPage === 'object') {
       base.coloring.fillsByPage = clone(raw.coloring.fillsByPage);
+    }
+  }
+
+  if (raw.ballroom && typeof raw.ballroom === 'object') {
+    const b = raw.ballroom;
+    const bFields = ['skyTheme', 'chandelier', 'bannerStyle', 'bannerColor', 'floor', 'decor'];
+    for (const key of bFields) {
+      if (typeof b[key] === 'string' && b[key].trim().length > 0) {
+        base.ballroom[key] = b[key];
+      }
     }
   }
 

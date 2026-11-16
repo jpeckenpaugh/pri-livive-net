@@ -1,5 +1,6 @@
 import { renderPaperDollSvg } from './paper_doll.js';
 import { renderColoringPageSvg } from './coloring_book.js';
+import { renderBallroomSvg } from './ballroom.js';
 import { generateRoyalName } from './names.js';
 import { announcePrincess } from './speech.js';
 
@@ -10,6 +11,7 @@ const TABS = [
   { id: 'tiaras', icon: '💎', label: 'Tiaras' },
   { id: 'accessories', icon: '🪄', label: 'Magic' },
   { id: 'makeup', icon: '💄', label: 'Makeup' },
+  { id: 'ballroom', icon: '🏰', label: 'Ballroom' },
   { id: 'coloring', icon: '🎨', label: 'Coloring' }
 ];
 
@@ -49,7 +51,7 @@ function renderItemButtons(items, selectedId, dataAttr) {
   </div>`;
 }
 
-export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer }) {
+export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig }) {
   const sparkleLayer = () => root.querySelector('.sparkle-burst-layer');
 
   function triggerSparkle() {
@@ -154,6 +156,41 @@ export function mountApp({ root, store, config, coloringData, coloringController
             ${renderItemButtons(palettes.makeup.faceGems, p.makeup.faceGems, 'makeup-facegems')}
           </div>
         `;
+      case 'ballroom': {
+        const b = state.ballroom || {};
+        const renderBallroomOptions = (title, field, list) => `
+          <div class="panel-section">
+            <h3>${title}</h3>
+            <div class="option-grid">
+              ${(list || [])
+                .map(
+                  (item) =>
+                    `<button type="button" class="option-btn ${item.id === b[field] ? 'is-active' : ''}" data-ballroom-field="${field}" data-ballroom-value="${item.id}">${escapeHtml(item.label)}</button>`
+                )
+                .join('')}
+            </div>
+          </div>
+        `;
+        return `
+          ${renderBallroomOptions('Sky & Windows', 'skyTheme', ballroomConfig?.skyThemes)}
+          ${renderBallroomOptions('Chandelier', 'chandelier', ballroomConfig?.chandeliers)}
+          ${renderBallroomOptions('Banners & Drapes', 'bannerStyle', ballroomConfig?.bannerStyles)}
+          <div class="panel-section">
+            <h3>Banner Color</h3>
+            <div class="swatch-grid">
+              ${(ballroomConfig?.bannerColors || [])
+                .map(
+                  (c) =>
+                    `<button type="button" class="swatch-btn ${c.id === b.bannerColor ? 'is-active' : ''}" data-ballroom-field="bannerColor" data-ballroom-value="${c.id}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`
+                )
+                .join('')}
+            </div>
+          </div>
+          ${renderBallroomOptions('Floor & Carpet', 'floor', ballroomConfig?.floors)}
+          ${renderBallroomOptions('Flowers & Pillars', 'decor', ballroomConfig?.decors)}
+        `;
+      }
+
       case 'coloring': {
         const activePage = coloringController.getPage(state.coloring.activePageId);
         const pageFills = state.coloring.fillsByPage[activePage.id] || {};
@@ -197,6 +234,10 @@ export function mountApp({ root, store, config, coloringData, coloringController
   function render(state) {
     soundPlayer.setMuted(state.muted);
     const isColoring = state.activeTab === 'coloring';
+    const isBallroom = state.activeTab === 'ballroom';
+    const stageSvg = isBallroom
+      ? renderBallroomSvg(state.ballroom, ballroomConfig, state.princess, config)
+      : renderPaperDollSvg(state.princess, config);
 
     root.innerHTML = `
       <div class="studio-shell">
@@ -214,10 +255,10 @@ export function mountApp({ root, store, config, coloringData, coloringController
         </header>
 
         <main class="studio-main ${isColoring ? 'is-coloring-mode' : ''}">
-          <section class="stage-card" aria-label="Princess Stage">
+          <section class="stage-card ${isBallroom ? 'is-ballroom-mode' : ''}" aria-label="Princess Stage">
             <div class="princess-banner">${escapeHtml(state.princess.name)}</div>
-            <div class="doll-stage gentle-breathe">
-              ${renderPaperDollSvg(state.princess, config)}
+            <div class="doll-stage ${isBallroom ? 'is-ballroom-stage' : 'gentle-breathe'}">
+              ${stageSvg}
               <div class="sparkle-burst-layer" aria-hidden="true">
                 <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
               </div>
@@ -277,9 +318,20 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.tab) {
-      soundPlayer.playCue('ui-click');
+      soundPlayer.playCue(btn.dataset.tab === 'ballroom' ? 'ballroom-enter' : 'ui-click');
       store.update((s) => {
         s.activeTab = btn.dataset.tab;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.ballroomField && btn.dataset.ballroomValue) {
+      const field = btn.dataset.ballroomField;
+      const value = btn.dataset.ballroomValue;
+      soundPlayer.playCue('sparkle-chime');
+      store.update((s) => {
+        s.ballroom[field] = value;
         return s;
       });
       return;

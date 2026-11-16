@@ -66,3 +66,18 @@ test('sounds.json has all 8 required Web Audio cues', () => {
     assert.ok(Array.isArray(sounds[cue].notes) && sounds[cue].notes.length >= 1);
   }
 });
+
+test('ballroom_config.json has skyThemes, chandeliers, bannerStyles, bannerColors, floors, and decors', () => {
+  const ballroom = JSON.parse(fs.readFileSync(new URL('../data/ballroom_config.json', import.meta.url), 'utf8'));
+  assert.ok(Array.isArray(ballroom.skyThemes) && ballroom.skyThemes.length >= 4);
+  assert.ok(Array.isArray(ballroom.chandeliers) && ballroom.chandeliers.length >= 3);
+  assert.ok(Array.isArray(ballroom.bannerStyles) && ballroom.bannerStyles.length >= 3);
+  assert.ok(Array.isArray(ballroom.bannerColors) && ballroom.bannerColors.length >= 6);
+  assert.ok(Array.isArray(ballroom.floors) && ballroom.floors.length >= 3);
+  assert.ok(Array.isArray(ballroom.decors) && ballroom.decors.length >= 3);
+});
+
+test('sounds.json includes ballroom-enter cue', () => {
+  const sounds = JSON.parse(fs.readFileSync(new URL('../data/sounds.json', import.meta.url), 'utf8'));
+  assert.ok(sounds['ballroom-enter'] && Array.isArray(sounds['ballroom-enter'].notes) && sounds['ballroom-enter'].notes.length > 0);
+});
