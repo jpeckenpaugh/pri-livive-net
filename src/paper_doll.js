@@ -111,7 +111,7 @@ function renderFaceGemsLayer(shape) {
   return `<g id="layer-face-gems"></g>`;
 }
 
-export function renderPetSvg(petId, petName = '', x = 248, y = 376) {
+export function renderPetSvg(petId, petName = '', x = 248, y = 348) {
   if (!petId || petId === 'none') return '';
   const safeName = String(petName || '').trim().slice(0, 20);
   let body = '';
@@ -170,13 +170,13 @@ export function renderPetSvg(petId, petName = '', x = 248, y = 376) {
   }
 
   const label = safeName
-    ? `<g transform="translate(0, 36)">
-        <rect x="-34" y="-9" width="68" height="16" rx="8" fill="rgba(255,255,255,0.92)" stroke="rgba(160,108,213,0.45)" stroke-width="1"/>
-        <text x="0" y="2.5" text-anchor="middle" font-size="8.5" font-weight="700" fill="#4A2545">${safeName.replace(/[<>&"]/g, '')}</text>
+    ? `<g transform="translate(0, 62)">
+        <rect x="-42" y="-11" width="84" height="20" rx="10" fill="rgba(255,255,255,0.92)" stroke="rgba(160,108,213,0.45)" stroke-width="1"/>
+        <text x="0" y="3" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4A2545">${safeName.replace(/[<>&"]/g, '')}</text>
       </g>`
     : '';
 
-  return `<g id="layer-pet" transform="translate(${x}, ${y})"><g class="pet-companion">${body}${label}</g></g>`;
+  return `<g id="layer-pet" transform="translate(${x}, ${y})"><g class="pet-companion"><g transform="scale(2.2)">${body}</g>${label}</g></g>`;
 }
 
 function renderCharacterTypeBackLayer(characterTypeId) {
