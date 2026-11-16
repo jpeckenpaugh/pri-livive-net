@@ -6,7 +6,7 @@ export const DEFAULT_STATE = {
   activeTab: 'profile',
   muted: false,
   princess: {
-    name: 'Princess Luna of Starlight Castle',
+    name: 'Princess Tamara of Starlight Castle',
     skinTone: 'peach',
     hairstyle: 'royal-waves',
     hairColor: 'butter-blonde',
