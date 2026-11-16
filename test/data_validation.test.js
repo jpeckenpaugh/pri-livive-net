@@ -125,3 +125,11 @@ test('Phase 5: lessons_config.json defines 5 valid subjects for Royal Academy', 
     assert.equal(mel.notes.length, 3);
   }
 });
+
+test('Pet Customization & Shoes: princess_config.json has petColors, petAccessories, items.shoes, and palettes.shoeColors', () => {
+  const config = readJson('data/princess_config.json');
+  assert.ok(Array.isArray(config.petColors) && config.petColors.length >= 6);
+  assert.ok(Array.isArray(config.petAccessories) && config.petAccessories.length >= 6);
+  assert.ok(Array.isArray(config.items?.shoes) && config.items.shoes.length >= 5);
+  assert.ok(Array.isArray(config.palettes?.shoeColors) && config.palettes.shoeColors.length >= 5);
+});

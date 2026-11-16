@@ -168,6 +168,43 @@
         "hex": "#CAF0F8"
       }
     ],
+    "shoeColors": [
+      {
+        "id": "glass",
+        "label": "Glass Ice",
+        "hex": "#E0FBFC"
+      },
+      {
+        "id": "royal-pink",
+        "label": "Royal Pink",
+        "hex": "#FF70A6"
+      },
+      {
+        "id": "gold",
+        "label": "Royal Gold",
+        "hex": "#FFD166"
+      },
+      {
+        "id": "silver",
+        "label": "Silver Star",
+        "hex": "#E2E8F0"
+      },
+      {
+        "id": "lavender",
+        "label": "Lavender",
+        "hex": "#A06CD5"
+      },
+      {
+        "id": "ruby",
+        "label": "Ruby Red",
+        "hex": "#E63946"
+      },
+      {
+        "id": "midnight",
+        "label": "Midnight",
+        "hex": "#2B2D42"
+      }
+    ],
     "makeup": {
       "lipstick": [
         {
@@ -401,7 +438,29 @@
           "label": "Butterfly Wings"
         }
       ]
-    }
+    },
+    "shoes": [
+      {
+        "id": "glass-slippers",
+        "label": "Glass Slippers"
+      },
+      {
+        "id": "ballet-flats",
+        "label": "Ballet Flats"
+      },
+      {
+        "id": "royal-heels",
+        "label": "Royal Heels"
+      },
+      {
+        "id": "sparkle-boots",
+        "label": "Sparkle Boots"
+      },
+      {
+        "id": "barefoot",
+        "label": "Barefoot"
+      }
+    ]
   },
   "royalNames": {
     "prefixes": [
@@ -534,6 +593,80 @@
       "name": "Unicorn Foal",
       "icon": "🦄",
       "color": "#F8AD9D"
+    }
+  ],
+  "petColors": [
+    {
+      "id": "default",
+      "label": "Natural",
+      "hex": ""
+    },
+    {
+      "id": "golden",
+      "label": "Golden",
+      "hex": "#FFD166"
+    },
+    {
+      "id": "snow-white",
+      "label": "Snow White",
+      "hex": "#F8FAFC"
+    },
+    {
+      "id": "midnight",
+      "label": "Midnight",
+      "hex": "#334155"
+    },
+    {
+      "id": "rose-pink",
+      "label": "Rose Pink",
+      "hex": "#FF8FAB"
+    },
+    {
+      "id": "sky-blue",
+      "label": "Sky Blue",
+      "hex": "#72EFDD"
+    },
+    {
+      "id": "lavender",
+      "label": "Lavender",
+      "hex": "#C77DFF"
+    },
+    {
+      "id": "chocolate",
+      "label": "Chocolate",
+      "hex": "#8D5B4C"
+    }
+  ],
+  "petAccessories": [
+    {
+      "id": "none",
+      "label": "None",
+      "icon": "🚫"
+    },
+    {
+      "id": "bow",
+      "label": "Satin Bow",
+      "icon": "🎀"
+    },
+    {
+      "id": "crown",
+      "label": "Mini Crown",
+      "icon": "👑"
+    },
+    {
+      "id": "cape",
+      "label": "Royal Cape",
+      "icon": "🦸"
+    },
+    {
+      "id": "scarf",
+      "label": "Cozy Scarf",
+      "icon": "🧣"
+    },
+    {
+      "id": "glasses",
+      "label": "Star Glasses",
+      "icon": "🕶️"
     }
   ],
   "customGownOptions": {

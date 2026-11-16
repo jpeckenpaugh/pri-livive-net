@@ -111,14 +111,70 @@ function renderFaceGemsLayer(shape) {
   return `<g id="layer-face-gems"></g>`;
 }
 
-export function renderPetSvg(petId, petName = '', x = 72, y = 348) {
+function renderPetAccessorySvg(accessoryId) {
+  if (!accessoryId || accessoryId === 'none') return { back: '', front: '' };
+  if (accessoryId === 'cape') {
+    return {
+      back: `<path d="M -10 4 L -22 24 Q 0 30 22 24 L 10 4 Z" fill="#E63946" stroke="#9B2226" stroke-width="1.2"/>`,
+      front: `<path d="M -8 4 Q 0 8 8 4" fill="none" stroke="#FFD166" stroke-width="2" stroke-linecap="round"/>`
+    };
+  }
+  if (accessoryId === 'bow') {
+    return {
+      back: '',
+      front: `
+        <g transform="translate(0, 6)">
+          <path d="M 0 0 L -8 -4 L -8 4 Z M 0 0 L 8 -4 L 8 4 Z" fill="#FF70A6" stroke="#C9184A" stroke-width="0.9"/>
+          <circle cx="0" cy="0" r="2.2" fill="#FFE5EC" stroke="#C9184A" stroke-width="0.8"/>
+        </g>`
+    };
+  }
+  if (accessoryId === 'crown') {
+    return {
+      back: '',
+      front: `
+        <g transform="translate(0, -15)">
+          <path d="M -7 2 L -8 -6 L -3 -2 L 0 -8 L 3 -2 L 8 -6 L 7 2 Z" fill="#FFD166" stroke="#B5830E" stroke-width="1"/>
+          <circle cx="0" cy="-2" r="1.4" fill="#FF4D6D"/>
+        </g>`
+    };
+  }
+  if (accessoryId === 'scarf') {
+    return {
+      back: '',
+      front: `
+        <g transform="translate(0, 5)">
+          <rect x="-11" y="-2.5" width="22" height="5" rx="2.5" fill="#56CFE1" stroke="#0077B6" stroke-width="0.9"/>
+          <path d="M 4 1 L 8 11 L 12 10 L 8 0 Z" fill="#56CFE1" stroke="#0077B6" stroke-width="0.9"/>
+        </g>`
+    };
+  }
+  if (accessoryId === 'glasses') {
+    return {
+      back: '',
+      front: `
+        <g transform="translate(0, -3.5)">
+          <circle cx="-4.5" cy="0" r="3.8" fill="rgba(202,240,248,0.45)" stroke="#2B2D42" stroke-width="1.2"/>
+          <circle cx="4.5" cy="0" r="3.8" fill="rgba(202,240,248,0.45)" stroke="#2B2D42" stroke-width="1.2"/>
+          <line x1="-0.7" y1="0" x2="0.7" y2="0" stroke="#2B2D42" stroke-width="1.2"/>
+        </g>`
+    };
+  }
+  return { back: '', front: '' };
+}
+
+export function renderPetSvg(petId, petName = '', x = 72, y = 348, petOptions = {}) {
   if (!petId || petId === 'none') return '';
   const safeName = String(petName || '').trim().slice(0, 20);
+  const { petColor = '', petAccessoryId = 'none' } = petOptions || {};
+  const customFill = typeof petColor === 'string' && petColor.trim() ? petColor.trim() : '';
   let body = '';
   if (petId === 'puppy') {
+    const bodyFill = customFill || '#E6B88A';
+    const headFill = customFill || '#F2CC8F';
     body = `
-      <ellipse cx="0" cy="14" rx="16" ry="12" fill="#E6B88A" stroke="#8D5B4C" stroke-width="1.4"/>
-      <circle cx="0" cy="-2" r="13" fill="#F2CC8F" stroke="#8D5B4C" stroke-width="1.4"/>
+      <ellipse cx="0" cy="14" rx="16" ry="12" fill="${bodyFill}" stroke="#8D5B4C" stroke-width="1.4"/>
+      <circle cx="0" cy="-2" r="13" fill="${headFill}" stroke="#8D5B4C" stroke-width="1.4"/>
       <ellipse cx="-11" cy="-2" rx="4.5" ry="9" fill="#B57B50" transform="rotate(14 -11 -2)"/>
       <ellipse cx="11" cy="-2" rx="4.5" ry="9" fill="#B57B50" transform="rotate(-14 11 -2)"/>
       <circle cx="-4.5" cy="-4" r="2.2" fill="#2B2D42"/>
@@ -127,40 +183,48 @@ export function renderPetSvg(petId, petName = '', x = 72, y = 348) {
       <path d="M -5 -15 L 0 -22 L 5 -15 Z" fill="#FFD166" stroke="#8D5B4C" stroke-width="1"/>
     `;
   } else if (petId === 'kitten') {
+    const bodyFill = customFill || '#F5D0C5';
+    const headFill = customFill || '#FFE5D9';
     body = `
-      <ellipse cx="0" cy="14" rx="14" ry="11" fill="#F5D0C5" stroke="#8D5B4C" stroke-width="1.4"/>
-      <path d="M 12 16 Q 24 6 20 -4" fill="none" stroke="#F5D0C5" stroke-width="4.5" stroke-linecap="round"/>
-      <circle cx="0" cy="-2" r="12" fill="#FFE5D9" stroke="#8D5B4C" stroke-width="1.4"/>
-      <path d="M -10 -10 L -13 -21 L -3 -13 Z" fill="#F5D0C5" stroke="#8D5B4C" stroke-width="1.2"/>
-      <path d="M 10 -10 L 13 -21 L 3 -13 Z" fill="#F5D0C5" stroke="#8D5B4C" stroke-width="1.2"/>
+      <ellipse cx="0" cy="14" rx="14" ry="11" fill="${bodyFill}" stroke="#8D5B4C" stroke-width="1.4"/>
+      <path d="M 12 16 Q 24 6 20 -4" fill="none" stroke="${bodyFill}" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="0" cy="-2" r="12" fill="${headFill}" stroke="#8D5B4C" stroke-width="1.4"/>
+      <path d="M -10 -10 L -13 -21 L -3 -13 Z" fill="${bodyFill}" stroke="#8D5B4C" stroke-width="1.2"/>
+      <path d="M 10 -10 L 13 -21 L 3 -13 Z" fill="${bodyFill}" stroke="#8D5B4C" stroke-width="1.2"/>
       <circle cx="-4" cy="-3" r="2" fill="#2B2D42"/>
       <circle cx="4" cy="-3" r="2" fill="#2B2D42"/>
       <circle cx="0" cy="1" r="1.8" fill="#FF70A6"/>
     `;
   } else if (petId === 'dragon') {
+    const bodyFill = customFill || '#7AE582';
+    const headFill = customFill || '#9EF01A';
     body = `
       <path d="M -10 2 L -22 -12 L -8 -6 Z" fill="#C77DFF" opacity="0.85"/>
       <path d="M 10 2 L 22 -12 L 8 -6 Z" fill="#C77DFF" opacity="0.85"/>
-      <ellipse cx="0" cy="14" rx="15" ry="12" fill="#7AE582" stroke="#2D6A4F" stroke-width="1.4"/>
-      <circle cx="0" cy="-2" r="12.5" fill="#9EF01A" stroke="#2D6A4F" stroke-width="1.4"/>
+      <ellipse cx="0" cy="14" rx="15" ry="12" fill="${bodyFill}" stroke="#2D6A4F" stroke-width="1.4"/>
+      <circle cx="0" cy="-2" r="12.5" fill="${headFill}" stroke="#2D6A4F" stroke-width="1.4"/>
       <path d="M -6 -13 L -9 -22 L -2 -14 Z" fill="#FFD166"/>
       <path d="M 6 -13 L 9 -22 L 2 -14 Z" fill="#FFD166"/>
       <circle cx="-4" cy="-3" r="2.2" fill="#2B2D42"/>
       <circle cx="4" cy="-3" r="2.2" fill="#2B2D42"/>
     `;
   } else if (petId === 'seahorse') {
+    const bodyFill = customFill || '#48CAE4';
+    const headFill = customFill || '#90E0EF';
     body = `
-      <path d="M 0 -16 C 12 -16, 14 -2, 6 6 C 0 12, 12 20, 4 26 C -4 30, -10 22, -4 18" fill="none" stroke="#48CAE4" stroke-width="9" stroke-linecap="round"/>
-      <circle cx="1" cy="-10" r="8.5" fill="#90E0EF" stroke="#0077B6" stroke-width="1.3"/>
-      <path d="M 8 -10 L 16 -8 L 8 -6 Z" fill="#90E0EF" stroke="#0077B6" stroke-width="1"/>
+      <path d="M 0 -16 C 12 -16, 14 -2, 6 6 C 0 12, 12 20, 4 26 C -4 30, -10 22, -4 18" fill="none" stroke="${bodyFill}" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="1" cy="-10" r="8.5" fill="${headFill}" stroke="#0077B6" stroke-width="1.3"/>
+      <path d="M 8 -10 L 16 -8 L 8 -6 Z" fill="${headFill}" stroke="#0077B6" stroke-width="1"/>
       <circle cx="3" cy="-12" r="1.8" fill="#2B2D42"/>
       <path d="M -8 -2 L -16 -6 L -12 4 Z" fill="#CAF0F8" opacity="0.85"/>
     `;
   } else {
     // unicorn
+    const bodyFill = customFill || '#FFF0F3';
+    const headFill = customFill || '#FFFFFF';
     body = `
-      <ellipse cx="0" cy="14" rx="16" ry="11" fill="#FFF0F3" stroke="#A06CD5" stroke-width="1.4"/>
-      <circle cx="0" cy="-2" r="12" fill="#FFFFFF" stroke="#A06CD5" stroke-width="1.4"/>
+      <ellipse cx="0" cy="14" rx="16" ry="11" fill="${bodyFill}" stroke="#A06CD5" stroke-width="1.4"/>
+      <circle cx="0" cy="-2" r="12" fill="${headFill}" stroke="#A06CD5" stroke-width="1.4"/>
       <path d="M -2 -13 L 0 -26 L 3 -13 Z" fill="#FFD166" stroke="#C77DFF" stroke-width="1"/>
       <path d="M -10 -8 Q -15 0 -11 6" fill="none" stroke="#FF70A6" stroke-width="4" stroke-linecap="round"/>
       <circle cx="-4" cy="-3" r="2" fill="#2B2D42"/>
@@ -169,6 +233,7 @@ export function renderPetSvg(petId, petName = '', x = 72, y = 348) {
     `;
   }
 
+  const acc = renderPetAccessorySvg(petAccessoryId);
   const label = safeName
     ? `<g transform="translate(0, 62)">
         <rect x="-42" y="-11" width="84" height="20" rx="10" fill="rgba(255,255,255,0.92)" stroke="rgba(160,108,213,0.45)" stroke-width="1"/>
@@ -176,7 +241,7 @@ export function renderPetSvg(petId, petName = '', x = 72, y = 348) {
       </g>`
     : '';
 
-  return `<g id="layer-pet" transform="translate(${x}, ${y})"><g class="pet-companion"><g transform="scale(2.2)">${body}</g>${label}</g></g>`;
+  return `<g id="layer-pet" transform="translate(${x}, ${y})"><g class="pet-companion"><g transform="scale(2.2)">${acc.back}${body}${acc.front}</g>${label}</g></g>`;
 }
 
 function renderCharacterTypeBackLayer(characterTypeId) {
@@ -303,6 +368,46 @@ function renderWaistTrimLayer(waistTrimId, trimColor) {
   return '';
 }
 
+export function renderShoesLayer(shoesId, shoeColor = '#E0FBFC') {
+  if (!shoesId || shoesId === 'barefoot') return '';
+  const fill = shoeColor || '#E0FBFC';
+  if (shoesId === 'ballet-flats') {
+    return `
+      <g id="layer-shoes">
+        <ellipse cx="144" cy="396" rx="10" ry="5.5" fill="${fill}" stroke="rgba(43,45,66,0.28)" stroke-width="1.2"/>
+        <ellipse cx="176" cy="396" rx="10" ry="5.5" fill="${fill}" stroke="rgba(43,45,66,0.28)" stroke-width="1.2"/>
+        <path d="M 140 390 L 148 384 M 148 390 L 140 384" stroke="${fill}" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 172 390 L 180 384 M 180 390 L 172 384" stroke="${fill}" stroke-width="1.5" stroke-linecap="round"/>
+      </g>`;
+  }
+  if (shoesId === 'royal-heels') {
+    return `
+      <g id="layer-shoes">
+        <path d="M 134 396 Q 144 390 154 396 L 152 401 L 136 401 Z" fill="${fill}" stroke="rgba(43,45,66,0.28)" stroke-width="1.2"/>
+        <path d="M 166 396 Q 176 390 186 396 L 184 401 L 168 401 Z" fill="${fill}" stroke="rgba(43,45,66,0.28)" stroke-width="1.2"/>
+        <rect x="148" y="398" width="4" height="5" rx="1" fill="${fill}" stroke="rgba(43,45,66,0.25)" stroke-width="0.9"/>
+        <rect x="168" y="398" width="4" height="5" rx="1" fill="${fill}" stroke="rgba(43,45,66,0.25)" stroke-width="0.9"/>
+      </g>`;
+  }
+  if (shoesId === 'sparkle-boots') {
+    return `
+      <g id="layer-shoes">
+        <path d="M 137 372 L 151 372 L 153 398 Q 144 402 135 398 Z" fill="${fill}" stroke="rgba(43,45,66,0.28)" stroke-width="1.2"/>
+        <path d="M 169 372 L 183 372 L 185 398 Q 176 402 167 398 Z" fill="${fill}" stroke="rgba(43,45,66,0.28)" stroke-width="1.2"/>
+        <circle cx="144" cy="382" r="2.2" fill="#FFD166"/>
+        <circle cx="176" cy="382" r="2.2" fill="#FFD166"/>
+      </g>`;
+  }
+  // glass-slippers (default)
+  return `
+    <g id="layer-shoes">
+      <ellipse cx="144" cy="396" rx="10.5" ry="5.5" fill="${fill}" opacity="0.92" stroke="rgba(43,45,66,0.25)" stroke-width="1.2"/>
+      <ellipse cx="176" cy="396" rx="10.5" ry="5.5" fill="${fill}" opacity="0.92" stroke="rgba(43,45,66,0.25)" stroke-width="1.2"/>
+      <circle cx="141" cy="394" r="2" fill="#FFFFFF" opacity="0.85"/>
+      <circle cx="173" cy="394" r="2" fill="#FFFFFF" opacity="0.85"/>
+    </g>`;
+}
+
 export function renderPaperDollSvg(princess, config, options = {}) {
   const palettes = config?.palettes || {};
   const items = config?.items || {};
@@ -390,6 +495,19 @@ export function renderPaperDollSvg(princess, config, options = {}) {
       <circle cx="91" cy="248" r="7" fill="var(--skin-color)"/>
       <circle cx="229" cy="248" r="7" fill="var(--skin-color)"/>
     </g>
+    <!-- 4b. Legs & Shoes (hidden for mermaid) -->
+    ${princess?.characterTypeId !== 'mermaid'
+      ? `<g id="layer-legs">
+           <rect x="139" y="346" width="10" height="48" rx="5" fill="var(--skin-color)"/>
+           <rect x="171" y="346" width="10" height="48" rx="5" fill="var(--skin-color)"/>
+           <ellipse cx="144" cy="396" rx="9" ry="4.5" fill="var(--skin-color)"/>
+           <ellipse cx="176" cy="396" rx="9" ry="4.5" fill="var(--skin-color)"/>
+         </g>
+         ${renderShoesLayer(
+           princess?.shoesId || 'glass-slippers',
+           (config?.palettes?.shoeColors || []).find((c) => c.id === princess?.shoeColorId)?.hex || '#E0FBFC'
+         )}`
+      : ''}
     <!-- 5. Gown Skirt & Bodice -->
     <g id="layer-gown">
       ${princess?.characterTypeId === 'mermaid'
@@ -457,7 +575,12 @@ export function renderPaperDollSvg(princess, config, options = {}) {
     <!-- 17. Handheld Accessory -->
     ${renderHandheldLayer(princess?.handheld)}
     <!-- 18. Companion Pet -->
-    ${options?.includePet !== false ? renderPetSvg(princess?.petId, princess?.petName) : ''}
+    ${options?.includePet !== false
+      ? renderPetSvg(princess?.petId, princess?.petName, 72, 348, {
+          petColor: (config?.petColors || []).find((c) => c.id === princess?.petColorId)?.hex || '',
+          petAccessoryId: princess?.petAccessoryId || 'none'
+        })
+      : ''}
     <!-- 19. Power Burst -->
     ${options?.powerBurst ? renderPowerBurstSvg(princess?.powerId, config) : ''}
   </svg>`;

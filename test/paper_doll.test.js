@@ -83,3 +83,28 @@ test('Make Your Own Gown: renderPaperDollSvg renders custom bodice, skirt, sleev
   assert.ok(svg.includes('fill="#FFD166"'));
   assert.ok(svg.includes('fill="#FFF8F0"'));
 });
+
+test('Pet Customization & Shoes: renderPaperDollSvg renders pet color/accessory and princess legs/shoes (hidden for mermaid)', () => {
+  const customPrincess = {
+    ...DEFAULT_STATE.princess,
+    characterTypeId: 'princess',
+    petId: 'puppy',
+    petColorId: 'lavender',
+    petAccessoryId: 'glasses',
+    shoesId: 'sparkle-boots',
+    shoeColorId: 'royal-pink'
+  };
+  const svg = renderPaperDollSvg(customPrincess, config);
+  assert.ok(svg.includes('id="layer-legs"'));
+  assert.ok(svg.includes('id="layer-shoes"'));
+  assert.ok(svg.includes('fill="#FF70A6"'));
+  assert.ok(svg.includes('fill="#C77DFF"'));
+
+  const mermaidSvg = renderPaperDollSvg({ ...customPrincess, characterTypeId: 'mermaid' }, config);
+  assert.ok(!mermaidSvg.includes('id="layer-legs"'));
+  assert.ok(!mermaidSvg.includes('id="layer-shoes"'));
+
+  const barefootSvg = renderPaperDollSvg({ ...customPrincess, shoesId: 'barefoot' }, config);
+  assert.ok(barefootSvg.includes('id="layer-legs"'));
+  assert.ok(!barefootSvg.includes('id="layer-shoes"'));
+});

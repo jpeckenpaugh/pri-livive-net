@@ -429,6 +429,14 @@ export function mountApp({ root, store, config, coloringData, coloringController
             <h3 class="section-title">Fairy & Butterfly Wings</h3>
             ${renderItemButtons(items.accessories.wings, p.wings, 'wings')}
           </div>
+          <div class="panel-section">
+            <h3 class="section-title">Princess Shoes</h3>
+            ${renderItemButtons(items.shoes || [], p.shoesId, 'shoesId')}
+          </div>
+          <div class="panel-section">
+            <h3 class="section-title">Shoe Color</h3>
+            ${renderSwatches(palettes.shoeColors || [], p.shoeColorId, 'shoeColorId')}
+          </div>
         `;
       case 'makeup':
         return `
@@ -596,6 +604,28 @@ export function mountApp({ root, store, config, coloringData, coloringController
           <div class="panel-section">
             <label class="section-title" for="pet-name-input">Pet Name</label>
             <input id="pet-name-input" class="text-input" type="text" maxlength="24" placeholder="Name your pet..." value="${escapeHtml(state.princess.petName || '')}" />
+          </div>
+          <div class="panel-section">
+            <h3 class="section-title">Pet Color</h3>
+            <div class="swatch-grid">
+              ${(config.petColors || [])
+                .map(
+                  (c) =>
+                    `<button type="button" class="swatch-btn ${c.id === state.princess.petColorId ? 'is-active' : ''}" data-princess-field="petColorId" data-value="${c.id}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex || 'linear-gradient(135deg, #F2CC8F 50%, #F5D0C5 50%)'}"></button>`
+                )
+                .join('')}
+            </div>
+          </div>
+          <div class="panel-section">
+            <h3 class="section-title">Pet Accessory</h3>
+            <div class="option-grid">
+              ${(config.petAccessories || [])
+                .map(
+                  (acc) =>
+                    `<button type="button" class="option-btn ${acc.id === state.princess.petAccessoryId ? 'is-active' : ''}" data-princess-field="petAccessoryId" data-value="${acc.id}">${acc.icon || ''} ${escapeHtml(acc.label)}</button>`
+                )
+                .join('')}
+            </div>
           </div>
         `;
       }

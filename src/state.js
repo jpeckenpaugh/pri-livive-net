@@ -33,6 +33,10 @@ export const DEFAULT_STATE = {
     powerId: 'starlight',
     petId: 'none',
     petName: '',
+    petColorId: 'default',
+    petAccessoryId: 'none',
+    shoesId: 'glass-slippers',
+    shoeColorId: 'glass',
     makeup: {
       lipstick: 'none',
       blush: 'none',
@@ -155,7 +159,11 @@ export function normalizeState(raw) {
       'wings',
       'characterTypeId',
       'powerId',
-      'petId'
+      'petId',
+      'petColorId',
+      'petAccessoryId',
+      'shoesId',
+      'shoeColorId'
     ];
     for (const key of strFields) {
       if (typeof p[key] === 'string' && p[key].trim().length > 0) {

@@ -225,3 +225,25 @@ test('Phase 5: normalizeState migrates older saves without academy and preserves
   assert.equal(preserved.academy.stars, 9);
   assert.deepEqual(preserved.academy.completedLessons, ['math', 'spelling']);
 });
+
+test('Pet Customization & Shoes: normalizeState migrates older saves and preserves petColorId, petAccessoryId, shoesId, shoeColorId', () => {
+  const migrated = normalizeState({ version: 1, princess: { name: 'Princess Ada' } });
+  assert.equal(migrated.princess.petColorId, 'default');
+  assert.equal(migrated.princess.petAccessoryId, 'none');
+  assert.equal(migrated.princess.shoesId, 'glass-slippers');
+  assert.equal(migrated.princess.shoeColorId, 'glass');
+
+  const custom = normalizeState({
+    princess: {
+      petId: 'puppy',
+      petColorId: 'golden',
+      petAccessoryId: 'crown',
+      shoesId: 'sparkle-boots',
+      shoeColorId: 'royal-pink'
+    }
+  });
+  assert.equal(custom.princess.petColorId, 'golden');
+  assert.equal(custom.princess.petAccessoryId, 'crown');
+  assert.equal(custom.princess.shoesId, 'sparkle-boots');
+  assert.equal(custom.princess.shoeColorId, 'royal-pink');
+});
