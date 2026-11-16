@@ -1,4 +1,5 @@
 import { renderPaperDollSvg } from './paper_doll.js';
+import { createInitialState } from './state.js';
 
 export function getEpisodeById(episodesConfig, episodeId) {
   if (!episodesConfig || !Array.isArray(episodesConfig.episodes)) return null;
@@ -148,12 +149,18 @@ export function renderEpisodeSceneSvg(
   beatIndex,
   princessState,
   princessConfig,
-  { mayaMood = 'neutral', reactionType = 'none' } = {}
+  { mayaMood = 'neutral', reactionType = 'none', mayaPrincess = null } = {}
 ) {
   const beats = Array.isArray(episode?.beats) ? episode.beats : [];
   const beat = beats[beatIndex] || beats[0] || {};
   const backdrop = beat.backdrop || 'courtyard';
   const playerSvg = renderPaperDollSvg(princessState, princessConfig);
+  const mayaState = mayaPrincess || {
+    ...createInitialState(princessConfig).princess,
+    name: 'Princess Maya',
+    petId: 'none'
+  };
+  const mayaSvg = renderPaperDollSvg(mayaState, princessConfig, { includePet: false });
 
   return `
     <svg class="episode-scene-svg" viewBox="0 0 600 320" role="img" aria-label="Episode scene">
@@ -161,7 +168,13 @@ export function renderEpisodeSceneSvg(
       <svg x="35" y="18" width="205" height="295" viewBox="0 0 320 460">
         ${playerSvg}
       </svg>
-      ${renderPrincessMaya(mayaMood)}
+      <g id="episode-maya" class="maya-figure maya-${mayaMood} episode-maya--${mayaMood}">
+        <svg x="355" y="18" width="205" height="295" viewBox="0 0 320 460">
+          ${mayaSvg}
+        </svg>
+        <rect x="415" y="294" width="90" height="20" rx="10" fill="rgba(255,255,255,0.9)" stroke="#b388eb" stroke-width="1.5"/>
+        <text x="460" y="308" text-anchor="middle" font-size="11" font-weight="700" fill="#5e3a8c">Princess Maya</text>
+      </g>
       ${renderReactionOverlay(reactionType)}
     </svg>
   `;
