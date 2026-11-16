@@ -11,5 +11,6 @@
 5. **Dress Up Scope:** Hairstyle, Gown/Dress, Tiara/Crown, and Accessories (wand, necklace, wings), each customizable with color palettes.
 6. **Name Character & Royal Titles:** Free-text input + **"Random Royal Name"** generator (e.g., *Princess Luna of Starlight Castle*).
 7. **Layout & Navigation:** Single **Princess Dressing Studio** with big, colorful icon tabs so the Princess stays visible while customizing, plus a tab/mode for the Color Game.
-8. **Audio & Speech:** Synthesized Web Audio chimes (`data/sounds.json`) + optional `window.speechSynthesis` with a mute toggle.
+8. **Audio & Speech:** Synthesized Web Audio chimes (`data/sounds.json`) + `window.speechSynthesis` triggered explicitly via an "Announce Princess 🎺" button, with a mute toggle.
 9. **Testing:** Automated `node --test` for pure logic, data validation, and `localStorage` autosave (`priplay.save.v1`); human user performs interactive browser testing.
+10. **Phase 1 Scope Refinements:** Include subtle CSS keyframe animations (gentle breathing, tiara twinkle, wand glint); defer PNG/SVG snapshot download and rainbow/glitter coloring fills to Phase 2.
