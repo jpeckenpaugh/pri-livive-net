@@ -104,3 +104,24 @@ test('Make Your Own Gown: princess_config.json has customGownOptions', () => {
   assert.ok(Array.isArray(opts.patterns) && opts.patterns.length >= 5);
   assert.ok(Array.isArray(opts.colors) && opts.colors.length >= 8);
 });
+
+test('Phase 5: lessons_config.json defines 5 valid subjects for Royal Academy', () => {
+  const lessons = readJson('data/lessons_config.json');
+  assert.equal(typeof lessons.starRewardPerLesson, 'number');
+  assert.equal(lessons.subjects.length, 5);
+  assert.deepEqual(
+    lessons.subjects.map((s) => s.id),
+    ['math', 'spelling', 'science', 'music', 'geography']
+  );
+
+  const spelling = lessons.subjects.find((s) => s.id === 'spelling');
+  assert.deepEqual(
+    spelling.words.map((w) => w.word),
+    ['CASTLE', 'SPARKLE', 'TIARA', 'DRAGON']
+  );
+
+  const music = lessons.subjects.find((s) => s.id === 'music');
+  for (const mel of music.melodies) {
+    assert.equal(mel.notes.length, 3);
+  }
+});

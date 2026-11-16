@@ -210,3 +210,18 @@ test('Make Your Own Gown: normalizeState migrates older saves and preserves cust
   assert.equal(custom.princess.customGown.patternId, 'hearts');
   assert.equal(custom.princess.customGown.skirtColor, '#3A86FF');
 });
+
+test('Phase 5: normalizeState migrates older saves without academy and preserves valid academy state', () => {
+  const migrated = normalizeState({ version: 1, princess: { name: 'Princess Ada' } });
+  assert.deepEqual(migrated.academy, { stars: 0, completedLessons: [] });
+
+  const preserved = normalizeState({
+    version: 1,
+    academy: {
+      stars: 9,
+      completedLessons: ['math', 'spelling', 'math', '']
+    }
+  });
+  assert.equal(preserved.academy.stars, 9);
+  assert.deepEqual(preserved.academy.completedLessons, ['math', 'spelling']);
+});

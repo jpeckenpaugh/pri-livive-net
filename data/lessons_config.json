@@ -1,0 +1,157 @@
+{
+  "starRewardPerLesson": 3,
+  "subjects": [
+    {
+      "id": "math",
+      "title": "Royal Treasury",
+      "subtitle": "Count gems & gold coins!",
+      "icon": "💎",
+      "type": "quiz",
+      "questions": [
+        {
+          "id": "math-1",
+          "prompt": "You found 4 ruby gems and 5 sapphire gems. How many gems in all?",
+          "options": ["7", "8", "9", "10"],
+          "answer": "9"
+        },
+        {
+          "id": "math-2",
+          "prompt": "Each royal chest holds 3 gold coins. How many coins are in 4 chests?",
+          "options": ["7", "10", "12", "15"],
+          "answer": "12"
+        },
+        {
+          "id": "math-3",
+          "prompt": "The princess has 6 diamond tiaras and gets 6 more. How many tiaras total?",
+          "options": ["10", "12", "14", "16"],
+          "answer": "12"
+        },
+        {
+          "id": "math-4",
+          "prompt": "A dragon guards 5 piles of 5 coins each. How many coins is that?",
+          "options": ["20", "25", "30", "15"],
+          "answer": "25"
+        }
+      ]
+    },
+    {
+      "id": "spelling",
+      "title": "Enchanted Spellbook",
+      "subtitle": "Tap letter tiles to spell royal words!",
+      "icon": "📖",
+      "type": "spelling",
+      "words": [
+        {
+          "id": "spell-1",
+          "word": "CASTLE",
+          "hint": "A grand stone home for a princess"
+        },
+        {
+          "id": "spell-2",
+          "word": "SPARKLE",
+          "hint": "A bright, magical twinkle"
+        },
+        {
+          "id": "spell-3",
+          "word": "TIARA",
+          "hint": "A jeweled crown worn on the head"
+        },
+        {
+          "id": "spell-4",
+          "word": "DRAGON",
+          "hint": "A friendly winged creature of legend"
+        }
+      ]
+    },
+    {
+      "id": "science",
+      "title": "Potion & Nature Lab",
+      "subtitle": "Mix colors & explore habitats!",
+      "icon": "🧪",
+      "type": "quiz",
+      "questions": [
+        {
+          "id": "sci-1",
+          "prompt": "If you mix Red potion and Blue potion, what color do you get?",
+          "options": ["Green", "Purple", "Orange", "Yellow"],
+          "answer": "Purple"
+        },
+        {
+          "id": "sci-2",
+          "prompt": "If you mix Yellow potion and Blue potion, what color appears?",
+          "options": ["Green", "Pink", "Brown", "Purple"],
+          "answer": "Green"
+        },
+        {
+          "id": "sci-3",
+          "prompt": "Where does a Coral Mermaid love to swim and live?",
+          "options": ["Snowy Mountain", "Ocean Reef", "Desert Dunes", "Cloudy Sky"],
+          "answer": "Ocean Reef"
+        },
+        {
+          "id": "sci-4",
+          "prompt": "Which habitat is best for a Woodland Fairy and her fox friend?",
+          "options": ["Enchanted Forest", "Deep Sea", "Volcano", "Ice Cave"],
+          "answer": "Enchanted Forest"
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "title": "Royal Conservatory",
+      "subtitle": "Listen & echo the 3-note melody!",
+      "icon": "🎵",
+      "type": "melody",
+      "melodies": [
+        {
+          "id": "mel-1",
+          "title": "Starlight Fanfare",
+          "notes": ["C4", "E4", "G4"]
+        },
+        {
+          "id": "mel-2",
+          "title": "Royal Waltz",
+          "notes": ["G4", "E4", "C4"]
+        },
+        {
+          "id": "mel-3",
+          "title": "Crown Chime",
+          "notes": ["C4", "G4", "C5"]
+        }
+      ]
+    },
+    {
+      "id": "geography",
+      "title": "Kingdom Map",
+      "subtitle": "Follow the Compass Quest!",
+      "icon": "🧭",
+      "type": "compass",
+      "questions": [
+        {
+          "id": "geo-1",
+          "prompt": "Look at the Starlight Kingdom map: Which place is to the NORTH?",
+          "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+          "answer": "Crystal Castle"
+        },
+        {
+          "id": "geo-2",
+          "prompt": "Which place lies to the SOUTH of the Royal Fountain?",
+          "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+          "answer": "Coral Bay"
+        },
+        {
+          "id": "geo-3",
+          "prompt": "If you travel EAST from the Royal Fountain, where do you arrive?",
+          "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+          "answer": "Sunlit Meadow"
+        },
+        {
+          "id": "geo-4",
+          "prompt": "Which enchanted place is to the WEST?",
+          "options": ["Crystal Castle", "Whispering Woods", "Coral Bay", "Sunlit Meadow"],
+          "answer": "Whispering Woods"
+        }
+      ]
+    }
+  ]
+}

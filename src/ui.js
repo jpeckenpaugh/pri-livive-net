@@ -4,6 +4,15 @@ import { renderBallroomSvg, PRINCE_OUTFIT_COLORS } from './ballroom.js';
 import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from './piano.js';
 import { generateRoyalName } from './names.js';
 import { announcePrincess } from './speech.js';
+import {
+  getSubjectById,
+  checkQuizAnswer,
+  checkSpellingWord,
+  shuffleLetters,
+  checkMelodyEcho,
+  awardLessonStars,
+  getAcademyProgress
+} from './lessons.js';
 
 const TABS = [
   { id: 'profile', icon: '👑', label: 'Profile' },
@@ -14,7 +23,8 @@ const TABS = [
   { id: 'makeup', icon: '💄', label: 'Makeup' },
   { id: 'powers-pets', icon: '✨', label: 'Powers & Pets' },
   { id: 'ballroom', icon: '🏰', label: 'Ballroom' },
-  { id: 'coloring', icon: '🎨', label: 'Coloring' }
+  { id: 'coloring', icon: '🎨', label: 'Coloring' },
+  { id: 'academy', icon: '🏫', label: 'Academy' }
 ];
 
 function escapeHtml(str) {
@@ -53,12 +63,37 @@ function renderItemButtons(items, selectedId, dataAttr) {
   </div>`;
 }
 
-export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig }) {
+export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig, lessonsConfig }) {
   let powerBurstActive = false;
   let powerBurstTimer = null;
   const pianoPlayer = createPianoPlayer();
   let activeSongId = null;
+  let academySession = {
+    subjectId: null,
+    stepIndex: 0,
+    feedback: null,
+    completed: false,
+    newlyAwarded: false,
+    spellingTiles: [],
+    enteredLetters: [],
+    usedTileIds: [],
+    playedNotes: []
+  };
   const sparkleLayer = () => root.querySelector('.sparkle-burst-layer');
+
+  function speakWord(word) {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined') {
+      try {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(word);
+        utter.rate = 0.85;
+        utter.pitch = 1.1;
+        window.speechSynthesis.speak(utter);
+      } catch {
+        // Ignore speech synthesis errors
+      }
+    }
+  }
 
   function flashPianoKey(keyId, durationMs = 240) {
     const keyEl = root.querySelector(`[data-piano-key="${keyId}"]`);
@@ -75,6 +110,186 @@ export function mountApp({ root, store, config, coloringData, coloringController
     layer.classList.remove('is-bursting');
     void layer.offsetWidth;
     layer.classList.add('is-bursting');
+  }
+
+  function renderKingdomMapSvg() {
+    return `
+      <svg class="kingdom-map-svg" viewBox="0 0 320 220" role="img" aria-label="Starlight Kingdom Map">
+        <rect x="0" y="0" width="320" height="220" rx="16" fill="#eef6ff" stroke="#c7d8f5" stroke-width="2" />
+        <path d="M160 40 L160 180 M50 110 L270 110" stroke="#d5e2f7" stroke-width="4" stroke-dasharray="6 4" />
+        <!-- North: Crystal Castle -->
+        <g transform="translate(160, 32)">
+          <rect x="-46" y="-18" width="92" height="32" rx="10" fill="#fde2ff" stroke="#d680e6" stroke-width="1.5" />
+          <text x="0" y="3" text-anchor="middle" font-size="12" font-weight="600" fill="#5a189a">🏰 Crystal Castle</text>
+        </g>
+        <!-- South: Coral Bay -->
+        <g transform="translate(160, 188)">
+          <rect x="-42" y="-16" width="84" height="30" rx="10" fill="#d8f3dc" stroke="#52b788" stroke-width="1.5" />
+          <text x="0" y="3" text-anchor="middle" font-size="12" font-weight="600" fill="#1b4332">🐚 Coral Bay</text>
+        </g>
+        <!-- West: Whispering Woods -->
+        <g transform="translate(66, 110)">
+          <rect x="-56" y="-16" width="112" height="30" rx="10" fill="#e9f5db" stroke="#718355" stroke-width="1.5" />
+          <text x="0" y="3" text-anchor="middle" font-size="12" font-weight="600" fill="#334125">🌲 Whispering Woods</text>
+        </g>
+        <!-- East: Sunlit Meadow -->
+        <g transform="translate(254, 110)">
+          <rect x="-54" y="-16" width="108" height="30" rx="10" fill="#fff3b0" stroke="#e09f3e" stroke-width="1.5" />
+          <text x="0" y="3" text-anchor="middle" font-size="12" font-weight="600" fill="#7f4f24">🌻 Sunlit Meadow</text>
+        </g>
+        <!-- Center: Royal Fountain -->
+        <circle cx="160" cy="110" r="22" fill="#bde0fe" stroke="#4ea8de" stroke-width="2" />
+        <text x="160" y="114" text-anchor="middle" font-size="14">⛲</text>
+        <!-- Compass Rose -->
+        <g transform="translate(284, 34)">
+          <circle cx="0" cy="0" r="20" fill="#ffffff" stroke="#a5b4fc" stroke-width="1.5" />
+          <text x="0" y="-8" text-anchor="middle" font-size="9" font-weight="700" fill="#e63946">N</text>
+          <text x="0" y="15" text-anchor="middle" font-size="9" font-weight="700" fill="#457b9d">S</text>
+          <text x="11" y="3" text-anchor="middle" font-size="9" font-weight="700" fill="#457b9d">E</text>
+          <text x="-11" y="3" text-anchor="middle" font-size="9" font-weight="700" fill="#457b9d">W</text>
+        </g>
+      </svg>
+    `;
+  }
+
+  function renderAcademyTab(state) {
+    if (!lessonsConfig || !Array.isArray(lessonsConfig.subjects)) {
+      return '<div class="panel-section"><p>Royal Academy lessons are loading...</p></div>';
+    }
+
+    const academy = state.academy || { stars: 0, completedLessons: [] };
+    const progress = getAcademyProgress(academy, lessonsConfig);
+
+    if (!academySession.subjectId) {
+      return `
+        <div class="academy-header-card">
+          <div>
+            <h3 class="section-title">🏫 Royal Academy</h3>
+            <p class="academy-subtitle">Complete lessons to earn Royal Stars! (${progress.completedCount}/${progress.totalCount} completed)</p>
+          </div>
+          <div class="academy-stars-pill">⭐ ${progress.stars} Stars</div>
+        </div>
+        <div class="academy-subject-grid">
+          ${lessonsConfig.subjects
+            .map((subj) => {
+              const isDone = academy.completedLessons.includes(subj.id);
+              return `
+                <button type="button" class="academy-subject-card ${isDone ? 'is-completed' : ''}" data-academy-subject="${subj.id}">
+                  <span class="academy-subject-icon">${subj.icon}</span>
+                  <span class="academy-subject-info">
+                    <strong>${escapeHtml(subj.title)}</strong>
+                    <span>${escapeHtml(subj.subtitle)}</span>
+                  </span>
+                  <span class="academy-subject-status">${isDone ? '✅' : '▶'}</span>
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+    }
+
+    const subject = getSubjectById(lessonsConfig, academySession.subjectId);
+    if (!subject) {
+      academySession.subjectId = null;
+      return renderAcademyTab(state);
+    }
+
+    if (academySession.completed) {
+      return `
+        <div class="academy-complete-card">
+          <div class="academy-complete-burst">🌟</div>
+          <h3>${escapeHtml(subject.title)} Complete!</h3>
+          <p>${academySession.newlyAwarded ? `You earned +${lessonsConfig.starRewardPerLesson || 3} Royal Stars! ⭐` : 'Great practice! You already earned stars for this lesson.'}</p>
+          <button type="button" class="action-btn primary" data-academy-back="true">Back to Academy 🏫</button>
+        </div>
+      `;
+    }
+
+    let bodyHtml = '';
+    if (subject.type === 'quiz' || subject.type === 'compass') {
+      const questions = subject.questions || [];
+      const q = questions[academySession.stepIndex];
+      bodyHtml = `
+        <div class="academy-progress-label">Question ${academySession.stepIndex + 1} of ${questions.length}</div>
+        ${subject.type === 'compass' ? renderKingdomMapSvg() : ''}
+        <p class="academy-prompt">${escapeHtml(q.prompt)}</p>
+        <div class="academy-options-grid">
+          ${q.options
+            .map(
+              (opt) =>
+                `<button type="button" class="option-btn academy-opt-btn" data-academy-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`
+            )
+            .join('')}
+        </div>
+      `;
+    } else if (subject.type === 'spelling') {
+      const words = subject.words || [];
+      const entry = words[academySession.stepIndex];
+      const slots = entry.word.split('').map((_, idx) => academySession.enteredLetters[idx] || '_');
+      bodyHtml = `
+        <div class="academy-progress-label">Word ${academySession.stepIndex + 1} of ${words.length}</div>
+        <p class="academy-prompt">Hint: ${escapeHtml(entry.hint)}</p>
+        <div class="academy-spell-controls">
+          <button type="button" class="action-btn secondary" data-academy-hear-word="${escapeHtml(entry.word)}">Hear Word 🔊</button>
+          <button type="button" class="action-btn secondary" data-academy-clear-spell="true">Clear ↺</button>
+        </div>
+        <div class="academy-spell-slots">
+          ${slots.map((ch) => `<span class="spell-slot ${ch !== '_' ? 'is-filled' : ''}">${escapeHtml(ch)}</span>`).join('')}
+        </div>
+        <div class="academy-tile-grid">
+          ${academySession.spellingTiles
+            .map((tile) => {
+              const used = academySession.usedTileIds.includes(tile.id);
+              return `<button type="button" class="spell-tile-btn ${used ? 'is-used' : ''}" data-academy-tile-id="${tile.id}" data-academy-tile-letter="${tile.letter}" ${used ? 'disabled' : ''}>${escapeHtml(tile.letter)}</button>`;
+            })
+            .join('')}
+        </div>
+      `;
+    } else if (subject.type === 'melody') {
+      const melodies = subject.melodies || [];
+      const mel = melodies[academySession.stepIndex];
+      const whiteKeys = PIANO_KEYS.filter((k) => !k.isBlack);
+      bodyHtml = `
+        <div class="academy-progress-label">Melody ${academySession.stepIndex + 1} of ${melodies.length}: ${escapeHtml(mel.title)}</div>
+        <p class="academy-prompt">Listen to the 3-note melody, then echo it on the keys below!</p>
+        <div class="academy-spell-controls">
+          <button type="button" class="action-btn primary" data-academy-play-melody="true">Listen to Melody 🎵</button>
+          <button type="button" class="action-btn secondary" data-academy-clear-melody="true">Clear Notes ↺</button>
+        </div>
+        <div class="academy-melody-dots">
+          ${mel.notes
+            .map((_, idx) => {
+              const played = academySession.playedNotes[idx];
+              return `<span class="melody-dot ${played ? 'is-filled' : ''}">${played ? escapeHtml(played) : '♪'}</span>`;
+            })
+            .join('')}
+        </div>
+        <div class="academy-mini-piano">
+          ${whiteKeys
+            .map(
+              (k) =>
+                `<button type="button" class="academy-piano-key" data-academy-note="${k.id}">${escapeHtml(k.label)}</button>`
+            )
+            .join('')}
+        </div>
+      `;
+    }
+
+    const feedbackHtml = academySession.feedback
+      ? `<div class="academy-feedback ${academySession.feedback.ok ? 'is-ok' : 'is-try-again'}">${escapeHtml(academySession.feedback.text)}</div>`
+      : '';
+
+    return `
+      <div class="academy-lesson-view">
+        <div class="academy-lesson-topbar">
+          <button type="button" class="action-btn secondary" data-academy-back="true">← Back</button>
+          <strong>${subject.icon} ${escapeHtml(subject.title)}</strong>
+        </div>
+        ${bodyHtml}
+        ${feedbackHtml}
+      </div>
+    `;
   }
 
   function renderTabPanel(state) {
@@ -384,6 +599,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
           </div>
         `;
       }
+      case 'academy':
+        return renderAcademyTab(state);
       default:
         return '';
     }
@@ -468,6 +685,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
             <h1>Princess Play Time</h1>
           </div>
           <div class="header-actions">
+            <div class="royal-stars-badge" title="Royal Stars earned in Academy">⭐ <span>${state.academy?.stars ?? 0}</span></div>
             <button type="button" class="action-btn primary" data-action="announce">Announce Princess 🎺</button>
             <button type="button" class="icon-btn" data-action="toggle-mute" aria-label="${state.muted ? 'Unmute sound' : 'Mute sound'}" title="${state.muted ? 'Unmute' : 'Mute'}">
               ${state.muted ? '🔇' : '🔊'}
@@ -534,6 +752,179 @@ export function mountApp({ root, store, config, coloringData, coloringController
   root.addEventListener('click', (event) => {
     const btn = event.target.closest('button, .coloring-region');
     if (!btn) return;
+
+    if (btn.dataset.academySubject) {
+      const subject = getSubjectById(lessonsConfig, btn.dataset.academySubject);
+      if (subject) {
+        soundPlayer.playCue('ui-click');
+        academySession = {
+          subjectId: subject.id,
+          stepIndex: 0,
+          feedback: null,
+          completed: false,
+          newlyAwarded: false,
+          spellingTiles: subject.type === 'spelling' && subject.words?.[0] ? shuffleLetters(subject.words[0].word) : [],
+          enteredLetters: [],
+          usedTileIds: [],
+          playedNotes: []
+        };
+        render(store.getState());
+      }
+      return;
+    }
+
+    if (btn.dataset.academyBack) {
+      soundPlayer.playCue('ui-click');
+      academySession.subjectId = null;
+      academySession.feedback = null;
+      render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.academyAnswer !== undefined) {
+      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
+      const questions = subject?.questions || [];
+      const q = questions[academySession.stepIndex];
+      if (!q) return;
+      if (checkQuizAnswer(q, btn.dataset.academyAnswer)) {
+        soundPlayer.playCue('sparkle-magic');
+        if (academySession.stepIndex + 1 < questions.length) {
+          academySession.stepIndex += 1;
+          academySession.feedback = { ok: true, text: 'Sparkling job! ✨' };
+          render(store.getState());
+        } else {
+          academySession.completed = true;
+          academySession.feedback = null;
+          store.update((s) => {
+            const res = awardLessonStars(s.academy, subject.id, lessonsConfig?.starRewardPerLesson || 3);
+            s.academy = { stars: res.stars, completedLessons: res.completedLessons };
+            academySession.newlyAwarded = res.newlyAwarded;
+            return s;
+          });
+          triggerSparkle();
+        }
+      } else {
+        soundPlayer.playCue('ui-click');
+        academySession.feedback = { ok: false, text: 'Almost! Try another answer 💫' };
+        render(store.getState());
+      }
+      return;
+    }
+
+    if (btn.dataset.academyHearWord) {
+      speakWord(btn.dataset.academyHearWord);
+      return;
+    }
+
+    if (btn.dataset.academyClearSpell) {
+      soundPlayer.playCue('ui-click');
+      academySession.enteredLetters = [];
+      academySession.usedTileIds = [];
+      academySession.feedback = null;
+      render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.academyTileId) {
+      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
+      const words = subject?.words || [];
+      const entry = words[academySession.stepIndex];
+      if (!entry) return;
+      soundPlayer.playCue('ui-click');
+      academySession.enteredLetters.push(btn.dataset.academyTileLetter);
+      academySession.usedTileIds.push(btn.dataset.academyTileId);
+
+      if (academySession.enteredLetters.length === entry.word.length) {
+        if (checkSpellingWord(entry.word, academySession.enteredLetters)) {
+          soundPlayer.playCue('sparkle-magic');
+          if (academySession.stepIndex + 1 < words.length) {
+            academySession.stepIndex += 1;
+            academySession.enteredLetters = [];
+            academySession.usedTileIds = [];
+            academySession.spellingTiles = shuffleLetters(words[academySession.stepIndex].word);
+            academySession.feedback = { ok: true, text: `Wonderful! You spelled ${entry.word}! ✨` };
+            render(store.getState());
+          } else {
+            academySession.completed = true;
+            academySession.feedback = null;
+            store.update((s) => {
+              const res = awardLessonStars(s.academy, subject.id, lessonsConfig?.starRewardPerLesson || 3);
+              s.academy = { stars: res.stars, completedLessons: res.completedLessons };
+              academySession.newlyAwarded = res.newlyAwarded;
+              return s;
+            });
+            triggerSparkle();
+          }
+        } else {
+          academySession.feedback = { ok: false, text: 'Not quite! Tap Clear ↺ and try again.' };
+          render(store.getState());
+        }
+      } else {
+        academySession.feedback = null;
+        render(store.getState());
+      }
+      return;
+    }
+
+    if (btn.dataset.academyPlayMelody) {
+      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
+      const mel = subject?.melodies?.[academySession.stepIndex];
+      if (mel && Array.isArray(mel.notes)) {
+        mel.notes.forEach((noteId, idx) => {
+          setTimeout(() => {
+            pianoPlayer.playNote(noteId, 0.35);
+          }, idx * 420);
+        });
+      }
+      return;
+    }
+
+    if (btn.dataset.academyClearMelody) {
+      soundPlayer.playCue('ui-click');
+      academySession.playedNotes = [];
+      academySession.feedback = null;
+      render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.academyNote) {
+      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
+      const melodies = subject?.melodies || [];
+      const mel = melodies[academySession.stepIndex];
+      if (!mel) return;
+      const noteId = btn.dataset.academyNote;
+      pianoPlayer.playNote(noteId, 0.35);
+      academySession.playedNotes.push(noteId);
+
+      if (academySession.playedNotes.length === mel.notes.length) {
+        if (checkMelodyEcho(mel.notes, academySession.playedNotes)) {
+          soundPlayer.playCue('sparkle-magic');
+          if (academySession.stepIndex + 1 < melodies.length) {
+            academySession.stepIndex += 1;
+            academySession.playedNotes = [];
+            academySession.feedback = { ok: true, text: 'Bravo! Beautiful melody! 🎵' };
+            render(store.getState());
+          } else {
+            academySession.completed = true;
+            academySession.feedback = null;
+            store.update((s) => {
+              const res = awardLessonStars(s.academy, subject.id, lessonsConfig?.starRewardPerLesson || 3);
+              s.academy = { stars: res.stars, completedLessons: res.completedLessons };
+              academySession.newlyAwarded = res.newlyAwarded;
+              return s;
+            });
+            triggerSparkle();
+          }
+        } else {
+          academySession.feedback = { ok: false, text: 'Close! Tap Clear Notes ↺ and listen again.' };
+          render(store.getState());
+        }
+      } else {
+        academySession.feedback = null;
+        render(store.getState());
+      }
+      return;
+    }
 
     if (btn.dataset.action === 'use-power') {
       soundPlayer.playCue('power-cast');

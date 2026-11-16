@@ -56,6 +56,10 @@ export const DEFAULT_STATE = {
     princeOutfitColor: 'royal-blue',
     princeSkinToneId: 'peach',
     princeHairColorId: 'chestnut-brown'
+  },
+  academy: {
+    stars: 0,
+    completedLessons: []
   }
 };
 
@@ -222,6 +226,21 @@ export function normalizeState(raw) {
     }
     if (typeof b.dancing === 'boolean') {
       base.ballroom.dancing = b.dancing;
+    }
+  }
+
+  if (raw.academy && typeof raw.academy === 'object') {
+    const a = raw.academy;
+    if (typeof a.stars === 'number' && Number.isFinite(a.stars) && a.stars >= 0) {
+      base.academy.stars = Math.floor(a.stars);
+    }
+    if (Array.isArray(a.completedLessons)) {
+      const seen = new Set();
+      base.academy.completedLessons = a.completedLessons.filter((id) => {
+        if (typeof id !== 'string' || id.trim().length === 0 || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
     }
   }
 
