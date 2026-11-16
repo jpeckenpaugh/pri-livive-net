@@ -456,6 +456,18 @@ export function mountApp({ root, store, config, coloringData, coloringController
       return;
     }
 
+    if (btn.dataset.princessField && btn.dataset.value) {
+      const field = btn.dataset.princessField;
+      const value = btn.dataset.value;
+      soundPlayer.playCue('dress-change');
+      store.update((s) => {
+        s.princess[field] = value;
+        return s;
+      });
+      triggerSparkleBurst();
+      return;
+    }
+
     if (btn.classList.contains('coloring-region')) {
       const regionId = btn.dataset.regionId;
       const state = store.getState();
