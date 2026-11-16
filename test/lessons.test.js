@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
   getSubjectById,
+  getSubjectLessons,
+  getLessonById,
   checkQuizAnswer,
   checkSpellingWord,
   shuffleLetters,
@@ -13,10 +15,16 @@ import {
 
 const lessonsConfig = JSON.parse(fs.readFileSync(new URL('../data/lessons_config.json', import.meta.url), 'utf8'));
 
-test('getSubjectById returns matching subject or null', () => {
+test('getSubjectById and getLessonById return matching entries or null', () => {
   const math = getSubjectById(lessonsConfig, 'math');
   assert.equal(math?.title, 'Royal Treasury');
+  assert.equal(getSubjectLessons(math).length, 2);
   assert.equal(getSubjectById(lessonsConfig, 'nonexistent'), null);
+
+  const math2 = getLessonById(lessonsConfig, 'math-2');
+  assert.equal(math2?.title, 'Crown Sharing & Fractions');
+  assert.equal(math2?.icon, '💎');
+  assert.equal(getLessonById(lessonsConfig, 'nonexistent'), null);
 });
 
 test('checkQuizAnswer validates multiple-choice answers', () => {
@@ -53,9 +61,14 @@ test('awardLessonStars awards stars once per lesson and getAcademyProgress summa
   assert.equal(repeat.stars, 3);
   assert.equal(repeat.newlyCompleted, false);
 
-  const progress = getAcademyProgress(repeat, lessonsConfig);
-  assert.equal(progress.stars, 3);
-  assert.equal(progress.completedCount, 1);
-  assert.equal(progress.totalCount, 5);
+  const second = awardLessonStars(repeat, 'math-2', 3);
+  assert.equal(second.stars, 6);
+  assert.deepEqual(second.completedLessons, ['math', 'math-2']);
+  assert.equal(second.newlyCompleted, true);
+
+  const progress = getAcademyProgress(second, lessonsConfig);
+  assert.equal(progress.stars, 6);
+  assert.equal(progress.completedCount, 2);
+  assert.equal(progress.totalCount, 10);
   assert.equal(progress.percent, 20);
 });

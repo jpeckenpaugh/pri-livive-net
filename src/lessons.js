@@ -3,6 +3,29 @@ export function getSubjectById(lessonsConfig, subjectId) {
   return lessonsConfig.subjects.find((s) => s.id === subjectId) || null;
 }
 
+export function getSubjectLessons(subject) {
+  if (!subject || typeof subject !== 'object') return [];
+  if (Array.isArray(subject.lessons)) return subject.lessons;
+  return [subject];
+}
+
+export function getLessonById(lessonsConfig, lessonId) {
+  if (!lessonsConfig || !Array.isArray(lessonsConfig.subjects) || typeof lessonId !== 'string') return null;
+  for (const subject of lessonsConfig.subjects) {
+    const lessons = getSubjectLessons(subject);
+    const match = lessons.find((l) => l.id === lessonId);
+    if (match) {
+      return {
+        ...match,
+        icon: match.icon || subject.icon,
+        subjectId: subject.id,
+        subjectTitle: subject.title
+      };
+    }
+  }
+  return null;
+}
+
 export function checkQuizAnswer(question, selectedOption) {
   if (!question || typeof question.answer !== 'string') return false;
   return selectedOption === question.answer;
@@ -64,8 +87,9 @@ export function getAcademyProgress(academyState, lessonsConfig) {
   const completed =
     academyState && Array.isArray(academyState.completedLessons) ? academyState.completedLessons : [];
   const subjects = lessonsConfig && Array.isArray(lessonsConfig.subjects) ? lessonsConfig.subjects : [];
-  const totalCount = subjects.length;
-  const completedCount = subjects.filter((s) => completed.includes(s.id)).length;
+  const allLessons = subjects.flatMap((s) => getSubjectLessons(s));
+  const totalCount = allLessons.length;
+  const completedCount = allLessons.filter((l) => completed.includes(l.id)).length;
   const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return {

@@ -105,7 +105,7 @@ test('Make Your Own Gown: princess_config.json has customGownOptions', () => {
   assert.ok(Array.isArray(opts.colors) && opts.colors.length >= 8);
 });
 
-test('Phase 5: lessons_config.json defines 5 valid subjects for Royal Academy', () => {
+test('Phase 5: lessons_config.json defines 5 valid subjects and 10 lessons for Royal Academy', () => {
   const lessons = readJson('data/lessons_config.json');
   assert.equal(typeof lessons.starRewardPerLesson, 'number');
   assert.equal(lessons.subjects.length, 5);
@@ -114,15 +114,30 @@ test('Phase 5: lessons_config.json defines 5 valid subjects for Royal Academy', 
     ['math', 'spelling', 'science', 'music', 'geography']
   );
 
+  const allLessons = lessons.subjects.flatMap((s) => s.lessons || []);
+  assert.equal(allLessons.length, 10);
+  for (const subj of lessons.subjects) {
+    assert.equal(subj.lessons.length, 2);
+    assert.equal(subj.lessons[0].id, subj.id);
+    assert.equal(subj.lessons[1].id, `${subj.id}-2`);
+  }
+
   const spelling = lessons.subjects.find((s) => s.id === 'spelling');
   assert.deepEqual(
-    spelling.words.map((w) => w.word),
+    spelling.lessons[0].words.map((w) => w.word),
     ['CASTLE', 'SPARKLE', 'TIARA', 'DRAGON']
+  );
+  assert.deepEqual(
+    spelling.lessons[1].words.map((w) => w.word),
+    ['UNICORN', 'MERMAID', 'PHOENIX', 'PEGASUS']
   );
 
   const music = lessons.subjects.find((s) => s.id === 'music');
-  for (const mel of music.melodies) {
+  for (const mel of music.lessons[0].melodies) {
     assert.equal(mel.notes.length, 3);
+  }
+  for (const mel of music.lessons[1].melodies) {
+    assert.equal(mel.notes.length, 4);
   }
 });
 

@@ -5,7 +5,8 @@ import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from '.
 import { generateRoyalName } from './names.js';
 import { announcePrincess } from './speech.js';
 import {
-  getSubjectById,
+  getSubjectLessons,
+  getLessonById,
   checkQuizAnswer,
   checkSpellingWord,
   shuffleLetters,
@@ -92,7 +93,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
   }
   let academySession = {
-    subjectId: null,
+    lessonId: null,
     stepIndex: 0,
     feedback: null,
     completed: false,
@@ -183,7 +184,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const academy = state.academy || { stars: 0, completedLessons: [] };
     const progress = getAcademyProgress(academy, lessonsConfig);
 
-    if (!academySession.subjectId) {
+    if (!academySession.lessonId) {
       return `
         <div class="academy-header-card">
           <div>
@@ -195,16 +196,33 @@ export function mountApp({ root, store, config, coloringData, coloringController
         <div class="academy-subject-grid">
           ${lessonsConfig.subjects
             .map((subj) => {
-              const isDone = academy.completedLessons.includes(subj.id);
+              const lessons = getSubjectLessons(subj);
               return `
-                <button type="button" class="academy-subject-card ${isDone ? 'is-completed' : ''}" data-academy-subject="${subj.id}">
-                  <span class="academy-subject-icon">${subj.icon}</span>
-                  <span class="academy-subject-info">
-                    <strong>${escapeHtml(subj.title)}</strong>
-                    <span>${escapeHtml(subj.subtitle)}</span>
-                  </span>
-                  <span class="academy-subject-status">${isDone ? '✅' : '▶'}</span>
-                </button>
+                <div class="academy-subject-group">
+                  <div class="academy-subject-header">
+                    <span class="academy-subject-icon">${subj.icon}</span>
+                    <span class="academy-subject-info">
+                      <strong>${escapeHtml(subj.title)}</strong>
+                      <span>${escapeHtml(subj.subtitle)}</span>
+                    </span>
+                  </div>
+                  <div class="academy-lesson-list">
+                    ${lessons
+                      .map((lesson, idx) => {
+                        const isDone = academy.completedLessons.includes(lesson.id);
+                        return `
+                          <button type="button" class="academy-subject-card ${isDone ? 'is-completed' : ''}" data-academy-lesson="${lesson.id}">
+                            <span class="academy-subject-info">
+                              <strong>Lesson ${idx + 1}: ${escapeHtml(lesson.title)}</strong>
+                              <span>${escapeHtml(lesson.subtitle)}</span>
+                            </span>
+                            <span class="academy-subject-status">${isDone ? '⭐' : '▶'}</span>
+                          </button>
+                        `;
+                      })
+                      .join('')}
+                  </div>
+                </div>
               `;
             })
             .join('')}
@@ -212,9 +230,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
       `;
     }
 
-    const subject = getSubjectById(lessonsConfig, academySession.subjectId);
-    if (!subject) {
-      academySession.subjectId = null;
+    const lesson = getLessonById(lessonsConfig, academySession.lessonId);
+    if (!lesson) {
+      academySession.lessonId = null;
       return renderAcademyTab(state);
     }
 
@@ -222,7 +240,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       return `
         <div class="academy-complete-card">
           <div class="academy-complete-burst">🌟</div>
-          <h3>${escapeHtml(subject.title)} Complete!</h3>
+          <h3>${escapeHtml(lesson.title)} Complete!</h3>
           <p>${academySession.newlyAwarded ? `You earned +${lessonsConfig.starRewardPerLesson || 3} Royal Stars! ⭐` : 'Great practice! You already earned stars for this lesson.'}</p>
           <button type="button" class="action-btn primary" data-academy-back="true">Back to Academy 🏫</button>
         </div>
@@ -230,12 +248,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     let bodyHtml = '';
-    if (subject.type === 'quiz' || subject.type === 'compass') {
-      const questions = subject.questions || [];
+    if (lesson.type === 'quiz' || lesson.type === 'compass') {
+      const questions = lesson.questions || [];
       const q = questions[academySession.stepIndex];
       bodyHtml = `
         <div class="academy-progress-label">Question ${academySession.stepIndex + 1} of ${questions.length}</div>
-        ${subject.type === 'compass' ? renderKingdomMapSvg() : ''}
+        ${lesson.type === 'compass' ? renderKingdomMapSvg() : ''}
         <p class="academy-prompt">${escapeHtml(q.prompt)}</p>
         <div class="academy-options-grid">
           ${q.options
@@ -246,8 +264,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
             .join('')}
         </div>
       `;
-    } else if (subject.type === 'spelling') {
-      const words = subject.words || [];
+    } else if (lesson.type === 'spelling') {
+      const words = lesson.words || [];
       const entry = words[academySession.stepIndex];
       const slots = entry.word.split('').map((_, idx) => academySession.enteredLetters[idx] || '_');
       bodyHtml = `
@@ -269,13 +287,13 @@ export function mountApp({ root, store, config, coloringData, coloringController
             .join('')}
         </div>
       `;
-    } else if (subject.type === 'melody') {
-      const melodies = subject.melodies || [];
+    } else if (lesson.type === 'melody') {
+      const melodies = lesson.melodies || [];
       const mel = melodies[academySession.stepIndex];
       const whiteKeys = PIANO_KEYS.filter((k) => !k.isBlack);
       bodyHtml = `
         <div class="academy-progress-label">Melody ${academySession.stepIndex + 1} of ${melodies.length}: ${escapeHtml(mel.title)}</div>
-        <p class="academy-prompt">Listen to the 3-note melody, then echo it on the keys below!</p>
+        <p class="academy-prompt">Listen to the ${mel.notes.length}-note melody, then echo it on the keys below!</p>
         <div class="academy-spell-controls">
           <button type="button" class="action-btn primary" data-academy-play-melody="true">Listen to Melody 🎵</button>
           <button type="button" class="action-btn secondary" data-academy-clear-melody="true">Clear Notes ↺</button>
@@ -307,7 +325,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       <div class="academy-lesson-view">
         <div class="academy-lesson-topbar">
           <button type="button" class="action-btn secondary" data-academy-back="true">← Back</button>
-          <strong>${subject.icon} ${escapeHtml(subject.title)}</strong>
+          <strong>${lesson.icon} ${escapeHtml(lesson.title)}</strong>
         </div>
         ${bodyHtml}
         ${feedbackHtml}
@@ -822,17 +840,17 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const btn = event.target.closest('button, .coloring-region');
     if (!btn) return;
 
-    if (btn.dataset.academySubject) {
-      const subject = getSubjectById(lessonsConfig, btn.dataset.academySubject);
-      if (subject) {
+    if (btn.dataset.academyLesson) {
+      const lesson = getLessonById(lessonsConfig, btn.dataset.academyLesson);
+      if (lesson) {
         soundPlayer.playCue('ui-click');
         academySession = {
-          subjectId: subject.id,
+          lessonId: lesson.id,
           stepIndex: 0,
           feedback: null,
           completed: false,
           newlyAwarded: false,
-          spellingTiles: subject.type === 'spelling' && subject.words?.[0] ? shuffleLetters(subject.words[0].word) : [],
+          spellingTiles: lesson.type === 'spelling' && lesson.words?.[0] ? shuffleLetters(lesson.words[0].word) : [],
           enteredLetters: [],
           usedTileIds: [],
           playedNotes: []
@@ -844,15 +862,15 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
     if (btn.dataset.academyBack) {
       soundPlayer.playCue('ui-click');
-      academySession.subjectId = null;
+      academySession.lessonId = null;
       academySession.feedback = null;
       render(store.getState());
       return;
     }
 
     if (btn.dataset.academyAnswer !== undefined) {
-      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
-      const questions = subject?.questions || [];
+      const lesson = getLessonById(lessonsConfig, academySession.lessonId);
+      const questions = lesson?.questions || [];
       const q = questions[academySession.stepIndex];
       if (!q) return;
       if (checkQuizAnswer(q, btn.dataset.academyAnswer)) {
@@ -865,7 +883,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
           academySession.completed = true;
           academySession.feedback = null;
           store.update((s) => {
-            const res = awardLessonStars(s.academy, subject.id, lessonsConfig?.starRewardPerLesson || 3);
+            const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
             s.academy = { stars: res.stars, completedLessons: res.completedLessons };
             academySession.newlyAwarded = res.newlyAwarded;
             return s;
@@ -895,8 +913,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyTileId) {
-      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
-      const words = subject?.words || [];
+      const lesson = getLessonById(lessonsConfig, academySession.lessonId);
+      const words = lesson?.words || [];
       const entry = words[academySession.stepIndex];
       if (!entry) return;
       soundPlayer.playCue('ui-click');
@@ -917,7 +935,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
             academySession.completed = true;
             academySession.feedback = null;
             store.update((s) => {
-              const res = awardLessonStars(s.academy, subject.id, lessonsConfig?.starRewardPerLesson || 3);
+              const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
               s.academy = { stars: res.stars, completedLessons: res.completedLessons };
               academySession.newlyAwarded = res.newlyAwarded;
               return s;
@@ -936,8 +954,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyPlayMelody) {
-      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
-      const mel = subject?.melodies?.[academySession.stepIndex];
+      const lesson = getLessonById(lessonsConfig, academySession.lessonId);
+      const mel = lesson?.melodies?.[academySession.stepIndex];
       if (mel && Array.isArray(mel.notes)) {
         mel.notes.forEach((noteId, idx) => {
           setTimeout(() => {
@@ -957,8 +975,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.academyNote) {
-      const subject = getSubjectById(lessonsConfig, academySession.subjectId);
-      const melodies = subject?.melodies || [];
+      const lesson = getLessonById(lessonsConfig, academySession.lessonId);
+      const melodies = lesson?.melodies || [];
       const mel = melodies[academySession.stepIndex];
       if (!mel) return;
       const noteId = btn.dataset.academyNote;
@@ -977,7 +995,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
             academySession.completed = true;
             academySession.feedback = null;
             store.update((s) => {
-              const res = awardLessonStars(s.academy, subject.id, lessonsConfig?.starRewardPerLesson || 3);
+              const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
               s.academy = { stars: res.stars, completedLessons: res.completedLessons };
               academySession.newlyAwarded = res.newlyAwarded;
               return s;
