@@ -111,7 +111,130 @@ function renderFaceGemsLayer(shape) {
   return `<g id="layer-face-gems"></g>`;
 }
 
-export function renderPaperDollSvg(princess, config) {
+export function renderPetSvg(petId, petName = '', x = 262, y = 348) {
+  if (!petId || petId === 'none') return '';
+  const safeName = String(petName || '').trim().slice(0, 20);
+  let body = '';
+  if (petId === 'puppy') {
+    body = `
+      <ellipse cx="0" cy="14" rx="16" ry="12" fill="#E6B88A" stroke="#8D5B4C" stroke-width="1.4"/>
+      <circle cx="0" cy="-2" r="13" fill="#F2CC8F" stroke="#8D5B4C" stroke-width="1.4"/>
+      <ellipse cx="-11" cy="-2" rx="4.5" ry="9" fill="#B57B50" transform="rotate(14 -11 -2)"/>
+      <ellipse cx="11" cy="-2" rx="4.5" ry="9" fill="#B57B50" transform="rotate(-14 11 -2)"/>
+      <circle cx="-4.5" cy="-4" r="2.2" fill="#2B2D42"/>
+      <circle cx="4.5" cy="-4" r="2.2" fill="#2B2D42"/>
+      <ellipse cx="0" cy="1" rx="3" ry="2.2" fill="#2B2D42"/>
+      <path d="M -5 -15 L 0 -22 L 5 -15 Z" fill="#FFD166" stroke="#8D5B4C" stroke-width="1"/>
+    `;
+  } else if (petId === 'kitten') {
+    body = `
+      <ellipse cx="0" cy="14" rx="14" ry="11" fill="#F5D0C5" stroke="#8D5B4C" stroke-width="1.4"/>
+      <path d="M 12 16 Q 24 6 20 -4" fill="none" stroke="#F5D0C5" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="0" cy="-2" r="12" fill="#FFE5D9" stroke="#8D5B4C" stroke-width="1.4"/>
+      <path d="M -10 -10 L -13 -21 L -3 -13 Z" fill="#F5D0C5" stroke="#8D5B4C" stroke-width="1.2"/>
+      <path d="M 10 -10 L 13 -21 L 3 -13 Z" fill="#F5D0C5" stroke="#8D5B4C" stroke-width="1.2"/>
+      <circle cx="-4" cy="-3" r="2" fill="#2B2D42"/>
+      <circle cx="4" cy="-3" r="2" fill="#2B2D42"/>
+      <circle cx="0" cy="1" r="1.8" fill="#FF70A6"/>
+    `;
+  } else if (petId === 'dragon') {
+    body = `
+      <path d="M -10 2 L -22 -12 L -8 -6 Z" fill="#C77DFF" opacity="0.85"/>
+      <path d="M 10 2 L 22 -12 L 8 -6 Z" fill="#C77DFF" opacity="0.85"/>
+      <ellipse cx="0" cy="14" rx="15" ry="12" fill="#7AE582" stroke="#2D6A4F" stroke-width="1.4"/>
+      <circle cx="0" cy="-2" r="12.5" fill="#9EF01A" stroke="#2D6A4F" stroke-width="1.4"/>
+      <path d="M -6 -13 L -9 -22 L -2 -14 Z" fill="#FFD166"/>
+      <path d="M 6 -13 L 9 -22 L 2 -14 Z" fill="#FFD166"/>
+      <circle cx="-4" cy="-3" r="2.2" fill="#2B2D42"/>
+      <circle cx="4" cy="-3" r="2.2" fill="#2B2D42"/>
+    `;
+  } else if (petId === 'seahorse') {
+    body = `
+      <path d="M 0 -16 C 12 -16, 14 -2, 6 6 C 0 12, 12 20, 4 26 C -4 30, -10 22, -4 18" fill="none" stroke="#48CAE4" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="1" cy="-10" r="8.5" fill="#90E0EF" stroke="#0077B6" stroke-width="1.3"/>
+      <path d="M 8 -10 L 16 -8 L 8 -6 Z" fill="#90E0EF" stroke="#0077B6" stroke-width="1"/>
+      <circle cx="3" cy="-12" r="1.8" fill="#2B2D42"/>
+      <path d="M -8 -2 L -16 -6 L -12 4 Z" fill="#CAF0F8" opacity="0.85"/>
+    `;
+  } else {
+    // unicorn
+    body = `
+      <ellipse cx="0" cy="14" rx="16" ry="11" fill="#FFF0F3" stroke="#A06CD5" stroke-width="1.4"/>
+      <circle cx="0" cy="-2" r="12" fill="#FFFFFF" stroke="#A06CD5" stroke-width="1.4"/>
+      <path d="M -2 -13 L 0 -26 L 3 -13 Z" fill="#FFD166" stroke="#C77DFF" stroke-width="1"/>
+      <path d="M -10 -8 Q -15 0 -11 6" fill="none" stroke="#FF70A6" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="-4" cy="-3" r="2" fill="#2B2D42"/>
+      <circle cx="4" cy="-3" r="2" fill="#2B2D42"/>
+      <circle cx="0" cy="1" r="1.8" fill="#FF8FA3"/>
+    `;
+  }
+
+  const label = safeName
+    ? `<g transform="translate(0, 36)">
+        <rect x="-34" y="-9" width="68" height="16" rx="8" fill="rgba(255,255,255,0.92)" stroke="rgba(160,108,213,0.45)" stroke-width="1"/>
+        <text x="0" y="2.5" text-anchor="middle" font-size="8.5" font-weight="700" fill="#4A2545">${safeName.replace(/[<>&"]/g, '')}</text>
+      </g>`
+    : '';
+
+  return `<g id="layer-pet" class="pet-companion" transform="translate(${x}, ${y})">${body}${label}</g>`;
+}
+
+function renderCharacterTypeBackLayer(characterTypeId) {
+  if (characterTypeId === 'angel') {
+    return `<g id="layer-character-back" class="character-angel-wings">
+      <path d="M 142 194 C 90 150, 56 172, 66 226 C 74 260, 112 256, 144 228 Z" fill="rgba(255,255,255,0.92)" stroke="#FFD166" stroke-width="1.8"/>
+      <path d="M 178 194 C 230 150, 264 172, 254 226 C 246 260, 208 256, 176 228 Z" fill="rgba(255,255,255,0.92)" stroke="#FFD166" stroke-width="1.8"/>
+    </g>`;
+  }
+  if (characterTypeId === 'demon') {
+    return `<g id="layer-character-back" class="character-demon-wings">
+      <path d="M 144 196 L 74 162 L 88 212 L 106 198 L 116 224 L 146 220 Z" fill="#5A189A" stroke="#240046" stroke-width="1.6"/>
+      <path d="M 176 196 L 246 162 L 232 212 L 214 198 L 204 224 L 174 220 Z" fill="#5A189A" stroke="#240046" stroke-width="1.6"/>
+    </g>`;
+  }
+  if (characterTypeId === 'fairy') {
+    return `<g id="layer-character-back" class="character-fairy-wings">
+      <path d="M 144 198 C 86 146, 54 178, 72 224 C 84 252, 122 246, 146 222 Z" fill="rgba(199,125,255,0.34)" stroke="#C77DFF" stroke-width="1.6"/>
+      <path d="M 176 198 C 234 146, 266 178, 248 224 C 236 252, 198 246, 174 222 Z" fill="rgba(199,125,255,0.34)" stroke="#C77DFF" stroke-width="1.6"/>
+      <circle cx="84" cy="186" r="3" fill="#FFD166"/>
+      <circle cx="236" cy="186" r="3" fill="#FFD166"/>
+    </g>`;
+  }
+  return '';
+}
+
+function renderCharacterTypeFrontLayer(characterTypeId) {
+  if (characterTypeId === 'angel') {
+    return `<g id="layer-character-front" class="character-angel-halo">
+      <ellipse cx="160" cy="56" rx="28" ry="7.5" fill="none" stroke="#FFD166" stroke-width="4"/>
+      <ellipse cx="160" cy="56" rx="28" ry="7.5" fill="none" stroke="#FFF3B0" stroke-width="1.5"/>
+    </g>`;
+  }
+  if (characterTypeId === 'demon') {
+    return `<g id="layer-character-front" class="character-demon-horns">
+      <path d="M 134 90 Q 118 64 130 52 Q 138 68 144 86 Z" fill="#9D4EDD" stroke="#3C096C" stroke-width="1.4"/>
+      <path d="M 186 90 Q 202 64 190 52 Q 182 68 176 86 Z" fill="#9D4EDD" stroke="#3C096C" stroke-width="1.4"/>
+    </g>`;
+  }
+  return '';
+}
+
+function renderPowerBurstSvg(powerId, config) {
+  const power = findById(config?.powers, powerId) || { color: '#F7D060', accent: '#C77DFF' };
+  const c1 = power.color || '#F7D060';
+  const c2 = power.accent || '#C77DFF';
+  return `<g id="layer-power-burst" class="power-burst-active">
+    <circle cx="80" cy="110" r="7" fill="${c1}" opacity="0.9"/>
+    <circle cx="242" cy="108" r="8" fill="${c2}" opacity="0.9"/>
+    <circle cx="64" cy="210" r="6" fill="${c2}" opacity="0.85"/>
+    <circle cx="256" cy="220" r="7" fill="${c1}" opacity="0.85"/>
+    <circle cx="110" cy="64" r="5" fill="${c1}" opacity="0.9"/>
+    <circle cx="212" cy="68" r="5" fill="${c2}" opacity="0.9"/>
+    <polygon points="160,34 164,44 174,44 166,50 169,60 160,54 151,60 154,50 146,44 156,44" fill="${c1}"/>
+  </g>`;
+}
+
+export function renderPaperDollSvg(princess, config, options = {}) {
   const palettes = config?.palettes || {};
   const items = config?.items || {};
 
@@ -167,6 +290,7 @@ export function renderPaperDollSvg(princess, config) {
     </g>
     <!-- 2. Wings -->
     ${renderWingsLayer(princess?.wings)}
+    ${renderCharacterTypeBackLayer(princess?.characterTypeId)}
     <!-- 3. Back Hair -->
     <g id="layer-hair-back">
       <path d="${hairstyle.backPath}" fill="var(--hair-color)" stroke="rgba(43,45,66,0.22)" stroke-width="1.5"/>
@@ -181,7 +305,10 @@ export function renderPaperDollSvg(princess, config) {
     </g>
     <!-- 5. Gown Skirt & Bodice -->
     <g id="layer-gown">
-      <path d="${gown.skirtPath}" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>
+      ${princess?.characterTypeId === 'mermaid'
+        ? `<path id="layer-mermaid-tail" d="M 134 238 C 126 286, 134 342, 154 378 L 130 402 Q 160 392 160 384 Q 160 392 190 402 L 166 378 C 186 342, 194 286, 186 238 Z" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.22)" stroke-width="1.6"/>
+           <path d="M 142 276 Q 160 286 178 276 M 144 308 Q 160 318 176 308 M 148 340 Q 160 350 172 340" fill="none" stroke="var(--gown-accent)" stroke-width="2" opacity="0.75"/>`
+        : `<path d="${gown.skirtPath}" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>`}
       <path d="${gown.bodicePath}" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>
       <path d="${gown.sleevePath}" fill="var(--gown-accent)" stroke="rgba(43,45,66,0.14)" stroke-width="1.2"/>
     </g>
@@ -236,7 +363,12 @@ export function renderPaperDollSvg(princess, config) {
     </g>
     <!-- 16. Tiara -->
     ${renderTiaraLayer(princess?.tiara)}
+    ${renderCharacterTypeFrontLayer(princess?.characterTypeId)}
     <!-- 17. Handheld Accessory -->
     ${renderHandheldLayer(princess?.handheld)}
+    <!-- 18. Companion Pet -->
+    ${options?.includePet !== false ? renderPetSvg(princess?.petId, princess?.petName) : ''}
+    <!-- 19. Power Burst -->
+    ${options?.powerBurst ? renderPowerBurstSvg(princess?.powerId, config) : ''}
   </svg>`;
 }

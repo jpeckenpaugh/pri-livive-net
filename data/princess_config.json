@@ -1,71 +1,271 @@
 {
   "palettes": {
     "skinTones": [
-      { "id": "porcelain", "label": "Porcelain", "hex": "#FFE5D9" },
-      { "id": "peach", "label": "Warm Peach", "hex": "#FCD5CE" },
-      { "id": "honey", "label": "Golden Honey", "hex": "#F4C29F" },
-      { "id": "caramel", "label": "Caramel", "hex": "#D89B72" },
-      { "id": "chestnut", "label": "Chestnut", "hex": "#A96E4B" },
-      { "id": "espresso", "label": "Deep Espresso", "hex": "#6F432A" }
+      {
+        "id": "porcelain",
+        "label": "Porcelain",
+        "hex": "#FFE5D9"
+      },
+      {
+        "id": "peach",
+        "label": "Warm Peach",
+        "hex": "#FCD5CE"
+      },
+      {
+        "id": "honey",
+        "label": "Golden Honey",
+        "hex": "#F4C29F"
+      },
+      {
+        "id": "caramel",
+        "label": "Caramel",
+        "hex": "#D89B72"
+      },
+      {
+        "id": "chestnut",
+        "label": "Chestnut",
+        "hex": "#A96E4B"
+      },
+      {
+        "id": "espresso",
+        "label": "Deep Espresso",
+        "hex": "#6F432A"
+      }
     ],
     "hairColors": [
-      { "id": "butter-blonde", "label": "Butter Blonde", "hex": "#F7D47C" },
-      { "id": "strawberry", "label": "Strawberry", "hex": "#E07A5F" },
-      { "id": "chestnut-brown", "label": "Chestnut", "hex": "#6D4C3D" },
-      { "id": "midnight", "label": "Midnight", "hex": "#2B2D42" },
-      { "id": "lavender-magic", "label": "Lavender Magic", "hex": "#B892FF" },
-      { "id": "rose-pink", "label": "Rose Pink", "hex": "#FF8FAB" },
-      { "id": "aqua-mermaid", "label": "Aqua Mermaid", "hex": "#64DFDF" },
-      { "id": "silver-star", "label": "Silver Star", "hex": "#E2E8F0" }
+      {
+        "id": "butter-blonde",
+        "label": "Butter Blonde",
+        "hex": "#F7D47C"
+      },
+      {
+        "id": "strawberry",
+        "label": "Strawberry",
+        "hex": "#E07A5F"
+      },
+      {
+        "id": "chestnut-brown",
+        "label": "Chestnut",
+        "hex": "#6D4C3D"
+      },
+      {
+        "id": "midnight",
+        "label": "Midnight",
+        "hex": "#2B2D42"
+      },
+      {
+        "id": "lavender-magic",
+        "label": "Lavender Magic",
+        "hex": "#B892FF"
+      },
+      {
+        "id": "rose-pink",
+        "label": "Rose Pink",
+        "hex": "#FF8FAB"
+      },
+      {
+        "id": "aqua-mermaid",
+        "label": "Aqua Mermaid",
+        "hex": "#64DFDF"
+      },
+      {
+        "id": "silver-star",
+        "label": "Silver Star",
+        "hex": "#E2E8F0"
+      }
     ],
     "gownColors": [
-      { "id": "royal-pink", "label": "Royal Pink", "primary": "#FF70A6", "accent": "#FFE5EC" },
-      { "id": "lavender-dream", "label": "Lavender Dream", "primary": "#A06CD5", "accent": "#F3E8FF" },
-      { "id": "sky-princess", "label": "Sky Princess", "primary": "#56CFE1", "accent": "#E0FBFC" },
-      { "id": "mint-fairy", "label": "Mint Fairy", "primary": "#52B788", "accent": "#D8F3DC" },
-      { "id": "sunshine-gold", "label": "Sunshine Gold", "primary": "#FFB703", "accent": "#FFF3B0" },
-      { "id": "ruby-velvet", "label": "Ruby Velvet", "primary": "#E63946", "accent": "#FFD6E0" },
-      { "id": "midnight-star", "label": "Midnight Star", "primary": "#3A0CA3", "accent": "#C77DFF" },
-      { "id": "snow-pearl", "label": "Snow Pearl", "primary": "#F8FAFC", "accent": "#BAE6FD" }
+      {
+        "id": "royal-pink",
+        "label": "Royal Pink",
+        "primary": "#FF70A6",
+        "accent": "#FFE5EC"
+      },
+      {
+        "id": "lavender-dream",
+        "label": "Lavender Dream",
+        "primary": "#A06CD5",
+        "accent": "#F3E8FF"
+      },
+      {
+        "id": "sky-princess",
+        "label": "Sky Princess",
+        "primary": "#56CFE1",
+        "accent": "#E0FBFC"
+      },
+      {
+        "id": "mint-fairy",
+        "label": "Mint Fairy",
+        "primary": "#52B788",
+        "accent": "#D8F3DC"
+      },
+      {
+        "id": "sunshine-gold",
+        "label": "Sunshine Gold",
+        "primary": "#FFB703",
+        "accent": "#FFF3B0"
+      },
+      {
+        "id": "ruby-velvet",
+        "label": "Ruby Velvet",
+        "primary": "#E63946",
+        "accent": "#FFD6E0"
+      },
+      {
+        "id": "midnight-star",
+        "label": "Midnight Star",
+        "primary": "#3A0CA3",
+        "accent": "#C77DFF"
+      },
+      {
+        "id": "snow-pearl",
+        "label": "Snow Pearl",
+        "primary": "#F8FAFC",
+        "accent": "#BAE6FD"
+      }
     ],
     "tiaraMetals": [
-      { "id": "gold", "label": "Royal Gold", "hex": "#FFD166" },
-      { "id": "silver", "label": "Moon Silver", "hex": "#E2E8F0" },
-      { "id": "rose-gold", "label": "Rose Gold", "hex": "#F4A29E" }
+      {
+        "id": "gold",
+        "label": "Royal Gold",
+        "hex": "#FFD166"
+      },
+      {
+        "id": "silver",
+        "label": "Moon Silver",
+        "hex": "#E2E8F0"
+      },
+      {
+        "id": "rose-gold",
+        "label": "Rose Gold",
+        "hex": "#F4A29E"
+      }
     ],
     "tiaraGems": [
-      { "id": "ruby", "label": "Ruby", "hex": "#FF4D6D" },
-      { "id": "sapphire", "label": "Sapphire", "hex": "#3A86FF" },
-      { "id": "emerald", "label": "Emerald", "hex": "#2EC4B6" },
-      { "id": "amethyst", "label": "Amethyst", "hex": "#9D4EDD" },
-      { "id": "diamond", "label": "Diamond", "hex": "#CAF0F8" }
+      {
+        "id": "ruby",
+        "label": "Ruby",
+        "hex": "#FF4D6D"
+      },
+      {
+        "id": "sapphire",
+        "label": "Sapphire",
+        "hex": "#3A86FF"
+      },
+      {
+        "id": "emerald",
+        "label": "Emerald",
+        "hex": "#2EC4B6"
+      },
+      {
+        "id": "amethyst",
+        "label": "Amethyst",
+        "hex": "#9D4EDD"
+      },
+      {
+        "id": "diamond",
+        "label": "Diamond",
+        "hex": "#CAF0F8"
+      }
     ],
     "makeup": {
       "lipstick": [
-        { "id": "none", "label": "Natural", "hex": "transparent" },
-        { "id": "berry", "label": "Berry", "hex": "#E63946" },
-        { "id": "rose", "label": "Rose", "hex": "#FF70A6" },
-        { "id": "peach", "label": "Peach", "hex": "#FF9770" },
-        { "id": "plum", "label": "Plum", "hex": "#9D4EDD" }
+        {
+          "id": "none",
+          "label": "Natural",
+          "hex": "transparent"
+        },
+        {
+          "id": "berry",
+          "label": "Berry",
+          "hex": "#E63946"
+        },
+        {
+          "id": "rose",
+          "label": "Rose",
+          "hex": "#FF70A6"
+        },
+        {
+          "id": "peach",
+          "label": "Peach",
+          "hex": "#FF9770"
+        },
+        {
+          "id": "plum",
+          "label": "Plum",
+          "hex": "#9D4EDD"
+        }
       ],
       "blush": [
-        { "id": "none", "label": "Natural", "hex": "transparent" },
-        { "id": "soft-pink", "label": "Soft Pink", "hex": "#FF8FAB" },
-        { "id": "coral", "label": "Coral", "hex": "#FF9E80" },
-        { "id": "berry-glow", "label": "Berry Glow", "hex": "#E56B6F" }
+        {
+          "id": "none",
+          "label": "Natural",
+          "hex": "transparent"
+        },
+        {
+          "id": "soft-pink",
+          "label": "Soft Pink",
+          "hex": "#FF8FAB"
+        },
+        {
+          "id": "coral",
+          "label": "Coral",
+          "hex": "#FF9E80"
+        },
+        {
+          "id": "berry-glow",
+          "label": "Berry Glow",
+          "hex": "#E56B6F"
+        }
       ],
       "eyeshadow": [
-        { "id": "none", "label": "Natural", "hex": "transparent" },
-        { "id": "lavender", "label": "Lavender", "hex": "#C77DFF" },
-        { "id": "sky", "label": "Sky", "hex": "#72EFDD" },
-        { "id": "gold", "label": "Gold", "hex": "#FFD166" },
-        { "id": "rose", "label": "Rose", "hex": "#FF8FAB" }
+        {
+          "id": "none",
+          "label": "Natural",
+          "hex": "transparent"
+        },
+        {
+          "id": "lavender",
+          "label": "Lavender",
+          "hex": "#C77DFF"
+        },
+        {
+          "id": "sky",
+          "label": "Sky",
+          "hex": "#72EFDD"
+        },
+        {
+          "id": "gold",
+          "label": "Gold",
+          "hex": "#FFD166"
+        },
+        {
+          "id": "rose",
+          "label": "Rose",
+          "hex": "#FF8FAB"
+        }
       ],
       "faceGems": [
-        { "id": "none", "label": "None", "shape": "none" },
-        { "id": "stars", "label": "Starlight", "shape": "stars" },
-        { "id": "hearts", "label": "Sweet Hearts", "shape": "hearts" },
-        { "id": "diamonds", "label": "Crystal Drops", "shape": "diamonds" }
+        {
+          "id": "none",
+          "label": "None",
+          "shape": "none"
+        },
+        {
+          "id": "stars",
+          "label": "Starlight",
+          "shape": "stars"
+        },
+        {
+          "id": "hearts",
+          "label": "Sweet Hearts",
+          "shape": "hearts"
+        },
+        {
+          "id": "diamonds",
+          "label": "Crystal Drops",
+          "shape": "diamonds"
+        }
       ]
     }
   },
@@ -137,32 +337,79 @@
       }
     ],
     "tiaras": [
-      { "id": "none", "label": "No Tiara" },
-      { "id": "royal-crown", "label": "Royal Crown" },
-      { "id": "star-diadem", "label": "Star Diadem" },
-      { "id": "floral-circlet", "label": "Floral Circlet" }
+      {
+        "id": "none",
+        "label": "No Tiara"
+      },
+      {
+        "id": "royal-crown",
+        "label": "Royal Crown"
+      },
+      {
+        "id": "star-diadem",
+        "label": "Star Diadem"
+      },
+      {
+        "id": "floral-circlet",
+        "label": "Floral Circlet"
+      }
     ],
     "accessories": {
       "handheld": [
-        { "id": "none", "label": "None" },
-        { "id": "star-wand", "label": "Star Wand" },
-        { "id": "royal-scepter", "label": "Royal Scepter" },
-        { "id": "flower-bouquet", "label": "Rose Bouquet" }
+        {
+          "id": "none",
+          "label": "None"
+        },
+        {
+          "id": "star-wand",
+          "label": "Star Wand"
+        },
+        {
+          "id": "royal-scepter",
+          "label": "Royal Scepter"
+        },
+        {
+          "id": "flower-bouquet",
+          "label": "Rose Bouquet"
+        }
       ],
       "necklaces": [
-        { "id": "none", "label": "None" },
-        { "id": "pearl-strand", "label": "Pearl Strand" },
-        { "id": "heart-pendant", "label": "Heart Pendant" }
+        {
+          "id": "none",
+          "label": "None"
+        },
+        {
+          "id": "pearl-strand",
+          "label": "Pearl Strand"
+        },
+        {
+          "id": "heart-pendant",
+          "label": "Heart Pendant"
+        }
       ],
       "wings": [
-        { "id": "none", "label": "No Wings" },
-        { "id": "fairy-wings", "label": "Fairy Wings" },
-        { "id": "butterfly-wings", "label": "Butterfly Wings" }
+        {
+          "id": "none",
+          "label": "No Wings"
+        },
+        {
+          "id": "fairy-wings",
+          "label": "Fairy Wings"
+        },
+        {
+          "id": "butterfly-wings",
+          "label": "Butterfly Wings"
+        }
       ]
     }
   },
   "royalNames": {
-    "prefixes": ["Princess", "Queen", "Duchess", "Lady"],
+    "prefixes": [
+      "Princess",
+      "Queen",
+      "Duchess",
+      "Lady"
+    ],
     "firstNames": [
       "Luna",
       "Aurora",
@@ -187,5 +434,106 @@
       "Sunpetal Court",
       "Dreamcloud Tower"
     ]
-  }
+  },
+  "characterTypes": [
+    {
+      "id": "princess",
+      "name": "Princess",
+      "icon": "👑"
+    },
+    {
+      "id": "mermaid",
+      "name": "Mermaid",
+      "icon": "🧜‍♀️"
+    },
+    {
+      "id": "fairy",
+      "name": "Fairy",
+      "icon": "🧚‍♀️"
+    },
+    {
+      "id": "angel",
+      "name": "Angel",
+      "icon": "👼"
+    },
+    {
+      "id": "demon",
+      "name": "Demon",
+      "icon": "😈"
+    }
+  ],
+  "powers": [
+    {
+      "id": "starlight",
+      "name": "Starlight Sparkles",
+      "icon": "✨",
+      "color": "#F7D060",
+      "accent": "#C77DFF"
+    },
+    {
+      "id": "bubbles",
+      "name": "Ocean Bubbles",
+      "icon": "🫧",
+      "color": "#72EFDD",
+      "accent": "#48BFE3"
+    },
+    {
+      "id": "fairy-dust",
+      "name": "Fairy Dust",
+      "icon": "🌸",
+      "color": "#FF70A6",
+      "accent": "#FFD6E0"
+    },
+    {
+      "id": "sunbeam",
+      "name": "Sunbeam Halo",
+      "icon": "☀️",
+      "color": "#FFD166",
+      "accent": "#FFF3B0"
+    },
+    {
+      "id": "hearts",
+      "name": "Playful Hearts",
+      "icon": "💖",
+      "color": "#FF4D6D",
+      "accent": "#FF8FA3"
+    }
+  ],
+  "pets": [
+    {
+      "id": "none",
+      "name": "No Pet",
+      "icon": "🚫"
+    },
+    {
+      "id": "puppy",
+      "name": "Royal Puppy",
+      "icon": "🐶",
+      "color": "#E6B88A"
+    },
+    {
+      "id": "kitten",
+      "name": "Velvet Kitten",
+      "icon": "🐱",
+      "color": "#F5D0C5"
+    },
+    {
+      "id": "dragon",
+      "name": "Baby Dragon",
+      "icon": "🐉",
+      "color": "#7AE582"
+    },
+    {
+      "id": "seahorse",
+      "name": "Seahorse",
+      "icon": "🦄",
+      "color": "#48CAE4"
+    },
+    {
+      "id": "unicorn",
+      "name": "Unicorn Foal",
+      "icon": "🦄",
+      "color": "#F8AD9D"
+    }
+  ]
 }

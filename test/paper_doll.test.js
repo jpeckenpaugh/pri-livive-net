@@ -39,3 +39,23 @@ test('renderPaperDollSvg updates wings, faceGems, and makeup colors', () => {
   assert.ok(svg.includes('--lip-color: #E63946'));
   assert.ok(svg.includes('id="layer-face-gems"'));
 });
+
+test('Phase 4: renderPaperDollSvg renders character types, pet companion, and power burst', () => {
+  const mermaidSvg = renderPaperDollSvg(
+    { ...DEFAULT_STATE.princess, characterTypeId: 'mermaid', petId: 'seahorse', petName: 'Bubbles' },
+    config,
+    { powerBurst: true }
+  );
+  assert.ok(mermaidSvg.includes('id="layer-mermaid-tail"'));
+  assert.ok(mermaidSvg.includes('id="layer-pet"'));
+  assert.ok(mermaidSvg.includes('Bubbles'));
+  assert.ok(mermaidSvg.includes('id="layer-power-burst"'));
+
+  const angelSvg = renderPaperDollSvg({ ...DEFAULT_STATE.princess, characterTypeId: 'angel' }, config);
+  assert.ok(angelSvg.includes('character-angel-halo'));
+  assert.ok(angelSvg.includes('character-angel-wings'));
+
+  const demonSvg = renderPaperDollSvg({ ...DEFAULT_STATE.princess, characterTypeId: 'demon' }, config);
+  assert.ok(demonSvg.includes('character-demon-horns'));
+  assert.ok(demonSvg.includes('character-demon-wings'));
+});

@@ -18,6 +18,10 @@ export const DEFAULT_STATE = {
     handheld: 'star-wand',
     necklace: 'pearl-strand',
     wings: 'none',
+    characterTypeId: 'princess',
+    powerId: 'starlight',
+    petId: 'none',
+    petName: '',
     makeup: {
       lipstick: 'none',
       blush: 'none',
@@ -133,12 +137,18 @@ export function normalizeState(raw) {
       'tiaraGem',
       'handheld',
       'necklace',
-      'wings'
+      'wings',
+      'characterTypeId',
+      'powerId',
+      'petId'
     ];
     for (const key of strFields) {
       if (typeof p[key] === 'string' && p[key].trim().length > 0) {
         base.princess[key] = p[key];
       }
+    }
+    if (typeof p.petName === 'string') {
+      base.princess.petName = p.petName.slice(0, 24);
     }
     if (p.makeup && typeof p.makeup === 'object') {
       for (const mKey of ['lipstick', 'blush', 'eyeshadow', 'faceGems']) {

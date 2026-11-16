@@ -62,3 +62,14 @@ test('renderBallroomSvg renders the Prince with custom princeSkinToneId and prin
   assert.ok(svg.includes(`fill="${espressoSkin.hex}"`));
   assert.ok(svg.includes(`fill="${midnightHair.hex}"`));
 });
+
+test('Phase 4: renderBallroomSvg includes the Princess pet companion when petId is set', () => {
+  const svg = renderBallroomSvg(
+    DEFAULT_STATE.ballroom,
+    ballroomConfig,
+    { ...DEFAULT_STATE.princess, petId: 'dragon', petName: 'Sparky' },
+    princessConfig
+  );
+  assert.ok(svg.includes('id="layer-pet"'));
+  assert.ok(svg.includes('Sparky'));
+});

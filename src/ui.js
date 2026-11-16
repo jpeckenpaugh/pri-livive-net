@@ -12,6 +12,7 @@ const TABS = [
   { id: 'tiaras', icon: '💎', label: 'Tiaras' },
   { id: 'accessories', icon: '🪄', label: 'Magic' },
   { id: 'makeup', icon: '💄', label: 'Makeup' },
+  { id: 'powers-pets', icon: '✨', label: 'Powers & Pets' },
   { id: 'ballroom', icon: '🏰', label: 'Ballroom' },
   { id: 'coloring', icon: '🎨', label: 'Coloring' }
 ];
@@ -53,6 +54,8 @@ function renderItemButtons(items, selectedId, dataAttr) {
 }
 
 export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig }) {
+  let powerBurstActive = false;
+  let powerBurstTimer = null;
   const pianoPlayer = createPianoPlayer();
   let activeSongId = null;
   const sparkleLayer = () => root.querySelector('.sparkle-burst-layer');
@@ -268,6 +271,53 @@ export function mountApp({ root, store, config, coloringData, coloringController
           </div>
         `;
       }
+      case 'powers-pets': {
+        const charTypes = config.characterTypes || [];
+        const powers = config.powers || [];
+        const pets = config.pets || [];
+        return `
+          <div class="panel-section">
+            <h3 class="section-title">Character Type</h3>
+            <div class="option-grid">
+              ${charTypes
+                .map(
+                  (ct) =>
+                    `<button type="button" class="option-btn ${ct.id === state.princess.characterTypeId ? 'is-active' : ''}" data-princess-field="characterTypeId" data-value="${ct.id}">${ct.icon || ''} ${escapeHtml(ct.name)}</button>`
+                )
+                .join('')}
+            </div>
+          </div>
+          <div class="panel-section">
+            <h3 class="section-title">Magical Power</h3>
+            <div class="option-grid">
+              ${powers
+                .map(
+                  (pw) =>
+                    `<button type="button" class="option-btn ${pw.id === state.princess.powerId ? 'is-active' : ''}" data-princess-field="powerId" data-value="${pw.id}">${pw.icon || ''} ${escapeHtml(pw.name)}</button>`
+                )
+                .join('')}
+            </div>
+            <div style="margin-top: 10px;">
+              <button type="button" class="action-btn primary" data-action="use-power">✨ Use Power!</button>
+            </div>
+          </div>
+          <div class="panel-section">
+            <h3 class="section-title">Companion Pet</h3>
+            <div class="option-grid">
+              ${pets
+                .map(
+                  (pet) =>
+                    `<button type="button" class="option-btn ${pet.id === state.princess.petId ? 'is-active' : ''}" data-princess-field="petId" data-value="${pet.id}">${pet.icon || ''} ${escapeHtml(pet.name)}</button>`
+                )
+                .join('')}
+            </div>
+          </div>
+          <div class="panel-section">
+            <label class="section-title" for="pet-name-input">Pet Name</label>
+            <input id="pet-name-input" class="text-input" type="text" maxlength="24" placeholder="Name your pet..." value="${escapeHtml(state.princess.petName || '')}" />
+          </div>
+        `;
+      }
       default:
         return '';
     }
@@ -326,7 +376,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const isBallroom = state.activeTab === 'ballroom';
     const stageSvg = isBallroom
       ? renderBallroomSvg(state.ballroom, ballroomConfig, state.princess, config)
-      : renderPaperDollSvg(state.princess, config);
+      : renderPaperDollSvg(state.princess, config, { powerBurst: powerBurstActive });
 
     root.innerHTML = `
       <div class="studio-shell">
@@ -381,12 +431,30 @@ export function mountApp({ root, store, config, coloringData, coloringController
         s.princess.name = target.value;
         return s;
       });
+    } else if (target && target.id === 'pet-name-input') {
+      store.update((s) => {
+        s.princess.petName = target.value;
+        return s;
+      });
     }
   });
 
   root.addEventListener('click', (event) => {
     const btn = event.target.closest('button, .coloring-region');
     if (!btn) return;
+
+    if (btn.dataset.action === 'use-power') {
+      soundPlayer.playCue('power-cast');
+      powerBurstActive = true;
+      render();
+      if (powerBurstTimer) clearTimeout(powerBurstTimer);
+      powerBurstTimer = setTimeout(() => {
+        powerBurstActive = false;
+        powerBurstTimer = null;
+        render();
+      }, 900);
+      return;
+    }
 
     if (btn.classList.contains('coloring-region')) {
       const regionId = btn.dataset.regionId;

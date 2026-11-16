@@ -153,3 +153,24 @@ test('createInitialState and loadState randomize fresh defaults from config whil
   assert.equal(loadedSaved.ballroom.princeSkinToneId, 'caramel');
   assert.equal(loadedSaved.ballroom.princeHairColorId, 'silver-star');
 });
+
+test('Phase 4: normalizeState preserves characterTypeId, powerId, petId, petName and migrates older saves', () => {
+  const migrated = normalizeState({ princess: { name: 'Princess Aria' } });
+  assert.equal(migrated.princess.characterTypeId, 'princess');
+  assert.equal(migrated.princess.powerId, 'starlight');
+  assert.equal(migrated.princess.petId, 'none');
+  assert.equal(migrated.princess.petName, '');
+
+  const custom = normalizeState({
+    princess: {
+      characterTypeId: 'mermaid',
+      powerId: 'bubbles',
+      petId: 'seahorse',
+      petName: 'Coral'
+    }
+  });
+  assert.equal(custom.princess.characterTypeId, 'mermaid');
+  assert.equal(custom.princess.powerId, 'bubbles');
+  assert.equal(custom.princess.petId, 'seahorse');
+  assert.equal(custom.princess.petName, 'Coral');
+});

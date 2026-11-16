@@ -81,3 +81,14 @@ test('sounds.json includes ballroom-enter cue', () => {
   const sounds = JSON.parse(fs.readFileSync(new URL('../data/sounds.json', import.meta.url), 'utf8'));
   assert.ok(sounds['ballroom-enter'] && Array.isArray(sounds['ballroom-enter'].notes) && sounds['ballroom-enter'].notes.length > 0);
 });
+
+test('Phase 4: princess_config.json has characterTypes, powers, pets and sounds.json has power-cast', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const config = JSON.parse(await readFile(new URL('../data/princess_config.json', import.meta.url), 'utf8'));
+  const sounds = JSON.parse(await readFile(new URL('../data/sounds.json', import.meta.url), 'utf8'));
+
+  assert.ok(Array.isArray(config.characterTypes) && config.characterTypes.length >= 5);
+  assert.ok(Array.isArray(config.powers) && config.powers.length >= 5);
+  assert.ok(Array.isArray(config.pets) && config.pets.length >= 6);
+  assert.ok(sounds['power-cast'] && Array.isArray(sounds['power-cast'].notes));
+});
