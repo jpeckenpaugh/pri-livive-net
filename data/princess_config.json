@@ -139,6 +139,16 @@
         "id": "rose-gold",
         "label": "Rose Gold",
         "hex": "#F4A29E"
+      },
+      {
+        "id": "platinum",
+        "label": "Starlight Platinum",
+        "hex": "#E5E7EB"
+      },
+      {
+        "id": "bronze",
+        "label": "Antique Bronze",
+        "hex": "#CD7F32"
       }
     ],
     "tiaraGems": [
@@ -166,6 +176,52 @@
         "id": "diamond",
         "label": "Diamond",
         "hex": "#CAF0F8"
+      },
+      {
+        "id": "tourmaline",
+        "label": "Pink Tourmaline",
+        "hex": "#FF85A1"
+      },
+      {
+        "id": "citrine",
+        "label": "Sunlit Citrine",
+        "hex": "#FFB703"
+      },
+      {
+        "id": "opal",
+        "label": "Rainbow Opal",
+        "hex": "#A0E7E5"
+      }
+    ],
+    "tiaraSizes": [
+      {
+        "id": "delicate",
+        "label": "Delicate",
+        "scale": 0.85
+      },
+      {
+        "id": "classic",
+        "label": "Classic",
+        "scale": 1.0
+      },
+      {
+        "id": "grand",
+        "label": "Grand Royal",
+        "scale": 1.2
+      }
+    ],
+    "tiaraEffects": [
+      {
+        "id": "none",
+        "label": "None"
+      },
+      {
+        "id": "twinkle",
+        "label": "Twinkle Glint"
+      },
+      {
+        "id": "glow",
+        "label": "Royal Glow"
       }
     ],
     "shoeColors": [

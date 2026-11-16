@@ -162,3 +162,17 @@ test('Ballroom Guests & Dance Styles: ballroom_config.json has guests and danceS
     ['waltz', 'twirl', 'bounce']
   );
 });
+
+test('Tiara Settings: princess_config.json has expanded tiaraMetals, tiaraGems, tiaraSizes, and tiaraEffects', () => {
+  const config = readJson('data/princess_config.json');
+  assert.ok(config.palettes.tiaraMetals.length >= 5);
+  assert.ok(config.palettes.tiaraGems.length >= 8);
+  assert.deepEqual(
+    config.palettes.tiaraSizes.map((s) => s.id),
+    ['delicate', 'classic', 'grand']
+  );
+  assert.deepEqual(
+    config.palettes.tiaraEffects.map((e) => e.id),
+    ['none', 'twinkle', 'glow']
+  );
+});

@@ -372,6 +372,10 @@ input {
   animation: tiaraTwinkle 2.8s ease-in-out infinite;
 }
 
+.tiara-glow {
+  filter: drop-shadow(0 0 6px rgba(255, 224, 130, 0.85));
+}
+
 .wand-glint {
   animation: wandGlint 2.4s ease-in-out infinite;
 }

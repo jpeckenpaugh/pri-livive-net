@@ -108,3 +108,30 @@ test('Pet Customization & Shoes: renderPaperDollSvg renders pet color/accessory 
   assert.ok(barefootSvg.includes('id="layer-legs"'));
   assert.ok(!barefootSvg.includes('id="layer-shoes"'));
 });
+
+test('Tiara Settings: renderPaperDollSvg applies tiaraSizeId scale transform and tiaraEffectId', () => {
+  const grandGlowSvg = renderPaperDollSvg(
+    {
+      ...DEFAULT_STATE.princess,
+      tiara: 'royal-crown',
+      tiaraSizeId: 'grand',
+      tiaraEffectId: 'glow'
+    },
+    config
+  );
+  assert.ok(grandGlowSvg.includes('transform="translate(160, 128) scale(1.2) translate(-160, -128)"'));
+  assert.ok(grandGlowSvg.includes('class="tiara-glow"'));
+
+  const delicateNoneSvg = renderPaperDollSvg(
+    {
+      ...DEFAULT_STATE.princess,
+      tiara: 'star-diadem',
+      tiaraSizeId: 'delicate',
+      tiaraEffectId: 'none'
+    },
+    config
+  );
+  assert.ok(delicateNoneSvg.includes('transform="translate(160, 128) scale(0.85) translate(-160, -128)"'));
+  assert.ok(!delicateNoneSvg.includes('class="tiara-twinkle"'));
+  assert.ok(!delicateNoneSvg.includes('class="tiara-glow"'));
+});

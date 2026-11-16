@@ -290,3 +290,19 @@ test('Free Draw Mode: normalizeState migrates older saves and preserves mode, br
   assert.equal(preserved.coloring.brushSize, 12);
   assert.equal(preserved.coloring.drawingsByPage['royal-princess-ballgown'].length, 1);
 });
+
+test('Tiara Settings: normalizeState migrates older saves and preserves tiaraSizeId and tiaraEffectId', () => {
+  const migrated = normalizeState({ version: 1, princess: { name: 'Princess Ada' } });
+  assert.equal(migrated.princess.tiaraSizeId, 'classic');
+  assert.equal(migrated.princess.tiaraEffectId, 'twinkle');
+
+  const preserved = normalizeState({
+    version: 1,
+    princess: {
+      tiaraSizeId: 'grand',
+      tiaraEffectId: 'glow'
+    }
+  });
+  assert.equal(preserved.princess.tiaraSizeId, 'grand');
+  assert.equal(preserved.princess.tiaraEffectId, 'glow');
+});

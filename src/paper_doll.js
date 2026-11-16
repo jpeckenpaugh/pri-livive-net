@@ -39,9 +39,25 @@ function renderNecklaceLayer(necklaceId) {
   return `<g id="layer-necklace"></g>`;
 }
 
-function renderTiaraLayer(tiaraId) {
+function renderTiaraLayer(tiaraId, scale = 1, effectId = 'twinkle') {
+  const safeScale = Number.isFinite(scale) ? scale : 1;
+  const transformAttr = `transform="translate(160, 128) scale(${safeScale}) translate(-160, -128)"`;
+  const effectClass =
+    effectId === 'twinkle' ? 'tiara-twinkle' : effectId === 'glow' ? 'tiara-glow' : '';
+  const classAttr = effectClass ? ` class="${effectClass}"` : '';
+  const effectSvg =
+    effectId === 'glow'
+      ? `<ellipse cx="160" cy="62" rx="38" ry="18" fill="var(--tiara-metal)" opacity="0.24"/>`
+      : effectId === 'twinkle'
+        ? `<g fill="#FFFFFF" opacity="0.9">
+            <path d="M 126 52 L 128 46 L 130 52 L 136 54 L 130 56 L 128 62 L 126 56 L 120 54 Z"/>
+            <path d="M 192 48 L 193.5 43 L 195 48 L 200 49.5 L 195 51 L 193.5 56 L 192 51 L 187 49.5 Z"/>
+          </g>`
+        : '';
+
   if (tiaraId === 'royal-crown') {
-    return `<g id="layer-tiara" class="tiara-twinkle">
+    return `<g id="layer-tiara"${classAttr} ${transformAttr}>
+      ${effectSvg}
       <path d="M 130 74 L 136 46 L 148 60 L 160 38 L 172 60 L 184 46 L 190 74 Q 160 80 130 74 Z" fill="var(--tiara-metal)" stroke="#B7791F" stroke-width="1.5" stroke-linejoin="round"/>
       <circle cx="160" cy="58" r="4.5" fill="var(--tiara-gem)"/>
       <circle cx="142" cy="64" r="3" fill="var(--tiara-gem)"/>
@@ -49,20 +65,22 @@ function renderTiaraLayer(tiaraId) {
     </g>`;
   }
   if (tiaraId === 'star-diadem') {
-    return `<g id="layer-tiara" class="tiara-twinkle">
+    return `<g id="layer-tiara"${classAttr} ${transformAttr}>
+      ${effectSvg}
       <path d="M 126 76 Q 160 60 194 76" fill="none" stroke="var(--tiara-metal)" stroke-width="4" stroke-linecap="round"/>
       <path d="M 160 40 L 164 52 L 176 54 L 167 62 L 169 74 L 160 68 L 151 74 L 153 62 L 144 54 L 156 52 Z" fill="var(--tiara-gem)" stroke="var(--tiara-metal)" stroke-width="1.5"/>
     </g>`;
   }
   if (tiaraId === 'floral-circlet') {
-    return `<g id="layer-tiara" class="tiara-twinkle">
+    return `<g id="layer-tiara"${classAttr} ${transformAttr}>
+      ${effectSvg}
       <path d="M 124 78 Q 160 62 196 78" fill="none" stroke="#52B788" stroke-width="3.5" stroke-linecap="round"/>
       <circle cx="140" cy="70" r="5.5" fill="var(--tiara-gem)"/>
       <circle cx="160" cy="65" r="6.5" fill="var(--tiara-metal)"/>
       <circle cx="180" cy="70" r="5.5" fill="var(--tiara-gem)"/>
     </g>`;
   }
-  return `<g id="layer-tiara"></g>`;
+  return `<g id="layer-tiara" ${transformAttr}></g>`;
 }
 
 function renderHandheldLayer(handheldId) {
@@ -420,6 +438,8 @@ export function renderPaperDollSvg(princess, config, options = {}) {
   };
   const tiaraMetal = findById(palettes.tiaraMetals, princess?.tiaraMetal) || { hex: '#FFD166' };
   const tiaraGem = findById(palettes.tiaraGems, princess?.tiaraGem) || { hex: '#FF4D6D' };
+  const tiaraSize = findById(palettes.tiaraSizes, princess?.tiaraSizeId) || { scale: 1 };
+  const tiaraEffectId = princess?.tiaraEffectId || 'twinkle';
 
   const lipstick = findById(palettes.makeup?.lipstick, princess?.makeup?.lipstick) || {
     hex: 'transparent'
@@ -570,7 +590,7 @@ export function renderPaperDollSvg(princess, config, options = {}) {
       <path d="${hairstyle.frontPath}" fill="var(--hair-color)" stroke="rgba(43,45,66,0.2)" stroke-width="1.2"/>
     </g>
     <!-- 16. Tiara -->
-    ${renderTiaraLayer(princess?.tiara)}
+    ${renderTiaraLayer(princess?.tiara, tiaraSize.scale, tiaraEffectId)}
     ${renderCharacterTypeFrontLayer(princess?.characterTypeId)}
     <!-- 17. Handheld Accessory -->
     ${renderHandheldLayer(princess?.handheld)}

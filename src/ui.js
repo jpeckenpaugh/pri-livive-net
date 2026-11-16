@@ -456,6 +456,14 @@ export function mountApp({ root, store, config, coloringData, coloringController
             ${renderSwatches(palettes.tiaraGems, p.tiaraGem, 'tiara-gem')}
           </div>
           <div class="panel-section">
+            <h3 class="section-title">Tiara Size</h3>
+            ${renderItemButtons(palettes.tiaraSizes || [], p.tiaraSizeId, 'tiaraSizeId')}
+          </div>
+          <div class="panel-section">
+            <h3 class="section-title">Tiara Sparkle</h3>
+            ${renderItemButtons(palettes.tiaraEffects || [], p.tiaraEffectId, 'tiaraEffectId')}
+          </div>
+          <div class="panel-section">
             <h3 class="section-title">Necklace</h3>
             ${renderItemButtons(items.accessories.necklaces, p.necklace, 'necklace')}
           </div>
@@ -1267,6 +1275,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
       ['tiara', 'tiara', 'sparkle-chime'],
       ['tiaraMetal', 'tiaraMetal', 'sparkle-chime'],
       ['tiaraGem', 'tiaraGem', 'sparkle-chime'],
+      ['tiarasizeid', 'tiaraSizeId', 'sparkle-chime'],
+      ['tiaraeffectid', 'tiaraEffectId', 'sparkle-chime'],
       ['necklace', 'necklace', 'sparkle-chime'],
       ['handheld', 'handheld', 'sparkle-chime'],
       ['wings', 'wings', 'sparkle-chime'],
