@@ -473,12 +473,13 @@ export function mountApp({ root, store, config, coloringData, coloringController
       soundPlayer.playCue('power-cast');
       powerBurstActive = true;
       render();
+      triggerSparkleBurst();
       if (powerBurstTimer) clearTimeout(powerBurstTimer);
       powerBurstTimer = setTimeout(() => {
         powerBurstActive = false;
         powerBurstTimer = null;
         render();
-      }, 900);
+      }, 1800);
       return;
     }
 
