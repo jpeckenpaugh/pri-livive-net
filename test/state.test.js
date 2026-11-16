@@ -269,3 +269,24 @@ test('Ballroom Guests & Dance Styles: normalizeState preserves invitedGuests and
   });
   assert.equal(invalidStyle.ballroom.danceStyle, 'waltz');
 });
+
+test('Free Draw Mode: normalizeState migrates older saves and preserves mode, brushSize, and drawingsByPage', () => {
+  const migrated = normalizeState({ version: 1, coloring: { activePageId: 'royal-princess-ballgown' } });
+  assert.equal(migrated.coloring.mode, 'fill');
+  assert.equal(migrated.coloring.brushSize, 6);
+  assert.deepEqual(migrated.coloring.drawingsByPage, {});
+
+  const preserved = normalizeState({
+    version: 1,
+    coloring: {
+      mode: 'draw',
+      brushSize: 12,
+      drawingsByPage: {
+        'royal-princess-ballgown': [{ color: '#FF70A6', width: 12, d: 'M 10 10 L 20 20' }]
+      }
+    }
+  });
+  assert.equal(preserved.coloring.mode, 'draw');
+  assert.equal(preserved.coloring.brushSize, 12);
+  assert.equal(preserved.coloring.drawingsByPage['royal-princess-ballgown'].length, 1);
+});

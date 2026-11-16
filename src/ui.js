@@ -1,5 +1,5 @@
 import { renderPaperDollSvg } from './paper_doll.js';
-import { renderColoringPageSvg } from './coloring_book.js';
+import { renderColoringPageSvg, addStroke, undoStroke, clearDrawings } from './coloring_book.js';
 import { renderBallroomSvg, PRINCE_OUTFIT_COLORS } from './ballroom.js';
 import { PIANO_KEYS, PRESET_SONGS, getKeyByKeyboard, createPianoPlayer } from './piano.js';
 import { generateRoyalName } from './names.js';
@@ -585,6 +585,10 @@ export function mountApp({ root, store, config, coloringData, coloringController
       case 'coloring': {
         const activePage = coloringController.getPage(state.coloring.activePageId);
         const pageFills = state.coloring.fillsByPage[activePage.id] || {};
+        const pageDrawings = (state.coloring.drawingsByPage && state.coloring.drawingsByPage[activePage.id]) || [];
+        const mode = state.coloring.mode === 'draw' ? 'draw' : 'fill';
+        const brushSize = state.coloring.brushSize || 6;
+        const canUndo = mode === 'draw' ? pageDrawings.length > 0 : coloringController.canUndo(activePage.id);
         return `
           <div class="panel-section">
             <h3 class="section-title">Choose a Page</h3>
@@ -598,6 +602,25 @@ export function mountApp({ root, store, config, coloringData, coloringController
             </div>
           </div>
           <div class="panel-section">
+            <h3 class="section-title">Mode</h3>
+            <div class="option-grid">
+              <button type="button" class="option-btn ${mode === 'fill' ? 'is-active' : ''}" data-coloring-mode="fill">🪣 Tap to Fill</button>
+              <button type="button" class="option-btn ${mode === 'draw' ? 'is-active' : ''}" data-coloring-mode="draw">✏️ Free Draw</button>
+            </div>
+          </div>
+          ${
+            mode === 'draw'
+              ? `<div class="panel-section">
+            <h3 class="section-title">Brush Size</h3>
+            <div class="option-grid">
+              <button type="button" class="option-btn ${brushSize === 3 ? 'is-active' : ''}" data-brush-size="3">Small</button>
+              <button type="button" class="option-btn ${brushSize === 6 ? 'is-active' : ''}" data-brush-size="6">Medium</button>
+              <button type="button" class="option-btn ${brushSize === 12 ? 'is-active' : ''}" data-brush-size="12">Large</button>
+            </div>
+          </div>`
+              : ''
+          }
+          <div class="panel-section">
             <h3 class="section-title">Color Palette</h3>
             <div class="swatch-grid">
               ${coloringData.coloringPalette
@@ -609,11 +632,11 @@ export function mountApp({ root, store, config, coloringData, coloringController
             </div>
           </div>
           <div class="panel-section coloring-actions">
-            <button type="button" class="action-btn secondary" data-action="coloring-undo" ${coloringController.canUndo(activePage.id) ? '' : 'disabled'}>↩️ Undo</button>
+            <button type="button" class="action-btn secondary" data-action="coloring-undo" ${canUndo ? '' : 'disabled'}>↩️ Undo</button>
             <button type="button" class="action-btn secondary" data-action="coloring-clear">🧹 Clear Page</button>
           </div>
-          <div class="coloring-canvas-wrap">
-            ${renderColoringPageSvg(activePage, pageFills)}
+          <div class="coloring-canvas-wrap ${mode === 'draw' ? 'is-draw-mode' : ''}">
+            ${renderColoringPageSvg(activePage, pageFills, pageDrawings)}
           </div>
         `;
       }
@@ -1070,8 +1093,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.classList.contains('coloring-region')) {
-      const regionId = btn.dataset.regionId;
       const state = store.getState();
+      if (state.coloring.mode === 'draw') return;
+      const regionId = btn.dataset.regionId;
       const page = coloringController.getPage(state.coloring.activePageId);
       const { fillsByPage, changed } = coloringController.fillRegion(
         state.coloring.fillsByPage,
@@ -1155,6 +1179,17 @@ export function mountApp({ root, store, config, coloringData, coloringController
     if (action === 'coloring-undo') {
       const state = store.getState();
       const page = coloringController.getPage(state.coloring.activePageId);
+      if (state.coloring.mode === 'draw') {
+        const { drawingsByPage, undone } = undoStroke(state.coloring.drawingsByPage, page.id);
+        if (undone) {
+          soundPlayer.playCue('color-undo');
+          store.update((s) => {
+            s.coloring.drawingsByPage = drawingsByPage;
+            return s;
+          });
+        }
+        return;
+      }
       const { fillsByPage, undone } = coloringController.undo(state.coloring.fillsByPage, page.id);
       if (undone) {
         soundPlayer.playCue('color-undo');
@@ -1170,10 +1205,38 @@ export function mountApp({ root, store, config, coloringData, coloringController
       const state = store.getState();
       const page = coloringController.getPage(state.coloring.activePageId);
       soundPlayer.playCue('makeup-clear');
+      if (state.coloring.mode === 'draw') {
+        store.update((s) => {
+          s.coloring.drawingsByPage = clearDrawings(s.coloring.drawingsByPage, page.id);
+          return s;
+        });
+        return;
+      }
       store.update((s) => {
         s.coloring.fillsByPage = coloringController.clearPage(s.coloring.fillsByPage, page.id);
         return s;
       });
+      return;
+    }
+
+    if (btn.dataset.coloringMode) {
+      soundPlayer.playCue('ui-click');
+      store.update((s) => {
+        s.coloring.mode = btn.dataset.coloringMode === 'draw' ? 'draw' : 'fill';
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.brushSize) {
+      soundPlayer.playCue('ui-click');
+      const size = Number(btn.dataset.brushSize);
+      if (Number.isFinite(size) && size > 0) {
+        store.update((s) => {
+          s.coloring.brushSize = size;
+          return s;
+        });
+      }
       return;
     }
 
@@ -1314,11 +1377,108 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
   root.addEventListener('pointerdown', (e) => {
     const keyBtn = e.target.closest('[data-piano-key]');
-    if (!keyBtn) return;
-    const keyId = keyBtn.dataset.pianoKey;
-    pianoPlayer.playNote(keyId, 360);
-    flashPianoKey(keyId, 260);
+    if (keyBtn) {
+      const keyId = keyBtn.dataset.pianoKey;
+      pianoPlayer.playNote(keyId, 360);
+      flashPianoKey(keyId, 260);
+      return;
+    }
+
+    const svg = e.target.closest('.coloring-svg');
+    if (!svg) return;
+    const state = store.getState();
+    if (state.activeTab !== 'coloring' || state.coloring.mode !== 'draw') return;
+
+    e.preventDefault();
+    const pt = mapClientToSvg(svg, e.clientX, e.clientY);
+    const layer = svg.querySelector('#layer-free-draw');
+    if (!layer) return;
+
+    const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pathEl.setAttribute('class', 'free-draw-stroke');
+    pathEl.setAttribute('fill', 'none');
+    pathEl.setAttribute('stroke', state.coloring.selectedColor);
+    pathEl.setAttribute('stroke-width', String(state.coloring.brushSize || 6));
+    pathEl.setAttribute('stroke-linecap', 'round');
+    pathEl.setAttribute('stroke-linejoin', 'round');
+    const d = `M ${pt.x} ${pt.y}`;
+    pathEl.setAttribute('d', d);
+    layer.appendChild(pathEl);
+
+    activeDraw = {
+      pointerId: e.pointerId,
+      svg,
+      pathEl,
+      points: [pt],
+      color: state.coloring.selectedColor,
+      width: state.coloring.brushSize || 6,
+      pageId: coloringController.getPage(state.coloring.activePageId).id
+    };
+
+    if (typeof svg.setPointerCapture === 'function') {
+      try {
+        svg.setPointerCapture(e.pointerId);
+      } catch {
+        // Ignore capture errors in synthetic events
+      }
+    }
   });
+
+  let activeDraw = null;
+
+  function mapClientToSvg(svg, clientX, clientY) {
+    const ctm = typeof svg.getScreenCTM === 'function' ? svg.getScreenCTM() : null;
+    if (ctm && typeof ctm.inverse === 'function') {
+      const inv = ctm.inverse();
+      const x = inv.a * clientX + inv.c * clientY + inv.e;
+      const y = inv.b * clientX + inv.d * clientY + inv.f;
+      return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+    }
+    const rect = svg.getBoundingClientRect();
+    const vb = svg.viewBox?.baseVal;
+    const vbW = vb && vb.width ? vb.width : 500;
+    const vbH = vb && vb.height ? vb.height : 600;
+    const vbX = vb ? vb.x : 0;
+    const vbY = vb ? vb.y : 0;
+    const x = vbX + ((clientX - rect.left) / (rect.width || 1)) * vbW;
+    const y = vbY + ((clientY - rect.top) / (rect.height || 1)) * vbH;
+    return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+  }
+
+  function buildStrokePath(points) {
+    if (points.length === 0) return '';
+    if (points.length === 1) return `M ${points[0].x} ${points[0].y} L ${points[0].x} ${points[0].y}`;
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i += 1) {
+      d += ` L ${points[i].x} ${points[i].y}`;
+    }
+    return d;
+  }
+
+  root.addEventListener('pointermove', (e) => {
+    if (!activeDraw || e.pointerId !== activeDraw.pointerId) return;
+    const pt = mapClientToSvg(activeDraw.svg, e.clientX, e.clientY);
+    const last = activeDraw.points[activeDraw.points.length - 1];
+    if (last && Math.hypot(pt.x - last.x, pt.y - last.y) < 1.5) return;
+    activeDraw.points.push(pt);
+    activeDraw.pathEl.setAttribute('d', buildStrokePath(activeDraw.points));
+  });
+
+  function finishDraw(e) {
+    if (!activeDraw || e.pointerId !== activeDraw.pointerId) return;
+    const { points, color, width, pageId } = activeDraw;
+    activeDraw = null;
+    const d = buildStrokePath(points);
+    if (!d) return;
+    soundPlayer.playCue('color-fill');
+    store.update((s) => {
+      s.coloring.drawingsByPage = addStroke(s.coloring.drawingsByPage, pageId, { color, width, d });
+      return s;
+    });
+  }
+
+  root.addEventListener('pointerup', finishDraw);
+  root.addEventListener('pointercancel', finishDraw);
 
   if (typeof globalThis.addEventListener === 'function') {
     globalThis.addEventListener('keydown', (e) => {

@@ -47,7 +47,10 @@ export const DEFAULT_STATE = {
   coloring: {
     activePageId: 'royal-princess-ballgown',
     selectedColor: '#FF70A6',
-    fillsByPage: {}
+    mode: 'fill',
+    brushSize: 6,
+    fillsByPage: {},
+    drawingsByPage: {}
   },
   ballroom: {
     skyTheme: 'starlight-night',
@@ -211,8 +214,17 @@ export function normalizeState(raw) {
     if (typeof raw.coloring.selectedColor === 'string') {
       base.coloring.selectedColor = raw.coloring.selectedColor;
     }
+    if (raw.coloring.mode === 'fill' || raw.coloring.mode === 'draw') {
+      base.coloring.mode = raw.coloring.mode;
+    }
+    if (typeof raw.coloring.brushSize === 'number' && Number.isFinite(raw.coloring.brushSize) && raw.coloring.brushSize > 0) {
+      base.coloring.brushSize = raw.coloring.brushSize;
+    }
     if (raw.coloring.fillsByPage && typeof raw.coloring.fillsByPage === 'object') {
       base.coloring.fillsByPage = clone(raw.coloring.fillsByPage);
+    }
+    if (raw.coloring.drawingsByPage && typeof raw.coloring.drawingsByPage === 'object') {
+      base.coloring.drawingsByPage = clone(raw.coloring.drawingsByPage);
     }
   }
 

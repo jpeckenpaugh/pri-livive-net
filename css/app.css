@@ -308,6 +308,12 @@ input {
   transition: filter 0.12s ease;
 }
 
+.coloring-canvas-wrap.is-draw-mode .coloring-svg,
+.coloring-canvas-wrap.is-draw-mode .coloring-region {
+  touch-action: none;
+  cursor: crosshair;
+}
+
 .coloring-region:hover {
   filter: brightness(0.96);
 }

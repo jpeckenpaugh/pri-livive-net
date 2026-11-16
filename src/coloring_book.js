@@ -64,7 +64,30 @@ export function createColoringController(pages = []) {
   };
 }
 
-export function renderColoringPageSvg(page, pageFills = {}) {
+export function addStroke(drawingsByPage, pageId, stroke) {
+  const next = { ...(drawingsByPage || {}) };
+  const existing = Array.isArray(next[pageId]) ? next[pageId] : [];
+  next[pageId] = [...existing, stroke];
+  return next;
+}
+
+export function undoStroke(drawingsByPage, pageId) {
+  const next = { ...(drawingsByPage || {}) };
+  const existing = Array.isArray(next[pageId]) ? next[pageId] : [];
+  if (existing.length === 0) {
+    return { drawingsByPage: next, undone: false };
+  }
+  next[pageId] = existing.slice(0, -1);
+  return { drawingsByPage: next, undone: true };
+}
+
+export function clearDrawings(drawingsByPage, pageId) {
+  const next = { ...(drawingsByPage || {}) };
+  delete next[pageId];
+  return next;
+}
+
+export function renderColoringPageSvg(page, pageFills = {}, pageDrawings = []) {
   if (!page) return '';
   const regionsSvg = page.regions
     .map((r) => {
@@ -80,8 +103,16 @@ export function renderColoringPageSvg(page, pageFills = {}) {
     )
     .join('\n');
 
+  const strokesSvg = (Array.isArray(pageDrawings) ? pageDrawings : [])
+    .map(
+      (s) =>
+        `<path class="free-draw-stroke" d="${s.d}" fill="none" stroke="${s.color}" stroke-width="${s.width}" stroke-linecap="round" stroke-linejoin="round" />`
+    )
+    .join('\n');
+
   return `<svg class="coloring-svg" viewBox="${page.viewBox || '0 0 320 340'}" role="img" aria-label="${page.title}">
     ${regionsSvg}
     ${linesSvg}
+    <g id="layer-free-draw" pointer-events="none">${strokesSvg}</g>
   </svg>`;
 }
