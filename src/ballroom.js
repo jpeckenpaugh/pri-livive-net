@@ -259,7 +259,7 @@ export const PRINCE_OUTFIT_COLORS = [
   { id: 'gold', label: 'Royal Gold', primary: '#D97706', dark: '#92400E', sash: '#FEF08A' }
 ];
 
-function renderPrinceSvg(outfitColorId) {
+function renderPrinceSvg(outfitColorId, skinHex = '#FCD5B5', hairHex = '#4B2E1E') {
   const palette = findById(PRINCE_OUTFIT_COLORS, outfitColorId);
   return `
     <svg class="prince-svg" viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg" aria-label="Royal Prince">
@@ -279,14 +279,14 @@ function renderPrinceSvg(outfitColorId) {
       <rect x="102" y="194" width="16" height="14" rx="3" fill="#FACC15"/>
       <!-- Arms -->
       <path d="M74 134 Q52 165 62 195" fill="none" stroke="${palette.primary}" stroke-width="15" stroke-linecap="round"/>
-      <circle cx="62" cy="197" r="7" fill="#FCD5B5"/>
+      <circle cx="62" cy="197" r="7" fill="${skinHex}"/>
       <path d="M146 134 Q168 165 158 195" fill="none" stroke="${palette.primary}" stroke-width="15" stroke-linecap="round"/>
-      <circle cx="158" cy="197" r="7" fill="#FCD5B5"/>
+      <circle cx="158" cy="197" r="7" fill="${skinHex}"/>
       <!-- Neck & Head -->
-      <rect x="101" y="106" width="18" height="24" rx="6" fill="#FCD5B5"/>
-      <ellipse cx="110" cy="84" rx="28" ry="31" fill="#FCD5B5"/>
+      <rect x="101" y="106" width="18" height="24" rx="6" fill="${skinHex}"/>
+      <ellipse cx="110" cy="84" rx="28" ry="31" fill="${skinHex}"/>
       <!-- Hair -->
-      <path d="M82 80 Q82 48 110 48 Q138 48 138 80 Q130 64 110 64 Q90 64 82 80 Z" fill="#4B2E1E"/>
+      <path d="M82 80 Q82 48 110 48 Q138 48 138 80 Q130 64 110 64 Q90 64 82 80 Z" fill="${hairHex}"/>
       <!-- Eyes & Smile -->
       <circle cx="99" cy="84" r="3.2" fill="#1F2937"/>
       <circle cx="121" cy="84" r="3.2" fill="#1F2937"/>
@@ -318,6 +318,10 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
   const floor = findById(ballroomConfig?.floors, ballroomState?.floor);
   const decor = findById(ballroomConfig?.decors, ballroomState?.decor);
   const isDancing = Boolean(ballroomState?.dancing);
+  const princeSkin = findById(princessConfig?.palettes?.skinTones, ballroomState?.princeSkinToneId);
+  const princeHair = findById(princessConfig?.palettes?.hairColors, ballroomState?.princeHairColorId);
+  const princeSkinHex = princeSkin?.hex || '#FCD5B5';
+  const princeHairHex = princeHair?.hex || '#4B2E1E';
 
   const wallColor = skyTheme?.wall || '#F5EEFF';
   const princessSvg = renderPaperDollSvg(princessState, princessConfig);
@@ -344,10 +348,10 @@ export function renderBallroomSvg(ballroomState, ballroomConfig, princessState, 
         isDancing
           ? `
       <!-- Royal Prince Dance Partner -->
-      <g class="ballroom-prince-slot is-dancing" data-prince-outfit="${ballroomState?.princeOutfitColor || 'royal-blue'}">
+      <g class="ballroom-prince-slot is-dancing" data-prince-outfit="${ballroomState?.princeOutfitColor || 'royal-blue'}" data-prince-skin="${ballroomState?.princeSkinToneId || 'peach'}" data-prince-hair="${ballroomState?.princeHairColorId || 'chestnut-brown'}">
         <ellipse cx="395" cy="468" rx="56" ry="13" fill="#000000" opacity="0.14"/>
         <svg x="285" y="148" width="220" height="340" viewBox="0 0 220 340">
-          ${renderPrinceSvg(ballroomState?.princeOutfitColor)}
+          ${renderPrinceSvg(ballroomState?.princeOutfitColor, princeSkinHex, princeHairHex)}
         </svg>
       </g>
       ${renderDancingNotes()}

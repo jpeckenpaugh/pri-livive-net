@@ -46,3 +46,19 @@ test('renderBallroomSvg renders the Prince and musical notes when dancing is tru
   assert.ok(svg.includes('class="ballroom-music-notes"'));
   assert.ok(svg.includes('class="ballroom-princess-slot is-dancing"'));
 });
+
+test('renderBallroomSvg renders the Prince with custom princeSkinToneId and princeHairColorId', () => {
+  const espressoSkin = princessConfig.palettes.skinTones.find((s) => s.id === 'espresso');
+  const midnightHair = princessConfig.palettes.hairColors.find((h) => h.id === 'midnight');
+  const dancingBallroom = {
+    ...DEFAULT_STATE.ballroom,
+    dancing: true,
+    princeSkinToneId: 'espresso',
+    princeHairColorId: 'midnight'
+  };
+  const svg = renderBallroomSvg(dancingBallroom, ballroomConfig, DEFAULT_STATE.princess, princessConfig);
+  assert.ok(svg.includes('data-prince-skin="espresso"'));
+  assert.ok(svg.includes('data-prince-hair="midnight"'));
+  assert.ok(svg.includes(`fill="${espressoSkin.hex}"`));
+  assert.ok(svg.includes(`fill="${midnightHair.hex}"`));
+});

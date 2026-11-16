@@ -1,12 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   DEFAULT_STATE,
   STORAGE_KEY,
+  createInitialState,
   createStore,
   loadState,
   normalizeState
 } from '../src/state.js';
+
+const princessConfig = JSON.parse(
+  fs.readFileSync(new URL('../data/princess_config.json', import.meta.url), 'utf8')
+);
 
 function createMemoryStorage() {
   const map = new Map();
@@ -95,9 +101,55 @@ test('normalizeState migrates Phase 2 saves without dancing/princeOutfitColor an
   const custom = normalizeState({
     ballroom: {
       dancing: true,
-      princeOutfitColor: 'emerald'
+      princeOutfitColor: 'emerald',
+      princeSkinToneId: 'espresso',
+      princeHairColorId: 'midnight'
     }
   });
   assert.equal(custom.ballroom.dancing, true);
   assert.equal(custom.ballroom.princeOutfitColor, 'emerald');
+  assert.equal(custom.ballroom.princeSkinToneId, 'espresso');
+  assert.equal(custom.ballroom.princeHairColorId, 'midnight');
+});
+
+test('createInitialState and loadState randomize fresh defaults from config while preserving saved state', () => {
+  // Deterministic rng picking the last item in each array
+  const pickLast = () => 0.9999;
+  const fresh = createInitialState(princessConfig, pickLast);
+  const lastSkin = princessConfig.palettes.skinTones.at(-1).id;
+  const lastHairColor = princessConfig.palettes.hairColors.at(-1).id;
+  const lastHairstyle = princessConfig.items.hairstyles.at(-1).id;
+  const lastGown = princessConfig.items.gowns.at(-1).id;
+  const lastGownColor = princessConfig.palettes.gownColors.at(-1).id;
+
+  assert.equal(fresh.princess.skinTone, lastSkin);
+  assert.equal(fresh.princess.hairColor, lastHairColor);
+  assert.equal(fresh.princess.hairstyle, lastHairstyle);
+  assert.equal(fresh.princess.gown, lastGown);
+  assert.equal(fresh.princess.gownColor, lastGownColor);
+  assert.equal(fresh.ballroom.princeSkinToneId, lastSkin);
+  assert.equal(fresh.ballroom.princeHairColorId, lastHairColor);
+
+  // Empty storage returns randomized initial state from config
+  const emptyStorage = { getItem: () => null };
+  const loadedFresh = loadState(emptyStorage, princessConfig);
+  assert.ok(princessConfig.palettes.skinTones.some((s) => s.id === loadedFresh.princess.skinTone));
+  assert.ok(princessConfig.palettes.skinTones.some((s) => s.id === loadedFresh.ballroom.princeSkinToneId));
+  assert.ok(princessConfig.palettes.hairColors.some((h) => h.id === loadedFresh.ballroom.princeHairColorId));
+
+  // Existing save in storage is preserved
+  const savedStorage = {
+    getItem: (key) =>
+      key === STORAGE_KEY
+        ? JSON.stringify({
+            princess: { skinTone: 'porcelain', hairColor: 'strawberry' },
+            ballroom: { princeSkinToneId: 'caramel', princeHairColorId: 'silver-star' }
+          })
+        : null
+  };
+  const loadedSaved = loadState(savedStorage, princessConfig);
+  assert.equal(loadedSaved.princess.skinTone, 'porcelain');
+  assert.equal(loadedSaved.princess.hairColor, 'strawberry');
+  assert.equal(loadedSaved.ballroom.princeSkinToneId, 'caramel');
+  assert.equal(loadedSaved.ballroom.princeHairColorId, 'silver-star');
 });

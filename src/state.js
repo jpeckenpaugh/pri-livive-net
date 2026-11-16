@@ -38,9 +38,69 @@ export const DEFAULT_STATE = {
     floor: 'marble-red-carpet',
     decor: 'rose-garlands',
     dancing: false,
-    princeOutfitColor: 'royal-blue'
+    princeOutfitColor: 'royal-blue',
+    princeSkinToneId: 'peach',
+    princeHairColorId: 'chestnut-brown'
   }
 };
+
+function pickRandom(items, rng = Math.random) {
+  if (!Array.isArray(items) || items.length === 0) return null;
+  const idx = Math.floor(rng() * items.length);
+  return items[Math.min(Math.max(idx, 0), items.length - 1)];
+}
+
+export function createInitialState(config = null, rng = Math.random) {
+  const base = clone(DEFAULT_STATE);
+  if (!config || typeof config !== 'object') {
+    return base;
+  }
+
+  const palettes = config.palettes || {};
+  const items = config.items || {};
+
+  const skinTone = pickRandom(palettes.skinTones, rng);
+  if (skinTone?.id) base.princess.skinTone = skinTone.id;
+
+  const hairstyle = pickRandom(items.hairstyles, rng);
+  if (hairstyle?.id) base.princess.hairstyle = hairstyle.id;
+
+  const hairColor = pickRandom(palettes.hairColors, rng);
+  if (hairColor?.id) base.princess.hairColor = hairColor.id;
+
+  const gown = pickRandom(items.gowns, rng);
+  if (gown?.id) base.princess.gown = gown.id;
+
+  const gownColor = pickRandom(palettes.gownColors, rng);
+  if (gownColor?.id) base.princess.gownColor = gownColor.id;
+
+  const tiara = pickRandom(items.tiaras, rng);
+  if (tiara?.id) base.princess.tiara = tiara.id;
+
+  const tiaraMetal = pickRandom(palettes.tiaraMetals, rng);
+  if (tiaraMetal?.id) base.princess.tiaraMetal = tiaraMetal.id;
+
+  const tiaraGem = pickRandom(palettes.tiaraGems, rng);
+  if (tiaraGem?.id) base.princess.tiaraGem = tiaraGem.id;
+
+  const accessories = items.accessories || {};
+  const handheld = pickRandom(accessories.handhelds, rng);
+  if (handheld?.id) base.princess.handheld = handheld.id;
+
+  const necklace = pickRandom(accessories.necklaces, rng);
+  if (necklace?.id) base.princess.necklace = necklace.id;
+
+  const wings = pickRandom(accessories.wings, rng);
+  if (wings?.id) base.princess.wings = wings.id;
+
+  const princeSkin = pickRandom(palettes.skinTones, rng);
+  if (princeSkin?.id) base.ballroom.princeSkinToneId = princeSkin.id;
+
+  const princeHair = pickRandom(palettes.hairColors, rng);
+  if (princeHair?.id) base.ballroom.princeHairColorId = princeHair.id;
+
+  return base;
+}
 
 function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
@@ -103,7 +163,17 @@ export function normalizeState(raw) {
 
   if (raw.ballroom && typeof raw.ballroom === 'object') {
     const b = raw.ballroom;
-    const bFields = ['skyTheme', 'chandelier', 'bannerStyle', 'bannerColor', 'floor', 'decor', 'princeOutfitColor'];
+    const bFields = [
+      'skyTheme',
+      'chandelier',
+      'bannerStyle',
+      'bannerColor',
+      'floor',
+      'decor',
+      'princeOutfitColor',
+      'princeSkinToneId',
+      'princeHairColorId'
+    ];
     for (const key of bFields) {
       if (typeof b[key] === 'string' && b[key].trim().length > 0) {
         base.ballroom[key] = b[key];
@@ -117,18 +187,18 @@ export function normalizeState(raw) {
   return base;
 }
 
-export function loadState(storage = globalThis.localStorage) {
+export function loadState(storage = globalThis.localStorage, config = null) {
   try {
     if (!storage || typeof storage.getItem !== 'function') {
-      return clone(DEFAULT_STATE);
+      return createInitialState(config);
     }
     const raw = storage.getItem(STORAGE_KEY);
     if (!raw) {
-      return clone(DEFAULT_STATE);
+      return createInitialState(config);
     }
     return normalizeState(JSON.parse(raw));
   } catch {
-    return clone(DEFAULT_STATE);
+    return createInitialState(config);
   }
 }
 
@@ -144,8 +214,8 @@ export function saveStateImmediate(state, storage = globalThis.localStorage) {
   }
 }
 
-export function createStore(initialState = null, storage = globalThis.localStorage) {
-  let state = normalizeState(initialState ?? loadState(storage));
+export function createStore(initialState = null, storage = globalThis.localStorage, config = null) {
+  let state = normalizeState(initialState ?? loadState(storage, config));
   let saveTimer = null;
   const listeners = new Set();
 

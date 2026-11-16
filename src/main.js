@@ -23,7 +23,7 @@ async function bootstrap() {
       loadJson('./data/ballroom_config.json')
     ]);
 
-    const store = createStore();
+    const store = createStore(null, globalThis.localStorage, config);
     const coloringController = createColoringController(coloringData.pages);
     const soundPlayer = createSoundPlayer(soundsMap);
 

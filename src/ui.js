@@ -197,6 +197,22 @@ export function mountApp({ root, store, config, coloringData, coloringController
                   `<button type="button" class="swatch-btn ${c.id === b.princeOutfitColor ? 'is-active' : ''}" data-ballroom-field="princeOutfitColor" data-ballroom-value="${c.id}" title="${escapeHtml(c.label)}" aria-label="Prince ${escapeHtml(c.label)}" style="--swatch-bg: ${c.primary}"></button>`
               ).join('')}
             </div>
+            <div class="swatch-grid" style="margin-top: 8px;">
+              ${(config?.palettes?.skinTones || [])
+                .map(
+                  (c) =>
+                    `<button type="button" class="swatch-btn ${c.id === b.princeSkinToneId ? 'is-active' : ''}" data-ballroom-field="princeSkinToneId" data-ballroom-value="${c.id}" title="Prince Skin: ${escapeHtml(c.label)}" aria-label="Prince Skin ${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`
+                )
+                .join('')}
+            </div>
+            <div class="swatch-grid" style="margin-top: 8px;">
+              ${(config?.palettes?.hairColors || [])
+                .map(
+                  (c) =>
+                    `<button type="button" class="swatch-btn ${c.id === b.princeHairColorId ? 'is-active' : ''}" data-ballroom-field="princeHairColorId" data-ballroom-value="${c.id}" title="Prince Hair: ${escapeHtml(c.label)}" aria-label="Prince Hair ${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`
+                )
+                .join('')}
+            </div>
           </div>
           ${renderBallroomOptions('Sky & Windows', 'skyTheme', ballroomConfig?.skyThemes)}
           ${renderBallroomOptions('Chandelier', 'chandelier', ballroomConfig?.chandeliers)}
