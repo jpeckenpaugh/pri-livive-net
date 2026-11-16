@@ -32,19 +32,20 @@ test('princess_config.json has required palettes, items, and royalNames', () => 
   assert.ok(config.royalNames.realms.length >= 4);
 });
 
-test('coloring_pages.json has 16-color palette and 4 distinct coloring pages', () => {
+test('coloring_pages.json has 16-color palette and 5 distinct coloring pages including Blank Canvas', () => {
   const data = readJson('data/coloring_pages.json');
   assert.equal(data.coloringPalette.length, 16);
-  assert.equal(data.pages.length, 4);
+  assert.equal(data.pages.length, 5);
   const ids = data.pages.map((p) => p.id);
   assert.deepEqual(ids, [
     'royal-princess-ballgown',
     'enchanted-castle',
     'magical-tiara-cushion',
-    'winged-unicorn'
+    'winged-unicorn',
+    'blank-canvas'
   ]);
   for (const page of data.pages) {
-    assert.ok(page.regions.length >= 5, `${page.id} should have clickable regions`);
+    assert.ok(page.regions.length >= 1, `${page.id} should have clickable regions`);
     assert.ok(Array.isArray(page.lines), `${page.id} should have lines`);
   }
 });

@@ -103,6 +103,15 @@
         "M 102 126 Q 108 130 114 126",
         "M 176 164 Q 208 150 234 148"
       ]
+    },
+    {
+      "id": "blank-canvas",
+      "title": "Blank Canvas",
+      "viewBox": "0 0 320 340",
+      "regions": [
+        { "id": "canvas-bg", "label": "Canvas Background", "d": "M 8 8 L 312 8 L 312 332 L 8 332 Z", "defaultFill": "#FFFFFF" }
+      ],
+      "lines": []
     }
   ]
 }
