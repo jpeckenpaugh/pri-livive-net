@@ -1024,17 +1024,18 @@ export function mountApp({ root, store, config, coloringData, coloringController
         if (episode && !completedList.includes(episode.id)) {
           const reward = typeof episode.starReward === 'number' ? episode.starReward : 2;
           episodeSession.justEarnedStars = reward;
-          store.setState({
-            academy: {
-              ...current.academy,
-              stars: (current.academy?.stars || 0) + reward
-            },
-            episodes: {
-              ...current.episodes,
+          store.update((s) => {
+            s.academy = {
+              ...s.academy,
+              stars: (s.academy?.stars || 0) + reward
+            };
+            s.episodes = {
+              ...s.episodes,
               completed: [...completedList, episode.id]
-            }
+            };
+            return s;
           });
-          soundPlayer.play('sparkle', store.getState().muted);
+          soundPlayer.playCue('royal-fanfare');
         }
       }
       render(store.getState());
