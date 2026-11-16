@@ -111,7 +111,7 @@ function renderFaceGemsLayer(shape) {
   return `<g id="layer-face-gems"></g>`;
 }
 
-export function renderPetSvg(petId, petName = '', x = 262, y = 348) {
+export function renderPetSvg(petId, petName = '', x = 248, y = 376) {
   if (!petId || petId === 'none') return '';
   const safeName = String(petName || '').trim().slice(0, 20);
   let body = '';
