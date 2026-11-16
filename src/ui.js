@@ -269,6 +269,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const sceneSvg = renderEpisodeSceneSvg(episode, episodeSession.beatIndex, state.princess, config, {
       mayaMood,
       reactionType,
+      playerAction: choice ? (choice.kindnessDelta > 0 ? 'kind' : 'unfriendly') : 'idle',
       mayaPrincess: state.pals?.maya || episodeSession.mayaPrincess
     });
     const displayText = choice ? choice.reactionText : beat.story;
@@ -1071,46 +1072,57 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     if (btn.dataset.episodeContinue) {
-      const episode = getEpisodeById(episodesConfig, episodeSession.episodeId) || episodesConfig?.episodes?.[0];
-      const beats = episode?.beats || [];
-      episodeSession.selectedChoice = null;
-      if (episodeSession.beatIndex + 1 < beats.length) {
-        episodeSession.beatIndex += 1;
-      } else {
-        episodeSession.completed = true;
-        const current = store.getState();
-        const completedList = Array.isArray(current.episodes?.completed) ? current.episodes.completed : [];
-        const ending = episode ? resolveEpisodeEnding(episode, episodeSession.kindnessCount) : null;
-        const passedWelcoming = ending?.id === 'welcoming' || episodeSession.kindnessCount >= (episode?.kindnessThreshold ?? 3);
-        const shouldUnlockMaya = episode?.id === 'new-princess-at-school' && passedWelcoming && current.pals?.maya && !current.pals.maya.unlocked;
-        const shouldAwardEpisode = episode && !completedList.includes(episode.id);
-        if (shouldAwardEpisode || shouldUnlockMaya) {
-          const reward = shouldAwardEpisode ? (typeof episode.starReward === 'number' ? episode.starReward : 2) : 0;
-          if (reward > 0) {
-            episodeSession.justEarnedStars = reward;
-          }
-          store.update((s) => {
+      const advanceBeat = () => {
+        const episode = getEpisodeById(episodesConfig, episodeSession.episodeId) || episodesConfig?.episodes?.[0];
+        const beats = episode?.beats || [];
+        episodeSession.selectedChoice = null;
+        if (episodeSession.beatIndex + 1 < beats.length) {
+          episodeSession.beatIndex += 1;
+        } else {
+          episodeSession.completed = true;
+          const current = store.getState();
+          const completedList = Array.isArray(current.episodes?.completed) ? current.episodes.completed : [];
+          const ending = episode ? resolveEpisodeEnding(episode, episodeSession.kindnessCount) : null;
+          const passedWelcoming = ending?.id === 'welcoming' || episodeSession.kindnessCount >= (episode?.kindnessThreshold ?? 3);
+          const shouldUnlockMaya = episode?.id === 'new-princess-at-school' && passedWelcoming && current.pals?.maya && !current.pals.maya.unlocked;
+          const shouldAwardEpisode = episode && !completedList.includes(episode.id);
+          if (shouldAwardEpisode || shouldUnlockMaya) {
+            const reward = shouldAwardEpisode ? (typeof episode.starReward === 'number' ? episode.starReward : 2) : 0;
+            if (reward > 0) {
+              episodeSession.justEarnedStars = reward;
+            }
+            store.update((s) => {
+              if (shouldAwardEpisode) {
+                s.academy = {
+                  ...s.academy,
+                  stars: (s.academy?.stars || 0) + reward
+                };
+                s.episodes = {
+                  ...s.episodes,
+                  completed: [...completedList, episode.id]
+                };
+              }
+              if (shouldUnlockMaya && s.pals?.maya) {
+                s.pals.maya.unlocked = true;
+              }
+              return s;
+            });
             if (shouldAwardEpisode) {
-              s.academy = {
-                ...s.academy,
-                stars: (s.academy?.stars || 0) + reward
-              };
-              s.episodes = {
-                ...s.episodes,
-                completed: [...completedList, episode.id]
-              };
+              soundPlayer.playCue('royal-fanfare');
             }
-            if (shouldUnlockMaya && s.pals?.maya) {
-              s.pals.maya.unlocked = true;
-            }
-            return s;
-          });
-          if (shouldAwardEpisode) {
-            soundPlayer.playCue('royal-fanfare');
           }
         }
+        render(store.getState());
+      };
+
+      const sceneEl = root.querySelector('.episode-scene-svg');
+      if (sceneEl) {
+        sceneEl.classList.add('is-transitioning');
+        btn.disabled = true;
+        setTimeout(advanceBeat, 300);
+      } else {
+        advanceBeat();
       }
-      render(store.getState());
       return;
     }
 

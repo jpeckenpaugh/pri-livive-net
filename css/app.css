@@ -1074,6 +1074,81 @@ input {
   display: block;
   width: 100%;
   height: auto;
+  animation: episodeFadeIn 0.45s ease-out;
+}
+
+.episode-scene-svg.is-transitioning {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes episodeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.episode-player {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.episode-player--kind {
+  animation: episodeWaveBop 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes episodeWaveBop {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(-2px) rotate(2deg);
+  }
+}
+
+.episode-player--unfriendly {
+  animation: episodeWalkAway 0.6s ease-out forwards;
+}
+
+@keyframes episodeWalkAway {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(-65px);
+  }
+}
+
+.maya-figure {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transition: transform 0.45s ease;
+}
+
+.maya-happy {
+  transform: translateX(-45px);
+  animation: episodeMayaHappy 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes episodeMayaHappy {
+  from {
+    transform: translateX(-45px) translateY(0px);
+  }
+  to {
+    transform: translateX(-45px) translateY(-6px);
+  }
+}
+
+.maya-sad {
+  transform: translateY(4px) scale(0.97);
 }
 
 .episode-reaction--sparkle {

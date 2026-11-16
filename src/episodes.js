@@ -149,7 +149,7 @@ export function renderEpisodeSceneSvg(
   beatIndex,
   princessState,
   princessConfig,
-  { mayaMood = 'neutral', reactionType = 'none', mayaPrincess = null } = {}
+  { mayaMood = 'neutral', reactionType = 'none', playerAction = 'idle', mayaPrincess = null } = {}
 ) {
   const beats = Array.isArray(episode?.beats) ? episode.beats : [];
   const beat = beats[beatIndex] || beats[0] || {};
@@ -165,9 +165,11 @@ export function renderEpisodeSceneSvg(
   return `
     <svg class="episode-scene-svg" viewBox="0 0 600 320" role="img" aria-label="Episode scene">
       ${renderBackdrop(backdrop)}
-      <svg x="35" y="18" width="205" height="295" viewBox="0 0 320 460">
-        ${playerSvg}
-      </svg>
+      <g id="episode-player" class="episode-player episode-player--${playerAction}">
+        <svg x="35" y="18" width="205" height="295" viewBox="0 0 320 460">
+          ${playerSvg}
+        </svg>
+      </g>
       <g id="episode-maya" class="maya-figure maya-${mayaMood} episode-maya--${mayaMood}">
         <svg x="355" y="18" width="205" height="295" viewBox="0 0 320 460">
           ${mayaSvg}
