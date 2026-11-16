@@ -472,13 +472,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     if (btn.dataset.action === 'use-power') {
       soundPlayer.playCue('power-cast');
       powerBurstActive = true;
-      render();
-      triggerSparkleBurst();
+      render(store.getState());
       if (powerBurstTimer) clearTimeout(powerBurstTimer);
       powerBurstTimer = setTimeout(() => {
         powerBurstActive = false;
         powerBurstTimer = null;
-        render();
+        render(store.getState());
       }, 1800);
       return;
     }
@@ -491,7 +490,6 @@ export function mountApp({ root, store, config, coloringData, coloringController
         s.princess[field] = value;
         return s;
       });
-      triggerSparkleBurst();
       return;
     }
 
