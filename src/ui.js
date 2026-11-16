@@ -1005,8 +1005,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
       if (choice) {
         episodeSession.selectedChoice = choice;
         episodeSession.kindnessCount += Number(choice.kindnessDelta || 0);
-        soundPlayer.play(choice.kindnessDelta > 0 ? 'sparkle' : 'pop', store.getState().muted);
-        render();
+        soundPlayer.playCue(choice.kindnessDelta > 0 ? 'sparkle-chime' : 'ui-click');
+        render(store.getState());
       }
       return;
     }

@@ -22,6 +22,16 @@ const AVOID_VOICES = new Set([
   'pipe organ', 'ralph', 'trinoids', 'whisper', 'zarvox'
 ]);
 
+let cachedVoices = [];
+if (globalThis.speechSynthesis && typeof globalThis.speechSynthesis.getVoices === 'function') {
+  cachedVoices = globalThis.speechSynthesis.getVoices();
+  if (typeof globalThis.speechSynthesis.addEventListener === 'function') {
+    globalThis.speechSynthesis.addEventListener('voiceschanged', () => {
+      cachedVoices = globalThis.speechSynthesis.getVoices();
+    });
+  }
+}
+
 export function pickBestVoice(voices) {
   if (!Array.isArray(voices) || voices.length === 0) return null;
   const english = voices.filter((v) => String(v?.lang || '').toLowerCase().startsWith('en'));
