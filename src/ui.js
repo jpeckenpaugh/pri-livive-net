@@ -478,7 +478,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
         powerBurstActive = false;
         powerBurstTimer = null;
         render(store.getState());
-      }, 1800);
+      }, 2600);
       return;
     }
 
