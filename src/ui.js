@@ -1037,7 +1037,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
           soundPlayer.play('sparkle', store.getState().muted);
         }
       }
-      render();
+      render(store.getState());
       return;
     }
 
@@ -1051,7 +1051,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
         justEarnedStars: 0
       };
       soundPlayer.play('pop', store.getState().muted);
-      render();
+      render(store.getState());
       return;
     }
 
