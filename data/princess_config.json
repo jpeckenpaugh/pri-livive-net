@@ -535,5 +535,101 @@
       "icon": "🦄",
       "color": "#F8AD9D"
     }
-  ]
+  ],
+  "customGownOptions": {
+    "bodices": [
+      {
+        "id": "sweetheart",
+        "label": "Sweetheart",
+        "bodicePath": "M 134 188 Q 147 196 160 190 Q 173 196 186 188 L 182 240 L 138 240 Z"
+      },
+      {
+        "id": "ruffled",
+        "label": "Ruffled",
+        "bodicePath": "M 132 186 Q 160 194 188 186 L 184 240 L 136 240 Z"
+      },
+      {
+        "id": "corset",
+        "label": "Corset",
+        "bodicePath": "M 134 186 L 186 186 L 180 240 L 140 240 Z"
+      },
+      {
+        "id": "regal",
+        "label": "Regal",
+        "bodicePath": "M 132 182 Q 160 174 188 182 L 182 240 L 138 240 Z"
+      }
+    ],
+    "skirts": [
+      {
+        "id": "ballgown",
+        "label": "Ballgown",
+        "skirtPath": "M 138 238 C 94 274, 72 342, 68 394 Q 160 410 252 394 C 248 342, 226 274, 182 238 Z"
+      },
+      {
+        "id": "petal",
+        "label": "Petal",
+        "skirtPath": "M 138 238 C 102 276, 86 334, 86 382 Q 112 398 134 382 Q 160 404 186 382 Q 208 398 234 382 C 234 334, 218 276, 182 238 Z"
+      },
+      {
+        "id": "mermaid",
+        "label": "Mermaid",
+        "skirtPath": "M 138 238 C 128 286, 134 330, 136 352 C 118 374, 96 392, 86 402 Q 160 412 234 402 C 224 392, 202 374, 184 352 C 186 330, 192 286, 182 238 Z"
+      },
+      {
+        "id": "tea-length",
+        "label": "Tea-Length",
+        "skirtPath": "M 138 238 C 106 270, 92 316, 90 352 Q 160 366 230 352 C 228 316, 214 270, 182 238 Z"
+      }
+    ],
+    "sleeves": [
+      {
+        "id": "puff",
+        "label": "Puff",
+        "sleevePath": "M 134 188 C 112 178, 108 206, 126 212 Z M 186 188 C 208 178, 212 206, 194 212 Z"
+      },
+      {
+        "id": "off-shoulder",
+        "label": "Off-Shoulder",
+        "sleevePath": "M 136 196 C 118 194, 114 210, 128 214 Z M 184 196 C 202 194, 206 210, 192 214 Z"
+      },
+      {
+        "id": "bell",
+        "label": "Bell",
+        "sleevePath": "M 134 188 L 106 228 Q 118 234 128 224 Z M 186 188 L 214 228 Q 202 234 192 224 Z"
+      },
+      {
+        "id": "sleeveless",
+        "label": "Sleeveless",
+        "sleevePath": ""
+      }
+    ],
+    "waistTrims": [
+      { "id": "none", "label": "None" },
+      { "id": "bow", "label": "Satin Bow" },
+      { "id": "sash", "label": "Royal Sash" },
+      { "id": "flowers", "label": "Flower Garland" }
+    ],
+    "patterns": [
+      { "id": "none", "label": "Solid" },
+      { "id": "stars", "label": "Stars" },
+      { "id": "hearts", "label": "Hearts" },
+      { "id": "dots", "label": "Polka Dots" },
+      { "id": "stripes", "label": "Stripes" },
+      { "id": "glitter", "label": "Glitter" }
+    ],
+    "colors": [
+      { "id": "royal-pink", "label": "Royal Pink", "hex": "#FF70A6" },
+      { "id": "blush-rose", "label": "Blush Rose", "hex": "#FFB3C6" },
+      { "id": "lavender", "label": "Lavender", "hex": "#A06CD5" },
+      { "id": "lilac", "label": "Lilac Mist", "hex": "#D8BBFF" },
+      { "id": "sky-blue", "label": "Sky Blue", "hex": "#56CFE1" },
+      { "id": "royal-blue", "label": "Royal Blue", "hex": "#3A86FF" },
+      { "id": "mint", "label": "Mint Fairy", "hex": "#52B788" },
+      { "id": "emerald", "label": "Emerald", "hex": "#2D6A4F" },
+      { "id": "gold", "label": "Royal Gold", "hex": "#FFD166" },
+      { "id": "ruby", "label": "Ruby Red", "hex": "#E63946" },
+      { "id": "ivory", "label": "Pearl Ivory", "hex": "#FFF8F0" },
+      { "id": "midnight", "label": "Midnight", "hex": "#2B2D42" }
+    ]
+  }
 }

@@ -108,17 +108,83 @@ export function mountApp({ root, store, config, coloringData, coloringController
             ${renderSwatches(palettes.hairColors, p.hairColor, 'hair-color')}
           </div>
         `;
-      case 'gowns':
+      case 'gowns': {
+        const isCustom = p.gownMode === 'custom';
+        const customOpts = config.customGownOptions || {};
+        const cg = p.customGown || {};
+        const renderCustomColorSwatches = (selectedHex, colorField) => `
+          <div class="swatch-grid">
+            ${(customOpts.colors || [])
+              .map((c) => {
+                const active = c.hex.toLowerCase() === String(selectedHex || '').toLowerCase() ? 'is-active' : '';
+                return `<button type="button" class="swatch-btn ${active}" data-custom-gown-color="${colorField}" data-color-hex="${c.hex}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`;
+              })
+              .join('')}
+          </div>`;
+        const renderCustomButtons = (list, selectedId, field) => `
+          <div class="option-grid">
+            ${(list || [])
+              .map((item) => {
+                const active = item.id === selectedId ? 'is-active' : '';
+                return `<button type="button" class="option-btn ${active}" data-custom-gown-field="${field}" data-value="${item.id}">${escapeHtml(item.label)}</button>`;
+              })
+              .join('')}
+          </div>`;
+
         return `
           <div class="panel-section">
-            <h3 class="section-title">Royal Gown</h3>
-            ${renderItemButtons(items.gowns, p.gown, 'gown')}
+            <div class="gown-mode-toggle" role="group" aria-label="Gown Design Mode">
+              <button type="button" class="option-btn ${!isCustom ? 'is-active' : ''}" data-gown-mode="preset">👗 Preset Gowns</button>
+              <button type="button" class="option-btn ${isCustom ? 'is-active' : ''}" data-gown-mode="custom">✨ Design Your Own</button>
+            </div>
           </div>
-          <div class="panel-section">
-            <h3 class="section-title">Gown Color</h3>
-            ${renderSwatches(palettes.gownColors, p.gownColor, 'gown-color', 'primary')}
-          </div>
+          ${isCustom
+            ? `
+              <div class="panel-section">
+                <h3 class="section-title">Bodice</h3>
+                ${renderCustomButtons(customOpts.bodices, cg.bodiceId, 'bodiceId')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Skirt</h3>
+                ${renderCustomButtons(customOpts.skirts, cg.skirtId, 'skirtId')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Sleeves</h3>
+                ${renderCustomButtons(customOpts.sleeves, cg.sleevesId, 'sleevesId')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Waist Trim</h3>
+                ${renderCustomButtons(customOpts.waistTrims, cg.waistTrimId, 'waistTrimId')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Pattern</h3>
+                ${renderCustomButtons(customOpts.patterns, cg.patternId, 'patternId')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Skirt Color</h3>
+                ${renderCustomColorSwatches(cg.skirtColor, 'skirtColor')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Bodice Color</h3>
+                ${renderCustomColorSwatches(cg.bodiceColor, 'bodiceColor')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Trim &amp; Pattern Color</h3>
+                ${renderCustomColorSwatches(cg.trimColor, 'trimColor')}
+              </div>
+            `
+            : `
+              <div class="panel-section">
+                <h3 class="section-title">Royal Gown</h3>
+                ${renderItemButtons(items.gowns, p.gown, 'gown')}
+              </div>
+              <div class="panel-section">
+                <h3 class="section-title">Gown Color</h3>
+                ${renderSwatches(palettes.gownColors, p.gownColor, 'gown-color', 'primary')}
+              </div>
+            `}
         `;
+      }
       case 'tiaras':
         return `
           <div class="panel-section">
@@ -479,6 +545,38 @@ export function mountApp({ root, store, config, coloringData, coloringController
         powerBurstTimer = null;
         render(store.getState());
       }, 2600);
+      return;
+    }
+
+    if (btn.dataset.gownMode) {
+      const mode = btn.dataset.gownMode === 'custom' ? 'custom' : 'preset';
+      soundPlayer.playCue('ui-click');
+      store.update((s) => {
+        s.princess.gownMode = mode;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.customGownField && btn.dataset.value) {
+      const field = btn.dataset.customGownField;
+      const value = btn.dataset.value;
+      soundPlayer.playCue('dress-change');
+      store.update((s) => {
+        s.princess.customGown[field] = value;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.customGownColor && btn.dataset.colorHex) {
+      const field = btn.dataset.customGownColor;
+      const hex = btn.dataset.colorHex;
+      soundPlayer.playCue('dress-change');
+      store.update((s) => {
+        s.princess.customGown[field] = hex;
+        return s;
+      });
       return;
     }
 

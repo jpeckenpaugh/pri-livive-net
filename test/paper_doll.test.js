@@ -59,3 +59,27 @@ test('Phase 4: renderPaperDollSvg renders character types, pet companion, and po
   assert.ok(demonSvg.includes('character-demon-horns'));
   assert.ok(demonSvg.includes('character-demon-wings'));
 });
+
+test('Make Your Own Gown: renderPaperDollSvg renders custom bodice, skirt, sleeves, waist trim, and SVG pattern', () => {
+  const customPrincess = {
+    ...DEFAULT_STATE.princess,
+    gownMode: 'custom',
+    customGown: {
+      bodiceId: 'corset',
+      skirtId: 'petal',
+      sleevesId: 'bell',
+      waistTrimId: 'bow',
+      patternId: 'stars',
+      skirtColor: '#A06CD5',
+      bodiceColor: '#FFD166',
+      trimColor: '#FFF8F0'
+    }
+  };
+  const svg = renderPaperDollSvg(customPrincess, config);
+  assert.ok(svg.includes('<pattern id="custom-gown-pattern"'));
+  assert.ok(svg.includes('fill="url(#custom-gown-pattern)"'));
+  assert.ok(svg.includes('id="layer-waist-trim"'));
+  assert.ok(svg.includes('fill="#A06CD5"'));
+  assert.ok(svg.includes('fill="#FFD166"'));
+  assert.ok(svg.includes('fill="#FFF8F0"'));
+});

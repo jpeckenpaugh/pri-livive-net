@@ -174,3 +174,39 @@ test('Phase 4: normalizeState preserves characterTypeId, powerId, petId, petName
   assert.equal(custom.princess.petId, 'seahorse');
   assert.equal(custom.princess.petName, 'Coral');
 });
+
+test('Make Your Own Gown: normalizeState migrates older saves and preserves customGown fields', () => {
+  const migrated = normalizeState({
+    princess: {
+      gown: 'starlight-tutu',
+      gownColor: 'lavender-dream'
+    }
+  });
+  assert.equal(migrated.princess.gown, 'starlight-tutu');
+  assert.equal(migrated.princess.gownColor, 'lavender-dream');
+  assert.equal(migrated.princess.gownMode, 'preset');
+  assert.equal(migrated.princess.customGown.bodiceId, 'sweetheart');
+  assert.equal(migrated.princess.customGown.skirtId, 'ballgown');
+
+  const custom = normalizeState({
+    princess: {
+      gownMode: 'custom',
+      customGown: {
+        bodiceId: 'regal',
+        skirtId: 'mermaid',
+        sleevesId: 'off-shoulder',
+        waistTrimId: 'flowers',
+        patternId: 'hearts',
+        skirtColor: '#3A86FF',
+        bodiceColor: '#56CFE1',
+        trimColor: '#FFD166'
+      }
+    }
+  });
+  assert.equal(custom.princess.gownMode, 'custom');
+  assert.equal(custom.princess.customGown.bodiceId, 'regal');
+  assert.equal(custom.princess.customGown.skirtId, 'mermaid');
+  assert.equal(custom.princess.customGown.waistTrimId, 'flowers');
+  assert.equal(custom.princess.customGown.patternId, 'hearts');
+  assert.equal(custom.princess.customGown.skirtColor, '#3A86FF');
+});

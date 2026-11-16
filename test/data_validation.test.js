@@ -92,3 +92,15 @@ test('Phase 4: princess_config.json has characterTypes, powers, pets and sounds.
   assert.ok(Array.isArray(config.pets) && config.pets.length >= 6);
   assert.ok(sounds['power-cast'] && Array.isArray(sounds['power-cast'].notes));
 });
+
+test('Make Your Own Gown: princess_config.json has customGownOptions', () => {
+  const config = readJson('data/princess_config.json');
+  const opts = config.customGownOptions;
+  assert.ok(opts && typeof opts === 'object');
+  assert.ok(Array.isArray(opts.bodices) && opts.bodices.length >= 4);
+  assert.ok(Array.isArray(opts.skirts) && opts.skirts.length >= 4);
+  assert.ok(Array.isArray(opts.sleeves) && opts.sleeves.length >= 4);
+  assert.ok(Array.isArray(opts.waistTrims) && opts.waistTrims.length >= 4);
+  assert.ok(Array.isArray(opts.patterns) && opts.patterns.length >= 5);
+  assert.ok(Array.isArray(opts.colors) && opts.colors.length >= 8);
+});

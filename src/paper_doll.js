@@ -234,6 +234,75 @@ function renderPowerBurstSvg(powerId, config) {
   </g>`;
 }
 
+function renderCustomPatternDef(patternId, trimColor) {
+  const color = trimColor || '#FFE5EC';
+  if (patternId === 'stars') {
+    return `<defs>
+      <pattern id="custom-gown-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
+        <path d="M 12 3 L 14 9 L 20 9.5 L 15.5 13.5 L 17 19.5 L 12 16.5 L 7 19.5 L 8.5 13.5 L 4 9.5 L 10 9 Z" fill="${color}" opacity="0.45"/>
+      </pattern>
+    </defs>`;
+  }
+  if (patternId === 'hearts') {
+    return `<defs>
+      <pattern id="custom-gown-pattern" width="22" height="22" patternUnits="userSpaceOnUse">
+        <path d="M 11 17 L 5 11 A 3.5 3.5 0 0 1 11 7.5 A 3.5 3.5 0 0 1 17 11 Z" fill="${color}" opacity="0.45"/>
+      </pattern>
+    </defs>`;
+  }
+  if (patternId === 'dots') {
+    return `<defs>
+      <pattern id="custom-gown-pattern" width="18" height="18" patternUnits="userSpaceOnUse">
+        <circle cx="9" cy="9" r="3" fill="${color}" opacity="0.5"/>
+      </pattern>
+    </defs>`;
+  }
+  if (patternId === 'stripes') {
+    return `<defs>
+      <pattern id="custom-gown-pattern" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(25)">
+        <rect x="0" y="0" width="5" height="14" fill="${color}" opacity="0.35"/>
+      </pattern>
+    </defs>`;
+  }
+  if (patternId === 'glitter') {
+    return `<defs>
+      <pattern id="custom-gown-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="5" cy="6" r="1.4" fill="#FFFFFF" opacity="0.75"/>
+        <circle cx="15" cy="4" r="1" fill="${color}" opacity="0.8"/>
+        <circle cx="11" cy="14" r="1.6" fill="#FFFFFF" opacity="0.65"/>
+        <circle cx="17" cy="17" r="1.1" fill="${color}" opacity="0.75"/>
+      </pattern>
+    </defs>`;
+  }
+  return '';
+}
+
+function renderWaistTrimLayer(waistTrimId, trimColor) {
+  const color = trimColor || 'var(--gown-accent)';
+  if (waistTrimId === 'bow') {
+    return `<g id="layer-waist-trim">
+      <path d="M 160 238 L 142 229 Q 138 238 142 247 Z" fill="${color}" stroke="rgba(43,45,66,0.2)" stroke-width="1"/>
+      <path d="M 160 238 L 178 229 Q 182 238 178 247 Z" fill="${color}" stroke="rgba(43,45,66,0.2)" stroke-width="1"/>
+      <circle cx="160" cy="238" r="4.5" fill="${color}" stroke="rgba(43,45,66,0.25)" stroke-width="1"/>
+    </g>`;
+  }
+  if (waistTrimId === 'sash') {
+    return `<g id="layer-waist-trim">
+      <path d="M 137 235 Q 160 242 183 235 L 182 244 Q 160 250 138 244 Z" fill="${color}" stroke="rgba(43,45,66,0.2)" stroke-width="1"/>
+      <path d="M 168 242 L 182 276 L 173 278 L 162 244 Z" fill="${color}" opacity="0.9"/>
+    </g>`;
+  }
+  if (waistTrimId === 'flowers') {
+    return `<g id="layer-waist-trim">
+      <circle cx="144" cy="238" r="4.5" fill="${color}" stroke="rgba(43,45,66,0.18)" stroke-width="0.9"/>
+      <circle cx="160" cy="240" r="5" fill="${color}" stroke="rgba(43,45,66,0.18)" stroke-width="0.9"/>
+      <circle cx="176" cy="238" r="4.5" fill="${color}" stroke="rgba(43,45,66,0.18)" stroke-width="0.9"/>
+      <circle cx="160" cy="240" r="2" fill="#FFD166"/>
+    </g>`;
+  }
+  return '';
+}
+
 export function renderPaperDollSvg(princess, config, options = {}) {
   const palettes = config?.palettes || {};
   const items = config?.items || {};
@@ -271,11 +340,28 @@ export function renderPaperDollSvg(princess, config, options = {}) {
     sleevePath: ''
   };
 
+  const isCustomGown = princess?.gownMode === 'custom';
+  const customOpts = config?.customGownOptions || {};
+  const cg = princess?.customGown || {};
+  const customBodice = isCustomGown ? findById(customOpts.bodices, cg.bodiceId) : null;
+  const customSkirt = isCustomGown ? findById(customOpts.skirts, cg.skirtId) : null;
+  const customSleeves = isCustomGown ? findById(customOpts.sleeves, cg.sleevesId) : null;
+
+  const activeSkirtPath = (isCustomGown && customSkirt?.skirtPath) || gown.skirtPath;
+  const activeBodicePath = (isCustomGown && customBodice?.bodicePath) || gown.bodicePath;
+  const activeSleevePath = isCustomGown ? (customSleeves?.sleevePath ?? '') : gown.sleevePath;
+  const activeSkirtColor = isCustomGown ? (cg.skirtColor || gownColor.primary) : 'var(--gown-primary)';
+  const activeBodiceColor = isCustomGown ? (cg.bodiceColor || gownColor.primary) : 'var(--gown-primary)';
+  const activeTrimColor = isCustomGown ? (cg.trimColor || gownColor.accent) : 'var(--gown-accent)';
+  const patternDef = isCustomGown ? renderCustomPatternDef(cg.patternId, activeTrimColor) : '';
+  const hasPattern = Boolean(patternDef);
+  const waistTrimHtml = isCustomGown ? renderWaistTrimLayer(cg.waistTrimId, activeTrimColor) : '';
+
   const styleVars = [
     `--skin-color: ${skin.hex}`,
     `--hair-color: ${hairColor.hex}`,
-    `--gown-primary: ${gownColor.primary}`,
-    `--gown-accent: ${gownColor.accent}`,
+    `--gown-primary: ${isCustomGown ? activeSkirtColor : gownColor.primary}`,
+    `--gown-accent: ${isCustomGown ? activeTrimColor : gownColor.accent}`,
     `--tiara-metal: ${tiaraMetal.hex}`,
     `--tiara-gem: ${tiaraGem.hex}`,
     `--lip-color: ${lipstick.hex}`,
@@ -284,6 +370,7 @@ export function renderPaperDollSvg(princess, config, options = {}) {
   ].join('; ');
 
   return `<svg class="paper-doll-svg" viewBox="0 0 320 420" style="${styleVars}" role="img" aria-label="${princess?.name || 'Princess'}">
+    ${patternDef}
     <!-- 1. Aura / Shadow -->
     <g id="layer-aura">
       <ellipse cx="160" cy="402" rx="86" ry="12" fill="rgba(160, 108, 213, 0.16)"/>
@@ -306,16 +393,19 @@ export function renderPaperDollSvg(princess, config, options = {}) {
     <!-- 5. Gown Skirt & Bodice -->
     <g id="layer-gown">
       ${princess?.characterTypeId === 'mermaid'
-        ? `<path id="layer-mermaid-tail" d="M 134 238 C 126 286, 134 342, 154 378 L 130 402 Q 160 392 160 384 Q 160 392 190 402 L 166 378 C 186 342, 194 286, 186 238 Z" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.22)" stroke-width="1.6"/>
-           <path d="M 142 276 Q 160 286 178 276 M 144 308 Q 160 318 176 308 M 148 340 Q 160 350 172 340" fill="none" stroke="var(--gown-accent)" stroke-width="2" opacity="0.75"/>`
-        : `<path d="${gown.skirtPath}" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>`}
-      <path d="${gown.bodicePath}" fill="var(--gown-primary)" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>
-      <path d="${gown.sleevePath}" fill="var(--gown-accent)" stroke="rgba(43,45,66,0.14)" stroke-width="1.2"/>
+        ? `<path id="layer-mermaid-tail" d="M 134 238 C 126 286, 134 342, 154 378 L 130 402 Q 160 392 160 384 Q 160 392 190 402 L 166 378 C 186 342, 194 286, 186 238 Z" fill="${activeSkirtColor}" stroke="rgba(43,45,66,0.22)" stroke-width="1.6"/>
+           ${hasPattern ? `<path d="M 134 238 C 126 286, 134 342, 154 378 L 130 402 Q 160 392 160 384 Q 160 392 190 402 L 166 378 C 186 342, 194 286, 186 238 Z" fill="url(#custom-gown-pattern)" pointer-events="none"/>` : ''}
+           <path d="M 142 276 Q 160 286 178 276 M 144 308 Q 160 318 176 308 M 148 340 Q 160 350 172 340" fill="none" stroke="${activeTrimColor}" stroke-width="2" opacity="0.75"/>`
+        : `<path d="${activeSkirtPath}" fill="${activeSkirtColor}" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>
+           ${hasPattern ? `<path d="${activeSkirtPath}" fill="url(#custom-gown-pattern)" pointer-events="none"/>` : ''}`}
+      <path d="${activeBodicePath}" fill="${activeBodiceColor}" stroke="rgba(43,45,66,0.18)" stroke-width="1.6"/>
+      ${activeSleevePath ? `<path d="${activeSleevePath}" fill="${activeTrimColor}" stroke="rgba(43,45,66,0.14)" stroke-width="1.2"/>` : ''}
     </g>
     <!-- 6. Gown Shading & Trim -->
     <g id="layer-gown-trim">
-      <path d="${gown.skirtPath}" fill="rgba(255,255,255,0.12)" pointer-events="none"/>
-      <path d="${gown.trimPath}" fill="none" stroke="var(--gown-accent)" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="${activeSkirtPath}" fill="rgba(255,255,255,0.12)" pointer-events="none"/>
+      ${!isCustomGown ? `<path d="${gown.trimPath}" fill="none" stroke="var(--gown-accent)" stroke-width="3.5" stroke-linecap="round"/>` : ''}
+      ${waistTrimHtml}
     </g>
     <!-- 7. Necklace -->
     ${renderNecklaceLayer(princess?.necklace)}

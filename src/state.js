@@ -12,6 +12,17 @@ export const DEFAULT_STATE = {
     hairColor: 'butter-blonde',
     gown: 'classic-ballgown',
     gownColor: 'royal-pink',
+    gownMode: 'preset',
+    customGown: {
+      bodiceId: 'sweetheart',
+      skirtId: 'ballgown',
+      sleevesId: 'puff',
+      waistTrimId: 'bow',
+      patternId: 'none',
+      skirtColor: '#FF70A6',
+      bodiceColor: '#FF70A6',
+      trimColor: '#FFE5EC'
+    },
     tiara: 'royal-crown',
     tiaraMetal: 'gold',
     tiaraGem: 'ruby',
@@ -149,6 +160,26 @@ export function normalizeState(raw) {
     }
     if (typeof p.petName === 'string') {
       base.princess.petName = p.petName.slice(0, 24);
+    }
+    if (p.gownMode === 'preset' || p.gownMode === 'custom') {
+      base.princess.gownMode = p.gownMode;
+    }
+    if (p.customGown && typeof p.customGown === 'object') {
+      const cgFields = [
+        'bodiceId',
+        'skirtId',
+        'sleevesId',
+        'waistTrimId',
+        'patternId',
+        'skirtColor',
+        'bodiceColor',
+        'trimColor'
+      ];
+      for (const cgKey of cgFields) {
+        if (typeof p.customGown[cgKey] === 'string' && p.customGown[cgKey].trim().length > 0) {
+          base.princess.customGown[cgKey] = p.customGown[cgKey];
+        }
+      }
     }
     if (p.makeup && typeof p.makeup === 'object') {
       for (const mKey of ['lipstick', 'blush', 'eyeshadow', 'faceGems']) {
