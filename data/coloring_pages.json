@@ -1,0 +1,108 @@
+{
+  "coloringPalette": [
+    { "id": "rose", "label": "Rose Pink", "hex": "#FF70A6" },
+    { "id": "blush", "label": "Soft Blush", "hex": "#FFB3C6" },
+    { "id": "ruby", "label": "Ruby Red", "hex": "#E63946" },
+    { "id": "coral", "label": "Coral", "hex": "#FF9770" },
+    { "id": "sunshine", "label": "Sunshine", "hex": "#FFD166" },
+    { "id": "butter", "label": "Buttercup", "hex": "#FFF3B0" },
+    { "id": "mint", "label": "Mint", "hex": "#80ED99" },
+    { "id": "emerald", "label": "Emerald", "hex": "#2EC4B6" },
+    { "id": "sky", "label": "Sky Blue", "hex": "#72EFDD" },
+    { "id": "azure", "label": "Royal Blue", "hex": "#4EA8DE" },
+    { "id": "lavender", "label": "Lavender", "hex": "#C77DFF" },
+    { "id": "plum", "label": "Royal Plum", "hex": "#7B2CBF" },
+    { "id": "peach", "label": "Peach", "hex": "#FCD5CE" },
+    { "id": "chestnut", "label": "Chestnut", "hex": "#A96E4B" },
+    { "id": "silver", "label": "Silver", "hex": "#E2E8F0" },
+    { "id": "white", "label": "Snow White", "hex": "#FFFFFF" }
+  ],
+  "pages": [
+    {
+      "id": "royal-princess-ballgown",
+      "title": "Royal Princess",
+      "viewBox": "0 0 320 340",
+      "regions": [
+        { "id": "bg-sky", "label": "Sky", "d": "M 8 8 H 312 V 332 H 8 Z", "defaultFill": "#FFFFFF" },
+        { "id": "hair", "label": "Hair", "d": "M 118 76 C 102 100, 102 150, 114 176 L 206 176 C 218 150, 218 100, 202 76 C 186 52, 134 52, 118 76 Z", "defaultFill": "#FFFFFF" },
+        { "id": "face", "label": "Face", "d": "M 130 92 C 130 72, 190 72, 190 92 C 190 120, 176 136, 160 136 C 144 136, 130 120, 130 92 Z", "defaultFill": "#FFFFFF" },
+        { "id": "crown", "label": "Crown", "d": "M 136 66 L 144 44 L 160 56 L 176 44 L 184 66 Z", "defaultFill": "#FFFFFF" },
+        { "id": "bodice", "label": "Bodice", "d": "M 136 148 L 184 148 L 178 194 L 142 194 Z", "defaultFill": "#FFFFFF" },
+        { "id": "skirt-top", "label": "Upper Skirt", "d": "M 142 194 C 110 218, 92 248, 86 270 L 234 270 C 228 248, 210 218, 178 194 Z", "defaultFill": "#FFFFFF" },
+        { "id": "skirt-hem", "label": "Skirt Hem", "d": "M 86 270 C 78 292, 74 308, 76 318 C 122 328, 198 328, 244 318 C 246 308, 242 292, 234 270 Z", "defaultFill": "#FFFFFF" },
+        { "id": "star-1", "label": "Left Star", "d": "M 54 68 L 60 82 L 74 84 L 63 94 L 66 108 L 54 101 L 42 108 L 45 94 L 34 84 L 48 82 Z", "defaultFill": "#FFFFFF" },
+        { "id": "star-2", "label": "Right Star", "d": "M 266 68 L 272 82 L 286 84 L 275 94 L 278 108 L 266 101 L 254 108 L 257 94 L 246 84 L 260 82 Z", "defaultFill": "#FFFFFF" }
+      ],
+      "lines": [
+        "M 146 102 A 3 3 0 1 1 146 101.9",
+        "M 174 102 A 3 3 0 1 1 174 101.9",
+        "M 152 118 Q 160 124 168 118",
+        "M 152 136 L 152 148 M 168 136 L 168 148"
+      ]
+    },
+    {
+      "id": "enchanted-castle",
+      "title": "Enchanted Castle",
+      "viewBox": "0 0 320 340",
+      "regions": [
+        { "id": "sky", "label": "Sky", "d": "M 8 8 H 312 V 290 H 8 Z", "defaultFill": "#FFFFFF" },
+        { "id": "ground", "label": "Meadow", "d": "M 8 290 H 312 V 332 H 8 Z", "defaultFill": "#FFFFFF" },
+        { "id": "left-tower", "label": "Left Tower", "d": "M 48 140 H 92 V 290 H 48 Z", "defaultFill": "#FFFFFF" },
+        { "id": "left-roof", "label": "Left Roof", "d": "M 40 140 L 70 76 L 100 140 Z", "defaultFill": "#FFFFFF" },
+        { "id": "right-tower", "label": "Right Tower", "d": "M 228 140 H 272 V 290 H 228 Z", "defaultFill": "#FFFFFF" },
+        { "id": "right-roof", "label": "Right Roof", "d": "M 220 140 L 250 76 L 280 140 Z", "defaultFill": "#FFFFFF" },
+        { "id": "center-wall", "label": "Castle Wall", "d": "M 92 170 H 228 V 290 H 92 Z", "defaultFill": "#FFFFFF" },
+        { "id": "center-spire", "label": "Center Spire", "d": "M 134 110 H 186 V 170 H 134 Z", "defaultFill": "#FFFFFF" },
+        { "id": "center-roof", "label": "Center Roof", "d": "M 126 110 L 160 36 L 194 110 Z", "defaultFill": "#FFFFFF" },
+        { "id": "gate", "label": "Royal Gate", "d": "M 134 290 V 230 C 134 206, 186 206, 186 230 V 290 Z", "defaultFill": "#FFFFFF" },
+        { "id": "flag-center", "label": "Flag", "d": "M 160 22 L 190 30 L 160 38 Z", "defaultFill": "#FFFFFF" }
+      ],
+      "lines": [
+        "M 160 20 V 36",
+        "M 64 176 H 76 V 202 H 64 Z",
+        "M 244 176 H 256 V 202 H 244 Z",
+        "M 152 132 H 168 V 154 H 152 Z",
+        "M 160 212 V 290"
+      ]
+    },
+    {
+      "id": "magical-tiara-cushion",
+      "title": "Royal Tiara",
+      "viewBox": "0 0 320 340",
+      "regions": [
+        { "id": "backdrop", "label": "Background", "d": "M 8 8 H 312 V 332 H 8 Z", "defaultFill": "#FFFFFF" },
+        { "id": "cushion", "label": "Velvet Cushion", "d": "M 42 204 C 42 178, 278 178, 278 204 C 290 236, 282 282, 260 292 C 206 306, 114 306, 60 292 C 38 282, 30 236, 42 204 Z", "defaultFill": "#FFFFFF" },
+        { "id": "tiara-band", "label": "Tiara Band", "d": "M 74 188 Q 160 210 246 188 L 238 164 Q 160 184 82 164 Z", "defaultFill": "#FFFFFF" },
+        { "id": "tiara-peaks", "label": "Tiara Peaks", "d": "M 82 164 L 96 106 L 126 144 L 160 76 L 194 144 L 224 106 L 238 164 Q 160 184 82 164 Z", "defaultFill": "#FFFFFF" },
+        { "id": "center-gem", "label": "Center Gem", "d": "M 160 112 L 176 134 L 160 156 L 144 134 Z", "defaultFill": "#FFFFFF" },
+        { "id": "left-gem", "label": "Left Gem", "d": "M 106 136 A 10 10 0 1 1 105.9 136 Z", "defaultFill": "#FFFFFF" },
+        { "id": "right-gem", "label": "Right Gem", "d": "M 214 136 A 10 10 0 1 1 213.9 136 Z", "defaultFill": "#FFFFFF" }
+      ],
+      "lines": [
+        "M 160 64 A 6 6 0 1 1 159.9 64 Z",
+        "M 96 96 A 5 5 0 1 1 95.9 96 Z",
+        "M 224 96 A 5 5 0 1 1 223.9 96 Z"
+      ]
+    },
+    {
+      "id": "winged-unicorn",
+      "title": "Winged Unicorn",
+      "viewBox": "0 0 320 340",
+      "regions": [
+        { "id": "sky", "label": "Sky", "d": "M 8 8 H 312 V 332 H 8 Z", "defaultFill": "#FFFFFF" },
+        { "id": "cloud", "label": "Cloud", "d": "M 42 280 C 42 258, 74 252, 92 262 C 110 242, 152 242, 168 260 C 188 246, 228 248, 240 266 C 266 264, 282 284, 272 302 C 254 316, 66 316, 48 302 C 38 296, 38 286, 42 280 Z", "defaultFill": "#FFFFFF" },
+        { "id": "body", "label": "Body", "d": "M 104 196 C 104 166, 206 166, 214 196 C 222 222, 208 244, 186 246 L 186 276 L 166 276 L 166 246 L 136 246 L 136 276 L 116 276 L 116 244 C 104 234, 100 214, 104 196 Z", "defaultFill": "#FFFFFF" },
+        { "id": "neck-head", "label": "Head & Neck", "d": "M 104 196 C 92 162, 94 126, 108 106 C 114 96, 134 94, 144 102 C 154 110, 154 128, 138 138 C 134 152, 136 172, 142 184 Z", "defaultFill": "#FFFFFF" },
+        { "id": "horn", "label": "Magic Horn", "d": "M 110 102 L 94 60 L 122 96 Z", "defaultFill": "#FFFFFF" },
+        { "id": "mane", "label": "Mane", "d": "M 134 98 C 154 106, 160 132, 150 154 C 142 168, 146 180, 152 188 L 136 184 C 130 168, 132 146, 138 132 C 142 122, 140 108, 134 98 Z", "defaultFill": "#FFFFFF" },
+        { "id": "wing", "label": "Wing", "d": "M 156 186 C 176 138, 238 122, 256 144 C 244 162, 224 176, 204 188 C 190 196, 170 198, 156 186 Z", "defaultFill": "#FFFFFF" },
+        { "id": "tail", "label": "Tail", "d": "M 212 196 C 244 186, 268 206, 260 236 C 254 256, 232 258, 224 242 C 232 232, 232 214, 212 208 Z", "defaultFill": "#FFFFFF" }
+      ],
+      "lines": [
+        "M 116 116 A 3 3 0 1 1 115.9 116 Z",
+        "M 102 126 Q 108 130 114 126",
+        "M 176 164 Q 208 150 234 148"
+      ]
+    }
+  ]
+}

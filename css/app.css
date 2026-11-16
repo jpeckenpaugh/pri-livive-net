@@ -1,0 +1,400 @@
+:root {
+  --bg-top: #fff0f6;
+  --bg-bottom: #f3e8ff;
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --royal-pink: #ff70a6;
+  --royal-purple: #845ec2;
+  --royal-gold: #ffd166;
+  --ink: #2b2d42;
+  --muted-ink: #5c6078;
+  --border-soft: #f3d5e5;
+  --shadow-soft: 0 12px 30px rgba(132, 94, 194, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Fredoka', ui-rounded, system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+.studio-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-crown {
+  font-size: 2rem;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+  color: var(--royal-purple);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-btn,
+.icon-btn,
+.tab-btn,
+.option-btn,
+.swatch-btn {
+  min-height: 48px;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+.action-btn:active,
+.icon-btn:active,
+.tab-btn:active,
+.option-btn:active,
+.swatch-btn:active {
+  transform: scale(0.96);
+}
+
+.action-btn {
+  padding: 0 18px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.action-btn.small {
+  min-height: 48px;
+  padding: 0 14px;
+  font-size: 0.92rem;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--royal-pink), var(--royal-purple));
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(255, 112, 166, 0.35);
+}
+
+.action-btn.secondary {
+  background: #ffffff;
+  color: var(--royal-purple);
+  border-color: var(--border-soft);
+}
+
+.action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.icon-btn {
+  min-width: 48px;
+  background: #ffffff;
+  border-color: var(--border-soft);
+  font-size: 1.3rem;
+}
+
+.studio-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.stage-card,
+.controls-card {
+  background: var(--card-bg);
+  border: 2px solid #ffffff;
+  border-radius: 26px;
+  box-shadow: var(--shadow-soft);
+  padding: 16px;
+}
+
+.stage-card {
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.princess-banner {
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.08rem;
+  color: var(--royal-purple);
+  background: #fdf2f8;
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.doll-stage {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  justify-content: center;
+}
+
+.paper-doll-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.tab-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 6px;
+  background: #fff7fb;
+  border-color: var(--border-soft);
+  color: var(--muted-ink);
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.tab-btn.is-active {
+  background: linear-gradient(135deg, #ffe5ec, #f3e8ff);
+  border-color: var(--royal-pink);
+  color: var(--royal-purple);
+}
+
+.tab-icon {
+  font-size: 1.25rem;
+}
+
+.panel-section {
+  margin-bottom: 18px;
+}
+
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.section-title,
+.field-label {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--royal-purple);
+}
+
+.name-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.text-input {
+  flex: 1;
+  min-width: 200px;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--border-soft);
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.swatch-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.swatch-btn {
+  min-width: 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--swatch-bg, #ffffff);
+  border: 3px solid #ffffff;
+  box-shadow: 0 3px 10px rgba(43, 45, 66, 0.16);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.swatch-btn.is-active {
+  border-color: var(--royal-purple);
+  transform: scale(1.08);
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 10px;
+}
+
+.option-btn {
+  padding: 10px 12px;
+  background: #ffffff;
+  border-color: var(--border-soft);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.option-btn.is-active {
+  background: #ffe5ec;
+  border-color: var(--royal-pink);
+  color: var(--royal-purple);
+}
+
+.coloring-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.coloring-canvas-wrap {
+  background: #ffffff;
+  border: 2px solid var(--border-soft);
+  border-radius: 20px;
+  padding: 12px;
+  max-width: 420px;
+}
+
+.coloring-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.coloring-region {
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+
+.coloring-region:hover {
+  filter: brightness(0.96);
+}
+
+/* Subtle CSS Animations */
+@keyframes gentleBreathe {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.008);
+  }
+}
+
+@keyframes tiaraTwinkle {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0px rgba(255, 209, 102, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 209, 102, 0.75));
+  }
+}
+
+@keyframes wandGlint {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0px rgba(255, 243, 176, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 7px rgba(255, 243, 176, 0.9));
+  }
+}
+
+@keyframes sparkleBurst {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35) translateY(-10px);
+  }
+}
+
+.gentle-breathe {
+  animation: gentleBreathe 4.2s ease-in-out infinite;
+}
+
+.tiara-twinkle {
+  animation: tiaraTwinkle 2.8s ease-in-out infinite;
+}
+
+.wand-glint {
+  animation: wandGlint 2.4s ease-in-out infinite;
+}
+
+.sparkle-burst-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 1.6rem;
+  opacity: 0;
+}
+
+.sparkle-burst-layer.is-bursting {
+  animation: sparkleBurst 0.7s ease-out forwards;
+}
+
+@media (max-width: 820px) {
+  .studio-main {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-card {
+    position: static;
+  }
+
+  .doll-stage {
+    max-width: 240px;
+  }
+}

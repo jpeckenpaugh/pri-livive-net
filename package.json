@@ -1,0 +1,12 @@
+{
+  "name": "pri-livive-net",
+  "version": "1.0.0",
+  "description": "Princess Play Time - Zero-build static dress-up, makeup, and coloring studio",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "serve": "python3 -m http.server 4174",
+    "start": "python3 -m http.server 4174"
+  },
+  "license": "MIT"
+}

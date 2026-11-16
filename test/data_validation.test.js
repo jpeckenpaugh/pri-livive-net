@@ -1,0 +1,68 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+
+function readJson(relPath) {
+  const fullPath = path.resolve(process.cwd(), relPath);
+  return JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+}
+
+test('princess_config.json has required palettes, items, and royalNames', () => {
+  const config = readJson('data/princess_config.json');
+  assert.ok(config.palettes.skinTones.length >= 4);
+  assert.ok(config.palettes.hairColors.length >= 6);
+  assert.ok(config.palettes.gownColors.length >= 6);
+  assert.ok(config.palettes.tiaraMetals.length >= 3);
+  assert.ok(config.palettes.tiaraGems.length >= 4);
+  assert.ok(config.palettes.makeup.lipstick.length >= 4);
+  assert.ok(config.palettes.makeup.blush.length >= 3);
+  assert.ok(config.palettes.makeup.eyeshadow.length >= 4);
+  assert.ok(config.palettes.makeup.faceGems.length >= 3);
+
+  assert.ok(config.items.hairstyles.length >= 4);
+  assert.ok(config.items.gowns.length >= 4);
+  assert.ok(config.items.tiaras.length >= 3);
+  assert.ok(config.items.accessories.handheld.length >= 3);
+  assert.ok(config.items.accessories.necklaces.length >= 2);
+  assert.ok(config.items.accessories.wings.length >= 2);
+
+  assert.ok(config.royalNames.prefixes.length >= 2);
+  assert.ok(config.royalNames.firstNames.length >= 6);
+  assert.ok(config.royalNames.realms.length >= 4);
+});
+
+test('coloring_pages.json has 16-color palette and 4 distinct coloring pages', () => {
+  const data = readJson('data/coloring_pages.json');
+  assert.equal(data.coloringPalette.length, 16);
+  assert.equal(data.pages.length, 4);
+  const ids = data.pages.map((p) => p.id);
+  assert.deepEqual(ids, [
+    'royal-princess-ballgown',
+    'enchanted-castle',
+    'magical-tiara-cushion',
+    'winged-unicorn'
+  ]);
+  for (const page of data.pages) {
+    assert.ok(page.regions.length >= 5, `${page.id} should have clickable regions`);
+    assert.ok(Array.isArray(page.lines), `${page.id} should have lines`);
+  }
+});
+
+test('sounds.json has all 8 required Web Audio cues', () => {
+  const sounds = readJson('data/sounds.json');
+  const expectedCues = [
+    'ui-click',
+    'dress-change',
+    'sparkle-chime',
+    'makeup-apply',
+    'makeup-clear',
+    'color-fill',
+    'color-undo',
+    'royal-fanfare'
+  ];
+  for (const cue of expectedCues) {
+    assert.ok(sounds[cue], `Missing cue: ${cue}`);
+    assert.ok(Array.isArray(sounds[cue].notes) && sounds[cue].notes.length >= 1);
+  }
+});
