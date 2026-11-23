@@ -21,20 +21,68 @@ import {
   getAcademyProgress
 } from './lessons.js';
 
-const TABS = [
+const DRESSING_TABS = [
   { id: 'profile', icon: '👑', label: 'Profile' },
   { id: 'hair', icon: '💇‍♀️', label: 'Hair' },
   { id: 'gowns', icon: '👗', label: 'Gowns' },
   { id: 'tiaras', icon: '💎', label: 'Tiaras' },
   { id: 'accessories', icon: '🪄', label: 'Magic' },
   { id: 'makeup', icon: '💄', label: 'Makeup' },
-  { id: 'powers-pets', icon: '✨', label: 'Powers & Pets' },
-  { id: 'ballroom', icon: '🏰', label: 'Ballroom' },
-  { id: 'coloring', icon: '🎨', label: 'Coloring' },
-  { id: 'academy', icon: '🏫', label: 'Academy' },
-  { id: 'episodes', icon: '📖', label: 'Episodes' },
+  { id: 'powers-pets', icon: '✨', label: 'Pets' },
   { id: 'pals', icon: '👭', label: 'Pals' }
 ];
+
+const WORLDS = [
+  {
+    id: 'dressing',
+    icon: '👗',
+    label: 'Dressing Room',
+    shortLabel: 'Dress Up',
+    defaultTab: 'profile',
+    tagline: 'Gowns, hair, tiaras, makeup, powers & pals'
+  },
+  {
+    id: 'ballroom',
+    icon: '🏰',
+    label: 'Ballroom',
+    shortLabel: 'Ballroom',
+    defaultTab: 'ballroom',
+    tagline: 'Dance with the Prince & play the Royal Piano'
+  },
+  {
+    id: 'coloring',
+    icon: '🎨',
+    label: 'Coloring',
+    shortLabel: 'Coloring',
+    defaultTab: 'coloring',
+    tagline: 'Paint royal pages & free-draw masterpieces'
+  },
+  {
+    id: 'academy',
+    icon: '🏫',
+    label: 'Academy',
+    shortLabel: 'Academy',
+    defaultTab: 'academy',
+    tagline: '25 royal lessons across 5 magical subjects'
+  },
+  {
+    id: 'stories',
+    icon: '📖',
+    label: 'Stories',
+    shortLabel: 'Stories',
+    defaultTab: 'episodes',
+    tagline: 'Interactive princess episodes & choices'
+  }
+];
+
+function getActiveWorld(activeTab) {
+  if (activeTab === 'hub') return 'hub';
+  if (activeTab === 'ballroom') return 'ballroom';
+  if (activeTab === 'coloring') return 'coloring';
+  if (activeTab === 'academy') return 'academy';
+  if (activeTab === 'episodes') return 'stories';
+  return 'dressing';
+}
 
 function escapeHtml(str) {
   return String(str ?? '')
@@ -100,6 +148,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
       pianoPlayer.stopSong();
     }
   }
+  let academySubjectFilter = lessonsConfig?.subjects?.[0]?.id || 'all';
+  let coloringToolsOpen = false;
   let academySession = {
     lessonId: null,
     stepIndex: 0,
@@ -115,6 +165,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
   let academyAdvanceTimer = null;
 
   let episodeSession = {
+    active: false,
     episodeId: episodesConfig?.episodes?.[0]?.id || 'new-princess-at-school',
     beatIndex: 0,
     kindnessCount: 0,
@@ -207,11 +258,49 @@ export function mountApp({ root, store, config, coloringData, coloringController
     if (!episodesConfig || !Array.isArray(episodesConfig.episodes) || episodesConfig.episodes.length === 0) {
       return `<div class="panel-card"><p>Episodes are loading...</p></div>`;
     }
+    const stars = state.academy?.stars || 0;
+    const completedEpisodes = Array.isArray(state.episodes?.completed) ? state.episodes.completed : [];
+
+    if (!episodeSession.active) {
+      return `
+        <div class="episode-overview-card">
+          <div class="episode-header">
+            <div>
+              <h2 class="episode-title">📖 Royal Story Episodes</h2>
+              <p class="episode-subtitle">Choose an interactive story to play and earn Royal Stars!</p>
+            </div>
+            <div class="academy-stars-pill">⭐ ${stars} Stars</div>
+          </div>
+          <div class="episode-selector-grid">
+            ${episodesConfig.episodes
+              .map((ep) => {
+                const isDone = completedEpisodes.includes(ep.id);
+                const beatCount = Array.isArray(ep.beats) ? ep.beats.length : 0;
+                const reward = typeof ep.starReward === 'number' ? ep.starReward : 2;
+                return `
+                  <div class="episode-select-card ${isDone ? 'is-completed' : ''}">
+                    <div class="episode-select-meta">
+                      <span class="episode-select-badge">${isDone ? '⭐ Completed' : `✨ +${reward} Stars`}</span>
+                      <span class="episode-select-beats">${beatCount} scenes</span>
+                    </div>
+                    <h3 class="episode-select-title">${escapeHtml(ep.title)}</h3>
+                    ${ep.description ? `<p class="episode-select-desc">${escapeHtml(ep.description)}</p>` : ''}
+                    <button type="button" class="primary-btn" data-episode-start="${escapeHtml(ep.id)}">
+                      ${isDone ? '🔄 Play Again' : '▶ Start Episode'}
+                    </button>
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+        </div>
+      `;
+    }
+
     const episode = getEpisodeById(episodesConfig, episodeSession.episodeId) || episodesConfig.episodes[0];
     const beats = Array.isArray(episode.beats) ? episode.beats : [];
     const totalBeats = beats.length + 1;
-    const stars = state.academy?.stars || 0;
-    const isAlreadyCompleted = Array.isArray(state.episodes?.completed) && state.episodes.completed.includes(episode.id);
+    const isAlreadyCompleted = completedEpisodes.includes(episode.id);
 
     if (episodeSession.completed) {
       const ending = resolveEpisodeEnding(episode, episodeSession.kindnessCount);
@@ -229,9 +318,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
       return `
         <div class="episode-player-card">
           <div class="episode-header">
-            <div>
-              <h2 class="episode-title">📖 ${escapeHtml(episode.title)}</h2>
-              <p class="episode-subtitle">Beat ${totalBeats} of ${totalBeats} · ${escapeHtml(ending?.title || 'The End')}</p>
+            <div class="episode-header-left">
+              <button type="button" class="pill-btn episode-back-btn" data-episode-back="true">← Episodes</button>
+              <div>
+                <h2 class="episode-title">📖 ${escapeHtml(episode.title)}</h2>
+                <p class="episode-subtitle">Beat ${totalBeats} of ${totalBeats} · ${escapeHtml(ending?.title || 'The End')}</p>
+              </div>
             </div>
             <div class="academy-stars-pill">⭐ ${stars} Stars</div>
           </div>
@@ -277,9 +369,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     return `
       <div class="episode-player-card">
         <div class="episode-header">
-          <div>
-            <h2 class="episode-title">📖 ${escapeHtml(episode.title)}</h2>
-            <p class="episode-subtitle">Beat ${episodeSession.beatIndex + 1} of ${totalBeats} · ${escapeHtml(beat.title)}</p>
+          <div class="episode-header-left">
+            <button type="button" class="pill-btn episode-back-btn" data-episode-back="true">← Episodes</button>
+            <div>
+              <h2 class="episode-title">📖 ${escapeHtml(episode.title)}</h2>
+              <p class="episode-subtitle">Beat ${episodeSession.beatIndex + 1} of ${totalBeats} · ${escapeHtml(beat.title)}</p>
+            </div>
           </div>
           <div class="academy-stars-pill">⭐ ${stars} Stars</div>
         </div>
@@ -328,8 +423,19 @@ export function mountApp({ root, store, config, coloringData, coloringController
           </div>
           <div class="academy-stars-pill">⭐ ${progress.stars} Stars</div>
         </div>
+        <div class="academy-filter-pills" role="tablist" aria-label="Academy subjects">
+          <button type="button" class="pill-btn ${academySubjectFilter === 'all' ? 'is-active' : ''}" data-academy-subject="all">All (${progress.totalCount})</button>
+          ${lessonsConfig.subjects
+            .map((subj) => {
+              const subjLessons = getSubjectLessons(subj);
+              const doneCount = subjLessons.filter((l) => academy.completedLessons.includes(l.id)).length;
+              return `<button type="button" class="pill-btn ${academySubjectFilter === subj.id ? 'is-active' : ''}" data-academy-subject="${escapeHtml(subj.id)}">${subj.icon} ${escapeHtml(subj.title)} (${doneCount}/${subjLessons.length})</button>`;
+            })
+            .join('')}
+        </div>
         <div class="academy-subject-grid">
           ${lessonsConfig.subjects
+            .filter((subj) => academySubjectFilter === 'all' || subj.id === academySubjectFilter)
             .map((subj) => {
               const lessons = getSubjectLessons(subj);
               return `
@@ -737,53 +843,62 @@ export function mountApp({ root, store, config, coloringData, coloringController
         const brushSize = state.coloring.brushSize || 6;
         const canUndo = mode === 'draw' ? pageDrawings.length > 0 : coloringController.canUndo(activePage.id);
         return `
-          <div class="panel-section">
-            <h3 class="section-title">Choose a Page</h3>
-            <div class="option-grid">
-              ${coloringData.pages
-                .map(
-                  (pg) =>
-                    `<button type="button" class="option-btn ${pg.id === activePage.id ? 'is-active' : ''}" data-coloring-page="${pg.id}">${escapeHtml(pg.title)}</button>`
-                )
-                .join('')}
+          <div class="coloring-layout">
+            <div class="coloring-controls">
+              <button type="button" class="action-btn secondary coloring-tools-toggle" data-action="toggle-coloring-tools" aria-expanded="${coloringToolsOpen}">
+                ${coloringToolsOpen ? '▲ Hide Pages & Tools' : `🎨 Pages & Tools (${escapeHtml(activePage.title)} · ${mode === 'draw' ? 'Free Draw' : 'Tap to Fill'})`}
+              </button>
+              <div class="coloring-collapsible-tools ${coloringToolsOpen ? 'is-open' : ''}">
+                <div class="panel-section">
+                  <h3 class="section-title">Choose a Page</h3>
+                  <div class="option-grid">
+                    ${coloringData.pages
+                      .map(
+                        (pg) =>
+                          `<button type="button" class="option-btn ${pg.id === activePage.id ? 'is-active' : ''}" data-coloring-page="${pg.id}">${escapeHtml(pg.title)}</button>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+                <div class="panel-section">
+                  <h3 class="section-title">Mode</h3>
+                  <div class="option-grid">
+                    <button type="button" class="option-btn ${mode === 'fill' ? 'is-active' : ''}" data-coloring-mode="fill">🪣 Tap to Fill</button>
+                    <button type="button" class="option-btn ${mode === 'draw' ? 'is-active' : ''}" data-coloring-mode="draw">✏️ Free Draw</button>
+                  </div>
+                </div>
+              </div>
+              ${
+                mode === 'draw'
+                  ? `<div class="panel-section">
+                <h3 class="section-title">Brush Size</h3>
+                <div class="option-grid brush-size-grid">
+                  <button type="button" class="option-btn ${brushSize === 3 ? 'is-active' : ''}" data-brush-size="3">Small</button>
+                  <button type="button" class="option-btn ${brushSize === 6 ? 'is-active' : ''}" data-brush-size="6">Medium</button>
+                  <button type="button" class="option-btn ${brushSize === 12 ? 'is-active' : ''}" data-brush-size="12">Large</button>
+                </div>
+              </div>`
+                  : ''
+              }
+              <div class="panel-section">
+                <h3 class="section-title">Color Palette</h3>
+                <div class="swatch-grid">
+                  ${coloringData.coloringPalette
+                    .map(
+                      (c) =>
+                        `<button type="button" class="swatch-btn ${c.hex === state.coloring.selectedColor ? 'is-active' : ''}" data-coloring-color="${c.hex}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`
+                    )
+                    .join('')}
+                </div>
+              </div>
+              <div class="panel-section coloring-actions">
+                <button type="button" class="action-btn secondary" data-action="coloring-undo" ${canUndo ? '' : 'disabled'}>↩️ Undo</button>
+                <button type="button" class="action-btn secondary" data-action="coloring-clear">🧹 Clear Page</button>
+              </div>
             </div>
-          </div>
-          <div class="panel-section">
-            <h3 class="section-title">Mode</h3>
-            <div class="option-grid">
-              <button type="button" class="option-btn ${mode === 'fill' ? 'is-active' : ''}" data-coloring-mode="fill">🪣 Tap to Fill</button>
-              <button type="button" class="option-btn ${mode === 'draw' ? 'is-active' : ''}" data-coloring-mode="draw">✏️ Free Draw</button>
+            <div class="coloring-canvas-wrap ${mode === 'draw' ? 'is-draw-mode' : ''}">
+              ${renderColoringPageSvg(activePage, pageFills, pageDrawings)}
             </div>
-          </div>
-          ${
-            mode === 'draw'
-              ? `<div class="panel-section">
-            <h3 class="section-title">Brush Size</h3>
-            <div class="option-grid">
-              <button type="button" class="option-btn ${brushSize === 3 ? 'is-active' : ''}" data-brush-size="3">Small</button>
-              <button type="button" class="option-btn ${brushSize === 6 ? 'is-active' : ''}" data-brush-size="6">Medium</button>
-              <button type="button" class="option-btn ${brushSize === 12 ? 'is-active' : ''}" data-brush-size="12">Large</button>
-            </div>
-          </div>`
-              : ''
-          }
-          <div class="panel-section">
-            <h3 class="section-title">Color Palette</h3>
-            <div class="swatch-grid">
-              ${coloringData.coloringPalette
-                .map(
-                  (c) =>
-                    `<button type="button" class="swatch-btn ${c.hex === state.coloring.selectedColor ? 'is-active' : ''}" data-coloring-color="${c.hex}" title="${escapeHtml(c.label)}" aria-label="${escapeHtml(c.label)}" style="--swatch-bg: ${c.hex}"></button>`
-                )
-                .join('')}
-            </div>
-          </div>
-          <div class="panel-section coloring-actions">
-            <button type="button" class="action-btn secondary" data-action="coloring-undo" ${canUndo ? '' : 'disabled'}>↩️ Undo</button>
-            <button type="button" class="action-btn secondary" data-action="coloring-clear">🧹 Clear Page</button>
-          </div>
-          <div class="coloring-canvas-wrap ${mode === 'draw' ? 'is-draw-mode' : ''}">
-            ${renderColoringPageSvg(activePage, pageFills, pageDrawings)}
           </div>
         `;
       }
@@ -954,11 +1069,54 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
   }
 
+  function renderCastleHub(state, activeChar) {
+    const stars = state.academy?.stars ?? 0;
+    const completedLessons = state.academy?.completedLessons?.length ?? 0;
+    const completedEpisodes = state.episodes?.completed?.length ?? 0;
+    return `
+      <section class="castle-hub" aria-label="Royal Castle Hub">
+        <div class="castle-hub-hero">
+          <div class="castle-hub-avatar">${renderPaperDollSvg(activeChar, config, { powerBurst: powerBurstActive })}</div>
+          <div class="castle-hub-welcome">
+            <div class="castle-hub-kicker">Welcome to Starlight Castle</div>
+            <h2>${escapeHtml(activeChar.name)}</h2>
+            <p>Choose a royal world to play, create, learn, and explore!</p>
+            <div class="castle-hub-stats">
+              <span class="hub-stat-pill">⭐ ${stars} Royal Stars</span>
+              <span class="hub-stat-pill">🏫 ${completedLessons}/25 Lessons</span>
+              <span class="hub-stat-pill">📖 ${completedEpisodes} Stories</span>
+            </div>
+          </div>
+        </div>
+        <div class="castle-world-grid">
+          ${WORLDS.map(
+            (w) => `
+            <button type="button" class="world-card world-card--${w.id}" data-world="${w.id}">
+              <span class="world-card-icon">${w.icon}</span>
+              <span class="world-card-title">${w.label}</span>
+              <span class="world-card-tagline">${w.tagline}</span>
+              <span class="world-card-cta">Enter World →</span>
+            </button>
+          `
+          ).join('')}
+        </div>
+      </section>
+    `;
+  }
+
+  let lastDressingTab = 'profile';
+
   function render(state) {
     soundPlayer.setMuted(state.muted);
     pianoPlayer.setMuted(state.muted);
-    const isColoring = state.activeTab === 'coloring';
-    const isBallroom = state.activeTab === 'ballroom';
+    const activeWorld = getActiveWorld(state.activeTab);
+    if (activeWorld === 'dressing') {
+      lastDressingTab = state.activeTab;
+    }
+    const isHub = activeWorld === 'hub';
+    const isBallroom = activeWorld === 'ballroom';
+    const isDressing = activeWorld === 'dressing';
+    const isFullWidthWorld = activeWorld === 'coloring' || activeWorld === 'academy' || activeWorld === 'stories';
     const activeChar = getActiveCharacter(state);
     const isEditingPal = Boolean(state.activeCharacterId && state.activeCharacterId !== 'main' && state.pals?.[state.activeCharacterId]);
     const stageSvg = isBallroom
@@ -971,54 +1129,104 @@ export function mountApp({ root, store, config, coloringData, coloringController
         ? { id: activeEl.id, start: activeEl.selectionStart, end: activeEl.selectionEnd }
         : null;
 
+    let mainContent = '';
+    if (isHub) {
+      mainContent = renderCastleHub(state, activeChar);
+    } else if (isBallroom) {
+      mainContent = `
+        <div class="ballroom-layout">
+          <section class="stage-card is-ballroom-mode ballroom-hero-stage" aria-label="Royal Ballroom Stage">
+            <div class="princess-banner">${escapeHtml(activeChar.name)}</div>
+            <div class="doll-stage is-ballroom-stage">
+              ${stageSvg}
+              <div class="sparkle-burst-layer" aria-hidden="true">
+                <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
+              </div>
+            </div>
+          </section>
+          <div class="ballroom-lower-grid">
+            <section class="controls-card" aria-label="Ballroom Studio">
+              <div class="tab-panel">${renderTabPanel(state)}</div>
+            </section>
+            <section class="controls-card ballroom-piano-panel" aria-label="Royal Piano">
+              ${renderPianoHtml()}
+            </section>
+          </div>
+        </div>
+      `;
+    } else if (isFullWidthWorld) {
+      mainContent = `
+        <section class="controls-card fullwidth-world-panel" aria-label="${activeWorld} World">
+          <div class="tab-panel">${renderTabPanel(state)}</div>
+        </section>
+      `;
+    } else {
+      mainContent = `
+        <section class="stage-card" aria-label="Princess Stage">
+          <div class="princess-banner">${escapeHtml(activeChar.name)}</div>
+          ${isEditingPal ? `
+            <div class="editing-pal-badge" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px;font-size:0.85rem;">
+              <span style="background:rgba(255,112,166,0.18);color:#b81d65;padding:3px 10px;border-radius:999px;font-weight:700;">👭 Editing Pal: ${escapeHtml(activeChar.name)}</span>
+              <button type="button" class="pill-btn" data-select-character="main" style="padding:2px 10px;font-size:0.8rem;">Back to My Princess</button>
+            </div>
+          ` : ''}
+          <div class="doll-stage gentle-breathe">
+            ${stageSvg}
+            <div class="sparkle-burst-layer" aria-hidden="true">
+              <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="controls-card" aria-label="Customization Studio">
+          <nav class="dressing-subdock" role="tablist" aria-label="Dressing Room Categories">
+            ${DRESSING_TABS.map(
+              (t) => `<button type="button" role="tab" aria-selected="${state.activeTab === t.id}" class="subdock-btn ${state.activeTab === t.id ? 'is-active' : ''}" data-tab="${t.id}">
+                <span class="subdock-icon">${t.icon}</span>
+                <span class="subdock-label">${t.label}</span>
+              </button>`
+            ).join('')}
+          </nav>
+          <div class="tab-panel">
+            ${renderTabPanel(state)}
+          </div>
+        </section>
+      `;
+    }
+
     root.innerHTML = `
       <div class="studio-shell">
         <header class="studio-header">
           <div class="brand">
-            <span class="brand-crown">👑</span>
-            <h1>Princess Play Time</h1>
+            <button type="button" class="hub-home-btn ${isHub ? 'is-active' : ''}" data-action="go-hub" title="Royal Castle Hub">
+              <span>🏰</span>
+              <span class="hub-home-label">Hub</span>
+            </button>
+            <div class="brand-title">
+              <span class="brand-crown">👑</span>
+              <h1>Princess Play Time</h1>
+            </div>
           </div>
+          <nav class="world-hud" aria-label="Game Worlds">
+            ${WORLDS.map(
+              (w) => `<button type="button" class="world-hud-btn ${activeWorld === w.id ? 'is-active' : ''}" data-world="${w.id}">
+                <span class="world-hud-icon">${w.icon}</span>
+                <span class="world-hud-label">${w.shortLabel}</span>
+              </button>`
+            ).join('')}
+          </nav>
           <div class="header-actions">
+            ${isFullWidthWorld ? `<div class="hud-princess-pill" title="Active Princess">👑 ${escapeHtml(activeChar.name)}</div>` : ''}
             <div class="royal-stars-badge" title="Royal Stars earned in Academy">⭐ <span>${state.academy?.stars ?? 0}</span></div>
-            <button type="button" class="action-btn primary" data-action="announce">Announce Princess 🎺</button>
+            <button type="button" class="action-btn primary" data-action="announce">Announce 🎺</button>
             <button type="button" class="icon-btn" data-action="toggle-mute" aria-label="${state.muted ? 'Unmute sound' : 'Mute sound'}" title="${state.muted ? 'Unmute' : 'Mute'}">
               ${state.muted ? '🔇' : '🔊'}
             </button>
           </div>
         </header>
 
-        <main class="studio-main ${isColoring ? 'is-coloring-mode' : ''}">
-          <section class="stage-card ${isBallroom ? 'is-ballroom-mode' : ''}" aria-label="Princess Stage">
-            <div class="princess-banner">${escapeHtml(activeChar.name)}</div>
-            ${isEditingPal ? `
-              <div class="editing-pal-badge" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px;font-size:0.85rem;">
-                <span style="background:rgba(255,112,166,0.18);color:#b81d65;padding:3px 10px;border-radius:999px;font-weight:700;">👭 Editing Pal: ${escapeHtml(activeChar.name)}</span>
-                <button type="button" class="pill-btn" data-select-character="main" style="padding:2px 10px;font-size:0.8rem;">Back to My Princess</button>
-              </div>
-            ` : ''}
-            <div class="doll-stage ${isBallroom ? 'is-ballroom-stage' : 'gentle-breathe'}">
-              ${stageSvg}
-              <div class="sparkle-burst-layer" aria-hidden="true">
-                <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
-              </div>
-            </div>
-            ${isBallroom ? renderPianoHtml() : ''}
-          </section>
-
-          <section class="controls-card" aria-label="Customization Studio">
-            <nav class="tab-bar" role="tablist">
-              ${TABS.map(
-                (t) => `<button type="button" role="tab" aria-selected="${state.activeTab === t.id}" class="tab-btn ${state.activeTab === t.id ? 'is-active' : ''}" data-tab="${t.id}">
-                  <span class="tab-icon">${t.icon}</span>
-                  <span class="tab-label">${t.label}</span>
-                </button>`
-              ).join('')}
-            </nav>
-            <div class="tab-panel">
-              ${renderTabPanel(state)}
-            </div>
-            ${isBallroom ? renderPianoHtml() : ''}
-          </section>
+        <main class="studio-main ${isDressing ? 'is-dressing-mode' : 'is-fullwidth-mode'}">
+          ${mainContent}
         </main>
       </div>
     `;
@@ -1136,8 +1344,39 @@ export function mountApp({ root, store, config, coloringData, coloringController
       return;
     }
 
+    if (btn.dataset.academySubject) {
+      academySubjectFilter = btn.dataset.academySubject;
+      soundPlayer.playCue('ui-click');
+      render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.episodeStart) {
+      episodeSession = {
+        active: true,
+        episodeId: btn.dataset.episodeStart,
+        beatIndex: 0,
+        kindnessCount: 0,
+        selectedChoice: null,
+        completed: false,
+        justEarnedStars: 0,
+        mayaPrincess: null
+      };
+      soundPlayer.playCue('ui-click');
+      render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.episodeBack) {
+      episodeSession.active = false;
+      soundPlayer.playCue('ui-click');
+      render(store.getState());
+      return;
+    }
+
     if (btn.dataset.episodeReplay) {
       episodeSession = {
+        active: true,
         episodeId: episodeSession.episodeId,
         beatIndex: 0,
         kindnessCount: 0,
@@ -1210,7 +1449,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
             store.update((s) => {
               const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
               s.academy = { stars: res.stars, completedLessons: res.completedLessons };
-              academySession.newlyAwarded = res.newlyAwarded;
+              academySession.newlyAwarded = res.newlyCompleted;
               return s;
             });
             triggerSparkle();
@@ -1271,7 +1510,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
               store.update((s) => {
                 const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
                 s.academy = { stars: res.stars, completedLessons: res.completedLessons };
-                academySession.newlyAwarded = res.newlyAwarded;
+                academySession.newlyAwarded = res.newlyCompleted;
                 return s;
               });
               triggerSparkle();
@@ -1341,7 +1580,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
               store.update((s) => {
                 const res = awardLessonStars(s.academy, lesson.id, lessonsConfig?.starRewardPerLesson || 3);
                 s.academy = { stars: res.stars, completedLessons: res.completedLessons };
-                academySession.newlyAwarded = res.newlyAwarded;
+                academySession.newlyAwarded = res.newlyCompleted;
                 return s;
               });
               triggerSparkle();
@@ -1437,6 +1676,18 @@ export function mountApp({ root, store, config, coloringData, coloringController
       return;
     }
 
+    if (btn.dataset.world) {
+      const world = WORLDS.find((w) => w.id === btn.dataset.world);
+      if (world) {
+        soundPlayer.playCue(world.id === 'ballroom' ? 'ballroom-enter' : 'ui-click');
+        store.update((s) => {
+          s.activeTab = world.id === 'dressing' ? lastDressingTab : world.defaultTab;
+          return s;
+        });
+      }
+      return;
+    }
+
     if (btn.dataset.tab) {
       soundPlayer.playCue(btn.dataset.tab === 'ballroom' ? 'ballroom-enter' : 'ui-click');
       store.update((s) => {
@@ -1458,6 +1709,14 @@ export function mountApp({ root, store, config, coloringData, coloringController
     }
 
     const action = btn.dataset.action;
+    if (action === 'go-hub') {
+      soundPlayer.playCue('ui-click');
+      store.update((s) => {
+        s.activeTab = 'hub';
+        return s;
+      });
+      return;
+    }
     if (action === 'toggle-mute') {
       const next = store.update((s) => {
         s.muted = !s.muted;
@@ -1499,6 +1758,13 @@ export function mountApp({ root, store, config, coloringData, coloringController
         });
         return s;
       });
+      return;
+    }
+
+    if (action === 'toggle-coloring-tools') {
+      coloringToolsOpen = !coloringToolsOpen;
+      soundPlayer.playCue('ui-click');
+      render(store.getState());
       return;
     }
 
