@@ -278,7 +278,7 @@ function renderThroneSvg(throneState, throneConfig, options = {}) {
         <circle cx="48" cy="12" r="10" fill="#FBBF24" />
       </g>
 
-      ${options.princessSvg ? `<g transform="translate(245, 165) scale(0.52)">${options.princessSvg}</g>` : ''}
+      ${options.princessSvg ? `<g transform="translate(237, 155) scale(0.52)">${options.princessSvg}</g>` : ''}
     </svg>
   `;
 }
@@ -338,7 +338,7 @@ function renderBedroomSvg(bedState, bedConfig, options = {}) {
       ${
         options.princessSvg
           ? sleeping
-            ? `<g transform="translate(365, 195) rotate(-82) scale(0.45)">${options.princessSvg}</g>
+            ? `<g transform="translate(224, 300) rotate(-90) scale(0.42)">${options.princessSvg}</g>
                <text x="320" y="168" font-size="26">💤</text>`
             : `<g transform="translate(108, 172) scale(0.5)">${options.princessSvg}</g>`
           : ''
@@ -390,7 +390,7 @@ function renderKitchenSvg(kitState, kitConfig, options = {}) {
           ? dining
             ? `<g transform="translate(226, 148) scale(0.48)">${options.princessSvg}</g>
                <text x="275" y="142" font-size="24">💖</text>`
-            : `<g transform="translate(500, 162) scale(0.5)">${options.princessSvg}</g>`
+            : `<g transform="translate(480, 162) scale(0.5)">${options.princessSvg}</g>`
           : ''
       }
     </svg>
@@ -432,7 +432,7 @@ export function renderCarriageSvg(carriageState, carriageConfig = {}, options = 
         }
         <rect x="65" y="34" width="80" height="52" rx="14" fill="#FFFFFF" opacity="0.88" />
         <text x="105" y="24" font-size="22" text-anchor="middle">${banner.icon || '👑'}</text>
-        ${options.princessSvg ? `<g transform="translate(68, 22) scale(0.32)">${options.princessSvg}</g>` : ''}
+        ${options.princessSvg ? `<g transform="translate(54, 24) scale(0.32)">${options.princessSvg}</g>` : ''}
       </g>
 
       <!-- Wheels -->

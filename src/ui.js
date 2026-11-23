@@ -334,11 +334,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const isAlreadyCompleted = completedEpisodes.includes(episode.id);
 
     if (episodeSession.completed) {
+      const palId = episode?.palId || (episode?.id === 'new-princess-at-school' ? 'maya' : null);
       const ending = resolveEpisodeEnding(episode, episodeSession.kindnessCount);
       const sceneSvg = renderEpisodeSceneSvg(episode, beats.length - 1, state.princess, config, {
         mayaMood: ending?.mayaMood || 'happy',
         reactionType: ending?.reactionType || 'celebrate',
-        mayaPrincess: state.pals?.maya || episodeSession.mayaPrincess
+        mayaPrincess: (palId && state.pals?.[palId]) || episodeSession.mayaPrincess
       });
       const rewardBadge = episodeSession.justEarnedStars > 0
         ? `<div class="episode-reward-pill">⭐ +${episodeSession.justEarnedStars} Royal Stars Earned!</div>`
@@ -375,16 +376,18 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const choice = episodeSession.selectedChoice;
     const mayaMood = choice ? choice.mayaMood : 'neutral';
     const reactionType = choice ? choice.reactionType : 'none';
-    if (episode.id === 'new-princess-at-school' && !state.pals?.maya) {
-      const rolledMaya = {
-        id: 'maya',
+    const palId = episode?.palId || (episode?.id === 'new-princess-at-school' ? 'maya' : null);
+    if (palId && !state.pals?.[palId]) {
+      const rolledPal = {
+        id: palId,
         unlocked: false,
         ...createInitialState(config).princess,
-        name: 'Princess Maya',
+        ...(episode.palDefaults || {}),
+        name: episode.palName || episode.mayaName || 'Princess Maya',
         petId: 'none'
       };
       store.update((s) => {
-        s.pals = { ...(s.pals || {}), maya: rolledMaya };
+        s.pals = { ...(s.pals || {}), [palId]: rolledPal };
         return s;
       });
       state = store.getState();
@@ -393,7 +396,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
       mayaMood,
       reactionType,
       playerAction: choice ? (choice.kindnessDelta > 0 ? 'kind' : 'unfriendly') : 'idle',
-      mayaPrincess: state.pals?.maya || episodeSession.mayaPrincess
+      mayaPrincess: (palId && state.pals?.[palId]) || episodeSession.mayaPrincess
     });
     const displayText = choice ? choice.reactionText : beat.story;
 
@@ -1636,9 +1639,10 @@ export function mountApp({ root, store, config, coloringData, coloringController
           const completedList = Array.isArray(current.episodes?.completed) ? current.episodes.completed : [];
           const ending = episode ? resolveEpisodeEnding(episode, episodeSession.kindnessCount) : null;
           const passedWelcoming = ending?.id === 'welcoming' || episodeSession.kindnessCount >= (episode?.kindnessThreshold ?? 3);
-          const shouldUnlockMaya = episode?.id === 'new-princess-at-school' && passedWelcoming && current.pals?.maya && !current.pals.maya.unlocked;
+          const palId = episode?.palId || (episode?.id === 'new-princess-at-school' ? 'maya' : null);
+          const shouldUnlockPal = Boolean(palId && passedWelcoming && current.pals?.[palId] && !current.pals[palId].unlocked);
           const shouldAwardEpisode = episode && !completedList.includes(episode.id);
-          if (shouldAwardEpisode || shouldUnlockMaya) {
+          if (shouldAwardEpisode || shouldUnlockPal) {
             const reward = shouldAwardEpisode ? (typeof episode.starReward === 'number' ? episode.starReward : 2) : 0;
             if (reward > 0) {
               episodeSession.justEarnedStars = reward;
@@ -1654,8 +1658,8 @@ export function mountApp({ root, store, config, coloringData, coloringController
                   completed: [...completedList, episode.id]
                 };
               }
-              if (shouldUnlockMaya && s.pals?.maya) {
-                s.pals.maya.unlocked = true;
+              if (shouldUnlockPal && s.pals?.[palId]) {
+                s.pals[palId].unlocked = true;
               }
               return s;
             });

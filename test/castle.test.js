@@ -128,3 +128,13 @@ test('renderCarriageSvg renders destination and invited friends', async () => {
   assert.ok(svg.includes('👸'));
   assert.ok(svg.includes('🧚'));
 });
+
+test('renderCastleSceneSvg positions sleeping princess on the bedroom mattress', () => {
+  const bedSvg = renderCastleSceneSvg(
+    { activeView: 'bedroom', bedroom: { sleeping: true, lampOn: true } },
+    castleConfig,
+    { princessSvg: '<g id="doll"></g>' }
+  );
+  assert.ok(bedSvg.includes('translate(224, 300) rotate(-90) scale(0.42)'));
+  assert.ok(bedSvg.includes('💤'));
+});

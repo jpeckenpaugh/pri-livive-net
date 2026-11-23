@@ -194,3 +194,24 @@ test('Phase 6: episodes_config.json defines new-princess-at-school with 4 choice
   assert.ok(ep.ending?.welcoming?.story);
   assert.ok(ep.ending?.exclusionary?.story);
 });
+
+test('episodes_config.json defines 4 new pal episodes (Crystal, Aurora, Coral, Willow)', () => {
+  const episodesConfig = JSON.parse(
+    fs.readFileSync(new URL('../data/episodes_config.json', import.meta.url), 'utf8')
+  );
+  const expected = [
+    ['crystal-cave-adventure', 'crystal', 'Princess Crystal'],
+    ['starlight-lantern-festival', 'aurora', 'Princess Aurora'],
+    ['coral-reef-treasure', 'coral', 'Princess Coral'],
+    ['whispering-woods-picnic', 'willow', 'Princess Willow']
+  ];
+  for (const [id, palId, palName] of expected) {
+    const ep = episodesConfig.episodes.find((e) => e.id === id);
+    assert.ok(ep, `Missing episode ${id}`);
+    assert.equal(ep.palId, palId);
+    assert.equal(ep.palName, palName);
+    assert.ok(Array.isArray(ep.beats) && ep.beats.length >= 2);
+    assert.ok(ep.ending?.welcoming?.story);
+    assert.ok(ep.ending?.exclusionary?.story);
+  }
+});

@@ -155,9 +155,11 @@ export function renderEpisodeSceneSvg(
   const beat = beats[beatIndex] || beats[0] || {};
   const backdrop = beat.backdrop || 'courtyard';
   const playerSvg = renderPaperDollSvg(princessState, princessConfig);
+  const palName = episode?.palName || episode?.mayaName || 'Princess Maya';
   const mayaState = mayaPrincess || {
     ...createInitialState(princessConfig).princess,
-    name: 'Princess Maya',
+    ...(episode?.palDefaults || {}),
+    name: palName,
     petId: 'none'
   };
   const mayaSvg = renderPaperDollSvg(mayaState, princessConfig, { includePet: false });
@@ -174,8 +176,8 @@ export function renderEpisodeSceneSvg(
         <svg x="355" y="18" width="205" height="295" viewBox="0 0 320 460">
           ${mayaSvg}
         </svg>
-        <rect x="415" y="294" width="90" height="20" rx="10" fill="rgba(255,255,255,0.9)" stroke="#b388eb" stroke-width="1.5"/>
-        <text x="460" y="308" text-anchor="middle" font-size="11" font-weight="700" fill="#5e3a8c">Princess Maya</text>
+        <rect x="405" y="294" width="110" height="20" rx="10" fill="rgba(255,255,255,0.9)" stroke="#b388eb" stroke-width="1.5"/>
+        <text x="460" y="308" text-anchor="middle" font-size="11" font-weight="700" fill="#5e3a8c">${palName}</text>
       </g>
       ${renderReactionOverlay(reactionType)}
     </svg>

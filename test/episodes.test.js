@@ -41,3 +41,23 @@ test('renderEpisodeSceneSvg composites player paper doll, Princess Maya, and rea
   assert.ok(svg.includes('episode-reaction--sparkle'));
   assert.ok(svg.includes('<svg'));
 });
+
+test('4 new pal episodes resolve endings and render their pal names', () => {
+  const newEpisodeIds = [
+    ['crystal-cave-adventure', 'Princess Crystal'],
+    ['starlight-lantern-festival', 'Princess Aurora'],
+    ['coral-reef-treasure', 'Princess Coral'],
+    ['whispering-woods-picnic', 'Princess Willow']
+  ];
+  for (const [id, palName] of newEpisodeIds) {
+    const ep = getEpisodeById(episodesConfig, id);
+    assert.ok(ep, `Expected episode ${id}`);
+    const welcoming = resolveEpisodeEnding(ep, ep.kindnessThreshold);
+    assert.equal(welcoming.type, 'welcoming');
+    const svg = renderEpisodeSceneSvg(ep, 0, DEFAULT_STATE, princessConfig, {
+      mayaMood: 'happy',
+      reactionType: 'sparkle'
+    });
+    assert.ok(svg.includes(palName), `Expected ${palName} in SVG for ${id}`);
+  }
+});

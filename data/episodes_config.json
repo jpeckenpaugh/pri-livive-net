@@ -5,6 +5,8 @@
       "title": "The New Princess at School",
       "subtitle": "A Royal Academy Story about Kindness",
       "starReward": 2,
+      "palId": "maya",
+      "palName": "Princess Maya",
       "mayaName": "Princess Maya",
       "kindnessThreshold": 3,
       "beats": [
@@ -117,6 +119,318 @@
           "mayaMood": "shy",
           "reactionType": "reflect",
           "story": "As the school bell rings, Princess Maya walks home quietly. Being new at school can feel lonely when others leave us out. Tomorrow is a brand-new day—even one small hello or helping hand can turn someone's whole day around!"
+        }
+      }
+    },
+    {
+      "id": "crystal-cave-adventure",
+      "title": "The Crystal Cave Quest",
+      "subtitle": "A Sparkling Adventure with Princess Crystal",
+      "starReward": 2,
+      "palId": "crystal",
+      "palName": "Princess Crystal",
+      "palDefaults": {
+        "characterTypeId": "ice-princess",
+        "dressColor": "#7DD3FC",
+        "hairColor": "#E0F2FE"
+      },
+      "kindnessThreshold": 1,
+      "beats": [
+        {
+          "id": "crystal-entrance",
+          "title": "The Shimmering Cavern",
+          "backdrop": "courtyard",
+          "story": "At the edge of the Frost Peak, you meet Princess Crystal! She is searching for a lost snowflake prism to light up the winter festival.",
+          "choices": [
+            {
+              "id": "help-search",
+              "label": "Offer to help her search the cave!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Princess Crystal's eyes light up like ice diamonds! \"Thank you! Two pairs of eyes are better than one.\""
+            },
+            {
+              "id": "watch-from-afar",
+              "label": "Stay outside and watch",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Crystal sighs softly and steps into the chilly cavern alone."
+            }
+          ]
+        },
+        {
+          "id": "crystal-prism",
+          "title": "The Glowing Prism",
+          "backdrop": "classroom",
+          "story": "Deep inside, a rainbow beam points to a high crystal shelf. Princess Crystal reaches up, but it's just out of reach!",
+          "choices": [
+            {
+              "id": "boost-crystal",
+              "label": "Hold her hand and boost her up!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Together you reach the snowflake prism! It fills the cave with dazzling rainbow light."
+            },
+            {
+              "id": "walk-away",
+              "label": "Shrug and head back",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Crystal tries to jump for it on her own, looking disappointed."
+            }
+          ]
+        }
+      ],
+      "ending": {
+        "welcoming": {
+          "title": "Sparkling New Friendship!",
+          "mayaMood": "happy",
+          "reactionType": "celebrate",
+          "story": "Princess Crystal places the prism in the town square, and the whole kingdom cheers! She promises to visit your castle anytime."
+        },
+        "exclusionary": {
+          "title": "A Chilly Afternoon",
+          "mayaMood": "shy",
+          "reactionType": "reflect",
+          "story": "Princess Crystal eventually finds another way, though she wishes she had a friend by her side. Next time, lending a hand makes any quest warmer!"
+        }
+      }
+    },
+    {
+      "id": "starlight-lantern-festival",
+      "title": "The Starlight Lantern Festival",
+      "subtitle": "A Glowing Evening with Princess Aurora",
+      "starReward": 2,
+      "palId": "aurora",
+      "palName": "Princess Aurora",
+      "palDefaults": {
+        "characterTypeId": "classic",
+        "dressColor": "#C084FC",
+        "hairColor": "#FDE047"
+      },
+      "kindnessThreshold": 1,
+      "beats": [
+        {
+          "id": "aurora-lanterns",
+          "title": "Lanterns by the Lake",
+          "backdrop": "lunch",
+          "story": "Twilight falls over the Royal Gardens! Princess Aurora is trying to untangle a string of starlight lanterns before the festival begins.",
+          "choices": [
+            {
+              "id": "untangle-together",
+              "label": "Help untangle the lanterns!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Princess Aurora giggles! \"With your help, these lanterns will shine brighter than ever!\""
+            },
+            {
+              "id": "pass-by",
+              "label": "Walk past to the snack table",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Aurora frowns as the ribbons tangle even more."
+            }
+          ]
+        },
+        {
+          "id": "aurora-launch",
+          "title": "Make a Wish",
+          "backdrop": "hallway",
+          "story": "The lanterns are ready to float into the night sky! Princess Aurora holds out a golden lantern for you.",
+          "choices": [
+            {
+              "id": "launch-together",
+              "label": "Launch the lanterns together!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "The lanterns drift up into the stars, painting the sky in warm gold and violet!"
+            },
+            {
+              "id": "skip-launch",
+              "label": "Decline and sit down",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Aurora releases her lantern quietly into the night."
+            }
+          ]
+        }
+      ],
+      "ending": {
+        "welcoming": {
+          "title": "Starlight Friends Forever!",
+          "mayaMood": "happy",
+          "reactionType": "celebrate",
+          "story": "You and Princess Aurora watch the sky glow with hundreds of wishes. She's thrilled to be your new royal pal!"
+        },
+        "exclusionary": {
+          "title": "A Quiet Festival",
+          "mayaMood": "shy",
+          "reactionType": "reflect",
+          "story": "The lanterns still float up, but sharing a moment with a friend makes every celebration twice as magical."
+        }
+      }
+    },
+    {
+      "id": "coral-reef-treasure",
+      "title": "The Coral Reef Treasure",
+      "subtitle": "An Ocean Quest with Princess Coral",
+      "starReward": 2,
+      "palId": "coral",
+      "palName": "Princess Coral",
+      "palDefaults": {
+        "characterTypeId": "mermaid",
+        "dressColor": "#2DD4BF",
+        "hairColor": "#FB7185"
+      },
+      "kindnessThreshold": 1,
+      "beats": [
+        {
+          "id": "coral-shore",
+          "title": "By the Crystal Cove",
+          "backdrop": "courtyard",
+          "story": "Down by the sparkling shore, Princess Coral is searching for a singing seashell that fell from her royal crown!",
+          "choices": [
+            {
+              "id": "search-tidepools",
+              "label": "Search the tidepools with her!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Princess Coral splashes happily! \"You're the best treasure-hunting partner ever!\""
+            },
+            {
+              "id": "ignore-shell",
+              "label": "Say you're too busy",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Coral dips back into the waves with a worried look."
+            }
+          ]
+        },
+        {
+          "id": "coral-pearl",
+          "title": "The Singing Seashell",
+          "backdrop": "lunch",
+          "story": "You spot a shimmering pink shell tucked behind a starfish! A little crab is guarding it.",
+          "choices": [
+            {
+              "id": "trade-pebble",
+              "label": "Offer the crab a shiny pebble!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "The crab happily trades! Princess Coral's seashell sings a joyful ocean melody."
+            },
+            {
+              "id": "leave-shell",
+              "label": "Leave it behind",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Coral swims away without her singing shell."
+            }
+          ]
+        }
+      ],
+      "ending": {
+        "welcoming": {
+          "title": "Treasured Ocean Pal!",
+          "mayaMood": "happy",
+          "reactionType": "celebrate",
+          "story": "Princess Coral places the singing shell back on her crown and invites you to join her on every royal adventure!"
+        },
+        "exclusionary": {
+          "title": "Drifting Waves",
+          "mayaMood": "shy",
+          "reactionType": "reflect",
+          "story": "The tide rolls in quietly. Helping a friend find what they lost always brings the brightest smiles!"
+        }
+      }
+    },
+    {
+      "id": "whispering-woods-picnic",
+      "title": "The Whispering Woods Picnic",
+      "subtitle": "A Forest Gathering with Princess Willow",
+      "starReward": 2,
+      "palId": "willow",
+      "palName": "Princess Willow",
+      "palDefaults": {
+        "characterTypeId": "fairy",
+        "dressColor": "#4ADE80",
+        "hairColor": "#A78BFA"
+      },
+      "kindnessThreshold": 1,
+      "beats": [
+        {
+          "id": "willow-blanket",
+          "title": "The Mossy Meadow",
+          "backdrop": "courtyard",
+          "story": "In the Whispering Woods, Princess Willow is setting up a tea picnic for the woodland bunnies, but a breeze blows her napkins away!",
+          "choices": [
+            {
+              "id": "catch-napkins",
+              "label": "Chase and catch the napkins!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Princess Willow claps her hands! \"Thank you! You saved our woodland tea party!\""
+            },
+            {
+              "id": "let-them-blow",
+              "label": "Watch them float away",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "Princess Willow sighs as she tries to gather them alone."
+            }
+          ]
+        },
+        {
+          "id": "willow-tea",
+          "title": "Berry Tarts & Tea",
+          "backdrop": "lunch",
+          "story": "The bunnies hop around the picnic blanket! Princess Willow pours a cup of honey-blossom tea for you.",
+          "choices": [
+            {
+              "id": "share-treat",
+              "label": "Share berry tarts with everyone!",
+              "kindnessDelta": 1,
+              "mayaMood": "happy",
+              "reactionType": "sparkle",
+              "reactionText": "Everyone cheers! Princess Willow says it's the coziest picnic in the kingdom."
+            },
+            {
+              "id": "eat-alone",
+              "label": "Eat quietly by yourself",
+              "kindnessDelta": 0,
+              "mayaMood": "sad",
+              "reactionType": "cloud",
+              "reactionText": "The picnic feels a little quiet without sharing."
+            }
+          ]
+        }
+      ],
+      "ending": {
+        "welcoming": {
+          "title": "Woodland Besties!",
+          "mayaMood": "happy",
+          "reactionType": "celebrate",
+          "story": "Princess Willow crowns you with a daisy chain! She can't wait to explore the castle and gardens with you."
+        },
+        "exclusionary": {
+          "title": "A Quiet Clearing",
+          "mayaMood": "shy",
+          "reactionType": "reflect",
+          "story": "The woodland breeze whispers through the trees. Sharing kindness turns any afternoon into a celebration!"
         }
       }
     }
