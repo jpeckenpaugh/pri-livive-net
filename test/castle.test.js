@@ -97,3 +97,34 @@ test('normalizeState migrates older saves without castle and preserves valid cas
   assert.equal(preserved.castle.throne.thrones, 'crystal-butterfly');
   assert.deepEqual(preserved.unlockedCastleItems, ['crystal-palace', 'crystal-butterfly']);
 });
+
+test('renderCastleSceneSvg renders bedroom and kitchen rooms with interactive states', () => {
+  const bedSvg = renderCastleSceneSvg(
+    { activeView: 'bedroom', bedroom: { sleeping: true, lampOn: false } },
+    castleConfig,
+    { princessSvg: '<g id="doll"></g>' }
+  );
+  assert.ok(bedSvg.includes('Royal Bedroom'));
+  assert.ok(bedSvg.includes('💤'));
+
+  const kitSvg = renderCastleSceneSvg(
+    { activeView: 'kitchen', kitchen: { dining: true, currentDish: 'enchanted-tea' } },
+    castleConfig,
+    { princessSvg: '<g id="doll"></g>' }
+  );
+  assert.ok(kitSvg.includes('Royal Kitchen and Dining'));
+  assert.ok(kitSvg.includes('🫖'));
+  assert.ok(kitSvg.includes('💖'));
+});
+
+test('renderCarriageSvg renders destination and invited friends', async () => {
+  const { renderCarriageSvg } = await import('../src/castle.js');
+  const svg = renderCarriageSvg(
+    { destination: 'crystal-beach', invitedFriends: ['maya', 'pip'] },
+    castleConfig.carriage,
+    { princessSvg: '<g id="doll"></g>' }
+  );
+  assert.ok(svg.includes('Crystal Beach'));
+  assert.ok(svg.includes('👸'));
+  assert.ok(svg.includes('🧚'));
+});

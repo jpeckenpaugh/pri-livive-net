@@ -95,7 +95,35 @@ export const DEFAULT_STATE = {
       chandeliers: 'candle-ring',
       banners: 'crown-tapestries',
       windows: 'sunny-meadow'
+    },
+    bedroom: {
+      wallColor: 'soft-blush',
+      beds: 'canopy-pink',
+      bedding: 'rose-satin',
+      rugs: 'heart-plush',
+      lamps: 'candle-sconce',
+      plushies: 'royal-teddy',
+      sleeping: false,
+      lampOn: true
+    },
+    kitchen: {
+      wallColor: 'warm-butter',
+      tables: 'oak-banquet',
+      tablecloths: 'lace-white',
+      hearths: 'brick-oven',
+      centerpieces: 'tea-set',
+      currentDish: 'royal-cupcakes',
+      dining: false
     }
+  },
+  carriage: {
+    styles: 'pumpkin-coach',
+    colors: 'royal-pink',
+    wheels: 'wooden-spokes',
+    horses: 'white-steed',
+    banners: 'crown-crest',
+    destination: 'enchanted-forest',
+    invitedFriends: []
   },
   unlockedCastleItems: []
 };
@@ -235,7 +263,10 @@ export function normalizeState(raw) {
     return base;
   }
 
-  if (typeof raw.activeTab === 'string') {
+  if (raw.activeTab === 'ballroom') {
+    base.activeTab = 'castle';
+    base.castle.activeView = 'ballroom';
+  } else if (typeof raw.activeTab === 'string') {
     base.activeTab = raw.activeTab;
   }
   if (typeof raw.muted === 'boolean') {
@@ -351,7 +382,13 @@ export function normalizeState(raw) {
 
   if (raw.castle && typeof raw.castle === 'object') {
     const c = raw.castle;
-    if (c.activeView === 'exterior' || c.activeView === 'throne') {
+    if (
+      c.activeView === 'exterior' ||
+      c.activeView === 'throne' ||
+      c.activeView === 'bedroom' ||
+      c.activeView === 'kitchen' ||
+      c.activeView === 'ballroom'
+    ) {
       base.castle.activeView = c.activeView;
     }
     if (c.exterior && typeof c.exterior === 'object') {
@@ -367,6 +404,46 @@ export function normalizeState(raw) {
           base.castle.throne[key] = c.throne[key];
         }
       }
+    }
+    if (c.bedroom && typeof c.bedroom === 'object') {
+      for (const key of ['wallColor', 'beds', 'bedding', 'rugs', 'lamps', 'plushies']) {
+        if (typeof c.bedroom[key] === 'string' && c.bedroom[key].trim().length > 0) {
+          base.castle.bedroom[key] = c.bedroom[key];
+        }
+      }
+      if (typeof c.bedroom.sleeping === 'boolean') {
+        base.castle.bedroom.sleeping = c.bedroom.sleeping;
+      }
+      if (typeof c.bedroom.lampOn === 'boolean') {
+        base.castle.bedroom.lampOn = c.bedroom.lampOn;
+      }
+    }
+    if (c.kitchen && typeof c.kitchen === 'object') {
+      for (const key of ['wallColor', 'tables', 'tablecloths', 'hearths', 'centerpieces', 'currentDish']) {
+        if (typeof c.kitchen[key] === 'string' && c.kitchen[key].trim().length > 0) {
+          base.castle.kitchen[key] = c.kitchen[key];
+        }
+      }
+      if (typeof c.kitchen.dining === 'boolean') {
+        base.castle.kitchen.dining = c.kitchen.dining;
+      }
+    }
+  }
+
+  if (raw.carriage && typeof raw.carriage === 'object') {
+    const cg = raw.carriage;
+    for (const key of ['styles', 'colors', 'wheels', 'horses', 'banners', 'destination']) {
+      if (typeof cg[key] === 'string' && cg[key].trim().length > 0) {
+        base.carriage[key] = cg[key];
+      }
+    }
+    if (Array.isArray(cg.invitedFriends)) {
+      const seen = new Set();
+      base.carriage.invitedFriends = cg.invitedFriends.filter((id) => {
+        if (typeof id !== 'string' || id.trim().length === 0 || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
     }
   }
 

@@ -76,5 +76,109 @@
       { "id": "aurora-night", "label": "Aurora Night", "icon": "🌠", "price": 5, "description": "Dancing northern lights" },
       { "id": "rainbow-waterfall", "label": "Rainbow Falls", "icon": "🌈", "price": 6, "description": "Magical waterfall vista" }
     ]
+  },
+  "bedroom": {
+    "wallColors": [
+      { "id": "soft-blush", "label": "Soft Blush", "hex": "#FFF0F5", "trim": "#F9C6D9", "price": 0 },
+      { "id": "lavender-dream", "label": "Lavender Dream", "hex": "#F5EEFF", "trim": "#D8B4FE", "price": 0 },
+      { "id": "sky-lullaby", "label": "Sky Lullaby", "hex": "#EFF6FF", "trim": "#BFDBFE", "price": 0 },
+      { "id": "starlight-velvet", "label": "Starlight Velvet", "hex": "#2E2A5E", "trim": "#818CF8", "price": 3, "description": "Cozy midnight dream walls" },
+      { "id": "rose-gold-silk", "label": "Rose Gold Silk", "hex": "#FFF1E6", "trim": "#F4A261", "price": 4, "description": "Warm shimmering silk walls" }
+    ],
+    "beds": [
+      { "id": "canopy-pink", "label": "Pink Canopy", "icon": "🛏️", "price": 0 },
+      { "id": "cloud-cradle", "label": "Cloud Bed", "icon": "☁️", "price": 0 },
+      { "id": "crystal-fourposter", "label": "Crystal Four-Poster", "icon": "💎", "price": 5, "description": "Sparkling crystal bedposts" },
+      { "id": "swan-carriage-bed", "label": "Swan Royal Bed", "icon": "🦢", "price": 7, "description": "Graceful carved swan bed" }
+    ],
+    "bedding": [
+      { "id": "rose-satin", "label": "Rose Satin", "hex": "#F472B6", "trim": "#FDE68A", "price": 0 },
+      { "id": "lilac-silk", "label": "Lilac Silk", "hex": "#C084FC", "trim": "#F3E8FF", "price": 0 },
+      { "id": "starlight-navy", "label": "Starlight Navy", "hex": "#3B82F6", "trim": "#E0F2FE", "price": 3, "description": "Celestial starry quilt" },
+      { "id": "golden-sunbeam", "label": "Golden Sunbeam", "hex": "#FBBF24", "trim": "#FFFBEB", "price": 4, "description": "Warm sunlit duvet" }
+    ],
+    "rugs": [
+      { "id": "heart-plush", "label": "Heart Plush", "hex": "#FB7185", "trim": "#FFE4E6", "price": 0 },
+      { "id": "cloud-fluff", "label": "Cloud Fluff", "hex": "#F8FAFC", "trim": "#CBD5E1", "price": 0 },
+      { "id": "starlight-circle", "label": "Starlight Rug", "hex": "#818CF8", "trim": "#FEF08A", "price": 3, "description": "Woven moon & stars rug" },
+      { "id": "floral-wreath", "label": "Floral Wreath", "hex": "#34D399", "trim": "#FBCFE8", "price": 4, "description": "Blossoming meadow rug" }
+    ],
+    "lamps": [
+      { "id": "candle-sconce", "label": "Candle Lamp", "icon": "🕯️", "price": 0 },
+      { "id": "moon-orb", "label": "Moonlight Orb", "icon": "🌙", "price": 0 },
+      { "id": "fairy-jar", "label": "Fairy Lantern", "icon": "🧚", "price": 4, "description": "Glowing firefly jar" },
+      { "id": "crystal-tulip", "label": "Crystal Tulip", "icon": "🌷", "price": 5, "description": "Radiant jeweled flower lamp" }
+    ],
+    "plushies": [
+      { "id": "royal-teddy", "label": "Royal Teddy", "icon": "🧸", "price": 0 },
+      { "id": "unicorn-plush", "label": "Unicorn Plush", "icon": "🦄", "price": 0 },
+      { "id": "bunny-princess", "label": "Bunny Princess", "icon": "🐰", "price": 3, "description": "Cuddly crowned bunny" },
+      { "id": "dragon-snuggle", "label": "Baby Dragon", "icon": "🐉", "price": 5, "description": "Sleepy pastel dragon" }
+    ]
+  },
+  "kitchen": {
+    "wallColors": [
+      { "id": "warm-butter", "label": "Warm Butter", "hex": "#FFFBEB", "trim": "#FDE68A", "price": 0 },
+      { "id": "mint-macaron", "label": "Mint Macaron", "hex": "#ECFDF5", "trim": "#A7F3D0", "price": 0 },
+      { "id": "peach-cream", "label": "Peach Cream", "hex": "#FFF7ED", "trim": "#FED7AA", "price": 0 },
+      { "id": "royal-blue-tile", "label": "Royal Blue Tile", "hex": "#EFF6FF", "trim": "#93C5FD", "price": 3, "description": "Classic Delftware kitchen tiles" },
+      { "id": "rose-marble", "label": "Rose Marble", "hex": "#FFF1F2", "trim": "#FECDD3", "price": 4, "description": "Polished pink bakery walls" }
+    ],
+    "tables": [
+      { "id": "oak-banquet", "label": "Oak Banquet", "icon": "🪵", "price": 0 },
+      { "id": "ivory-round", "label": "Ivory Round", "icon": "🍽️", "price": 0 },
+      { "id": "crystal-feast", "label": "Crystal Feast", "icon": "💎", "price": 5, "description": "Shimmering ice-crystal table" },
+      { "id": "golden-tea", "label": "Golden Tea Table", "icon": "✨", "price": 6, "description": "Gilded royal tea table" }
+    ],
+    "tablecloths": [
+      { "id": "lace-white", "label": "Lace White", "hex": "#FFFFFF", "trim": "#F1F5F9", "price": 0 },
+      { "id": "blush-check", "label": "Blush Check", "hex": "#FBCFE8", "trim": "#F472B6", "price": 0 },
+      { "id": "starry-indigo", "label": "Starry Indigo", "hex": "#6366F1", "trim": "#FEF08A", "price": 3, "description": "Midnight banquet runner" },
+      { "id": "gold-brocade", "label": "Gold Brocade", "hex": "#FBBF24", "trim": "#FFFBEB", "price": 4, "description": "Embroidered royal cloth" }
+    ],
+    "hearths": [
+      { "id": "brick-oven", "label": "Cozy Brick Hearth", "icon": "🔥", "price": 0 },
+      { "id": "pastel-hearth", "label": "Pastel Hearth", "icon": "🧁", "price": 0 },
+      { "id": "enchanted-cauldron", "label": "Enchanted Hearth", "icon": "✨", "price": 5, "description": "Sparkling magic soup hearth" },
+      { "id": "golden-rotisserie", "label": "Royal Gold Hearth", "icon": "👑", "price": 6, "description": "Grand palace kitchen hearth" }
+    ],
+    "centerpieces": [
+      { "id": "tea-set", "label": "Royal Tea Set", "icon": "🫖", "price": 0 },
+      { "id": "fruit-basket", "label": "Fruit & Flowers", "icon": "🍓", "price": 0 },
+      { "id": "tiered-cake", "label": "Tiered Cake Stand", "icon": "🎂", "price": 4, "description": "Three-tier pastry tower" },
+      { "id": "chocolate-fountain", "label": "Chocolate Fountain", "icon": "🍫", "price": 6, "description": "Flowing fondue centerpiece" }
+    ]
+  },
+  "carriage": {
+    "styles": [
+      { "id": "pumpkin-coach", "label": "Pumpkin Coach", "icon": "🎃", "price": 0 },
+      { "id": "swan-carriage", "label": "Swan Carriage", "icon": "🦢", "price": 0 },
+      { "id": "crystal-coach", "label": "Crystal Coach", "icon": "💎", "price": 5, "description": "Sparkling faceted royal coach" },
+      { "id": "pegasus-chariot", "label": "Pegasus Chariot", "icon": "🦄", "price": 7, "description": "Winged celestial chariot" }
+    ],
+    "colors": [
+      { "id": "royal-pink", "label": "Royal Pink", "hex": "#FF70A6", "price": 0 },
+      { "id": "pearl-ivory", "label": "Pearl Ivory", "hex": "#FFF8F0", "price": 0 },
+      { "id": "sapphire-blue", "label": "Sapphire Blue", "hex": "#60A5FA", "price": 3, "description": "Shimmering sky blue coach" },
+      { "id": "golden-sun", "label": "Golden Sun", "hex": "#FBBF24", "price": 4, "description": "Gilded royal gold coach" }
+    ],
+    "wheels": [
+      { "id": "wooden-spokes", "label": "Classic Spokes", "icon": "🛞", "price": 0 },
+      { "id": "golden-filigree", "label": "Golden Filigree", "icon": "✨", "price": 0 },
+      { "id": "crystal-rims", "label": "Crystal Rims", "icon": "💠", "price": 4, "description": "Diamond-cut spinning wheels" },
+      { "id": "starlight-wheels", "label": "Starlight Wheels", "icon": "🌟", "price": 5, "description": "Glowing celestial rims" }
+    ],
+    "horses": [
+      { "id": "white-steed", "label": "White Steed", "icon": "🐴", "price": 0 },
+      { "id": "golden-pony", "label": "Golden Pony", "icon": "🐎", "price": 0 },
+      { "id": "unicorn-pair", "label": "Unicorn Pair", "icon": "🦄", "price": 5, "description": "Magical horned steeds" },
+      { "id": "pegasus-duo", "label": "Winged Pegasus", "icon": "🪽", "price": 7, "description": "Soaring sky steeds" }
+    ],
+    "banners": [
+      { "id": "crown-crest", "label": "Crown Crest", "icon": "👑", "price": 0 },
+      { "id": "floral-garland", "label": "Floral Garland", "icon": "🌸", "price": 0 },
+      { "id": "starlight-ribbons", "label": "Starlight Ribbons", "icon": "🎗️", "price": 3, "description": "Fluttering star ribbons" },
+      { "id": "rainbow-streamers", "label": "Rainbow Streamers", "icon": "🌈", "price": 4, "description": "Pastel festival streamers" }
+    ]
   }
 }

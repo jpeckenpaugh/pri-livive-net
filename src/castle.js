@@ -9,8 +9,39 @@ const CATEGORY_LABELS = {
   thrones: 'Throne',
   chandeliers: 'Chandelier',
   banners: 'Wall Drapes',
-  windows: 'Window View'
+  windows: 'Window View',
+  beds: 'Royal Bed',
+  bedding: 'Bedding',
+  lamps: 'Night Lamp',
+  plushies: 'Plushie',
+  tables: 'Dining Table',
+  tablecloths: 'Tablecloth',
+  hearths: 'Kitchen Hearth',
+  centerpieces: 'Centerpiece',
+  colors: 'Carriage Color',
+  wheels: 'Trim & Wheels',
+  horses: 'Horses & Unicorns'
 };
+
+export const CARRIAGE_DESTINATIONS = [
+  { id: 'enchanted-forest', label: 'Enchanted Forest', icon: '🌲', sky: '#D1FAE5', ground: '#6EE7B7', accent: '#059669' },
+  { id: 'crystal-beach', label: 'Crystal Beach', icon: '🏖️', sky: '#E0F2FE', ground: '#FDE68A', accent: '#0284C7' },
+  { id: 'starlight-village', label: 'Starlight Village', icon: '🏘️', sky: '#EDE9FE', ground: '#C4B5FD', accent: '#7C3AED' },
+  { id: 'cloud-kingdom', label: 'Cloud Kingdom', icon: '☁️', sky: '#FFF1F2', ground: '#F8FAFC', accent: '#EC4899' }
+];
+
+export const CARRIAGE_FRIENDS = [
+  { id: 'maya', label: 'Princess Maya', icon: '👸' },
+  { id: 'leo', label: 'Prince Leo', icon: '🤴' },
+  { id: 'pip', label: 'Fairy Pip', icon: '🧚' }
+];
+
+export const ROYAL_DISHES = [
+  { id: 'royal-cupcakes', label: 'Royal Cupcakes', icon: '🧁' },
+  { id: 'starlight-soup', label: 'Starlight Soup', icon: '🍲' },
+  { id: 'enchanted-tea', label: 'Enchanted Tea', icon: '🫖' },
+  { id: 'golden-pancakes', label: 'Golden Pancakes', icon: '🥞' }
+];
 
 export function isCastleItemOwned(state, item) {
   if (!item) return false;
@@ -22,7 +53,7 @@ export function isCastleItemOwned(state, item) {
 export function getShopItems(castleConfig) {
   if (!castleConfig || typeof castleConfig !== 'object') return [];
   const items = [];
-  for (const view of ['exterior', 'throne']) {
+  for (const view of ['exterior', 'throne', 'bedroom', 'kitchen', 'carriage']) {
     const group = castleConfig[view];
     if (!group || typeof group !== 'object') continue;
     for (const [category, list] of Object.entries(group)) {
@@ -252,11 +283,193 @@ function renderThroneSvg(throneState, throneConfig, options = {}) {
   `;
 }
 
+function renderBedroomSvg(bedState, bedConfig, options = {}) {
+  const wall = findOption(bedConfig.wallColors, bedState?.wallColor) || { hex: '#FFF0F5', trim: '#F9C6D9' };
+  const bed = findOption(bedConfig.beds, bedState?.beds)?.id || 'canopy-pink';
+  const bedding = findOption(bedConfig.bedding, bedState?.bedding) || { hex: '#F472B6', trim: '#FDE68A' };
+  const rug = findOption(bedConfig.rugs, bedState?.rugs) || { hex: '#FB7185', trim: '#FFE4E6' };
+  const lamp = findOption(bedConfig.lamps, bedState?.lamps)?.id || 'candle-sconce';
+  const plushie = findOption(bedConfig.plushies, bedState?.plushies) || { icon: '🧸' };
+  const sleeping = Boolean(bedState?.sleeping);
+  const lampOn = bedState?.lampOn !== false;
+
+  const bedFrameColor =
+    bed === 'crystal-fourposter' ? '#BAE6FD' : bed === 'swan-carriage-bed' ? '#FEF3C7' : bed === 'cloud-cradle' ? '#F8FAFC' : '#FBCFE8';
+
+  return `
+    <svg viewBox="0 0 640 380" class="castle-scene-svg" role="img" aria-label="Royal Bedroom">
+      <rect width="640" height="380" fill="${wall.hex}" />
+      ${!lampOn ? '<rect width="640" height="380" fill="#0F172A" opacity="0.28" />' : ''}
+      <rect x="0" y="292" width="640" height="88" fill="#E8D5C4" />
+      <rect x="0" y="286" width="640" height="10" fill="${wall.trim}" />
+
+      <!-- Cozy Rug -->
+      <ellipse cx="320" cy="336" rx="190" ry="26" fill="${rug.hex}" stroke="${rug.trim}" stroke-width="4" />
+
+      <!-- Night Window -->
+      <rect x="64" y="54" width="96" height="122" rx="48" fill="#1E1B4B" stroke="${wall.trim}" stroke-width="6" />
+      <circle cx="98" cy="96" r="14" fill="#FEF08A" />
+      <circle cx="130" cy="84" r="3" fill="#FFFFFF" />
+      <circle cx="122" cy="120" r="2.5" fill="#FFFFFF" />
+
+      <!-- Royal Bed -->
+      <g transform="translate(195, 130)">
+        <rect x="14" y="10" width="12" height="150" rx="4" fill="${bedFrameColor}" stroke="#D97706" stroke-width="2" />
+        <rect x="224" y="10" width="12" height="150" rx="4" fill="${bedFrameColor}" stroke="#D97706" stroke-width="2" />
+        <path d="M14,16 Q125,-22 236,16" fill="none" stroke="${bedding.hex}" stroke-width="10" stroke-linecap="round" />
+        <rect x="22" y="96" width="206" height="58" rx="14" fill="#FFFFFF" stroke="${bedFrameColor}" stroke-width="4" />
+        <rect x="22" y="108" width="206" height="46" rx="12" fill="${bedding.hex}" stroke="${bedding.trim}" stroke-width="3" />
+        <rect x="34" y="88" width="54" height="24" rx="10" fill="#FFFFFF" stroke="${bedding.trim}" stroke-width="2" />
+      </g>
+
+      <!-- Nightstand & Lamp -->
+      <g transform="translate(470, 210)">
+        <rect x="0" y="28" width="68" height="56" rx="8" fill="#D97706" />
+        <rect x="6" y="34" width="56" height="20" rx="4" fill="#FDE68A" />
+        <rect x="28" y="4" width="12" height="24" fill="#F59E0B" />
+        <polygon points="14,6 54,6 44,-18 24,-18" fill="${lamp === 'fairy-jar' ? '#A7F3D0' : '#FEF08A'}" stroke="#D97706" stroke-width="2" />
+        ${lampOn ? '<circle cx="34" cy="-6" r="28" fill="#FEF08A" opacity="0.32" />' : ''}
+      </g>
+
+      <!-- Plushie -->
+      <text x="248" y="232" font-size="30" text-anchor="middle">${plushie.icon || '🧸'}</text>
+
+      <!-- Princess -->
+      ${
+        options.princessSvg
+          ? sleeping
+            ? `<g transform="translate(365, 195) rotate(-82) scale(0.45)">${options.princessSvg}</g>
+               <text x="320" y="168" font-size="26">💤</text>`
+            : `<g transform="translate(108, 172) scale(0.5)">${options.princessSvg}</g>`
+          : ''
+      }
+    </svg>
+  `;
+}
+
+function renderKitchenSvg(kitState, kitConfig, options = {}) {
+  const wall = findOption(kitConfig.wallColors, kitState?.wallColor) || { hex: '#FFFBEB', trim: '#FDE68A' };
+  const table = findOption(kitConfig.tables, kitState?.tables)?.id || 'oak-banquet';
+  const cloth = findOption(kitConfig.tablecloths, kitState?.tablecloths) || { hex: '#FFFFFF', trim: '#F1F5F9' };
+  const hearth = findOption(kitConfig.hearths, kitState?.hearths)?.id || 'brick-oven';
+  const centerpiece = findOption(kitConfig.centerpieces, kitState?.centerpieces) || { icon: '🫖' };
+  const dish = ROYAL_DISHES.find((d) => d.id === kitState?.currentDish) || ROYAL_DISHES[0];
+  const dining = Boolean(kitState?.dining);
+
+  const tableWood = table === 'crystal-feast' ? '#BAE6FD' : table === 'golden-tea' ? '#FBBF24' : '#B45309';
+
+  return `
+    <svg viewBox="0 0 640 380" class="castle-scene-svg" role="img" aria-label="Royal Kitchen and Dining">
+      <rect width="640" height="380" fill="${wall.hex}" />
+      <rect x="0" y="286" width="640" height="94" fill="#E8D5C4" />
+      <rect x="0" y="280" width="640" height="10" fill="${wall.trim}" />
+
+      <!-- Kitchen Hearth -->
+      <g transform="translate(56, 118)">
+        <rect x="0" y="0" width="136" height="164" rx="14" fill="${hearth === 'pastel-hearth' ? '#FBCFE8' : hearth === 'golden-rotisserie' ? '#FDE68A' : '#DC2626'}" stroke="#78350F" stroke-width="4" />
+        <path d="M26,164 L26,96 Q68,54 110,96 L110,164 Z" fill="#1F2937" />
+        <ellipse cx="68" cy="148" rx="26" ry="14" fill="#F97316" />
+        <ellipse cx="68" cy="144" rx="15" ry="10" fill="#FEF08A" />
+      </g>
+
+      <!-- Dining Table -->
+      <g transform="translate(244, 198)">
+        <rect x="20" y="42" width="18" height="72" fill="${tableWood}" />
+        <rect x="262" y="42" width="18" height="72" fill="${tableWood}" />
+        <rect x="0" y="22" width="300" height="24" rx="8" fill="${tableWood}" />
+        <path d="M8,22 L292,22 L286,52 Q250,40 214,52 Q178,40 150,52 Q122,40 86,52 Q50,40 14,52 Z" fill="${cloth.hex}" stroke="${cloth.trim}" stroke-width="2" />
+      </g>
+
+      <!-- Centerpiece & Dish -->
+      <text x="394" y="210" font-size="34" text-anchor="middle">${centerpiece.icon || '🫖'}</text>
+      <text x="328" y="212" font-size="30" text-anchor="middle">${dish.icon}</text>
+
+      <!-- Princess -->
+      ${
+        options.princessSvg
+          ? dining
+            ? `<g transform="translate(226, 148) scale(0.48)">${options.princessSvg}</g>
+               <text x="275" y="142" font-size="24">💖</text>`
+            : `<g transform="translate(500, 162) scale(0.5)">${options.princessSvg}</g>`
+          : ''
+      }
+    </svg>
+  `;
+}
+
+export function renderCarriageSvg(carriageState, carriageConfig = {}, options = {}) {
+  const dest = CARRIAGE_DESTINATIONS.find((d) => d.id === carriageState?.destination) || CARRIAGE_DESTINATIONS[0];
+  const color = findOption(carriageConfig.colors, carriageState?.colors)?.hex || '#FF70A6';
+  const style = findOption(carriageConfig.styles, carriageState?.styles)?.id || 'pumpkin-coach';
+  const wheel = findOption(carriageConfig.wheels, carriageState?.wheels)?.id || 'wooden-spokes';
+  const horse = findOption(carriageConfig.horses, carriageState?.horses) || { icon: '🐴' };
+  const banner = findOption(carriageConfig.banners, carriageState?.banners) || { icon: '👑' };
+  const invited = Array.isArray(carriageState?.invitedFriends) ? carriageState.invitedFriends : [];
+  const friends = CARRIAGE_FRIENDS.filter((f) => invited.includes(f.id));
+
+  const wheelColor = wheel === 'crystal-rims' ? '#7DD3FC' : wheel === 'starlight-wheels' ? '#FDE047' : wheel === 'golden-filigree' ? '#F59E0B' : '#92400E';
+
+  return `
+    <svg viewBox="0 0 640 380" class="castle-scene-svg" role="img" aria-label="Royal Carriage at ${dest.label}">
+      <rect width="640" height="380" fill="${dest.sky}" />
+      <rect x="0" y="275" width="640" height="105" fill="${dest.ground}" />
+      <rect x="0" y="295" width="640" height="44" fill="#E5E7EB" opacity="0.65" />
+
+      <!-- Destination Banner -->
+      <rect x="190" y="18" width="260" height="36" rx="18" fill="#FFFFFF" stroke="${dest.accent}" stroke-width="3" />
+      <text x="320" y="42" font-size="16" font-weight="700" fill="${dest.accent}" text-anchor="middle">${dest.icon} ${dest.label}</text>
+
+      <!-- Horses / Unicorns -->
+      <text x="128" y="268" font-size="56" text-anchor="middle">${horse.icon || '🐴'}</text>
+      <line x1="168" y1="252" x2="255" y2="256" stroke="#D97706" stroke-width="4" />
+
+      <!-- Carriage Body -->
+      <g transform="translate(245, 145)">
+        ${
+          style === 'crystal-coach'
+            ? `<polygon points="35,10 175,10 205,65 180,120 30,120 5,65" fill="${color}" stroke="#E0F2FE" stroke-width="4" />`
+            : `<rect x="15" y="15" width="180" height="105" rx="46" fill="${color}" stroke="#FBBF24" stroke-width="4" />`
+        }
+        <rect x="65" y="34" width="80" height="52" rx="14" fill="#FFFFFF" opacity="0.88" />
+        <text x="105" y="24" font-size="22" text-anchor="middle">${banner.icon || '👑'}</text>
+        ${options.princessSvg ? `<g transform="translate(68, 22) scale(0.32)">${options.princessSvg}</g>` : ''}
+      </g>
+
+      <!-- Wheels -->
+      <g stroke="${wheelColor}" stroke-width="6" fill="none">
+        <circle cx="295" cy="285" r="30" />
+        <circle cx="420" cy="285" r="30" />
+        <line x1="295" y1="255" x2="295" y2="315" />
+        <line x1="265" y1="285" x2="325" y2="285" />
+        <line x1="420" y1="255" x2="420" y2="315" />
+        <line x1="390" y1="285" x2="450" y2="285" />
+      </g>
+
+      <!-- Invited Friends -->
+      ${friends
+        .map(
+          (f, idx) =>
+            `<g transform="translate(${495 + idx * 44}, 256)">
+              <circle cx="0" cy="-16" r="18" fill="#FFFFFF" opacity="0.85" />
+              <text x="0" y="-8" font-size="24" text-anchor="middle">${f.icon}</text>
+            </g>`
+        )
+        .join('')}
+    </svg>
+  `;
+}
+
 export function renderCastleSceneSvg(castleState, castleConfig, options = {}) {
-  const view = castleState?.activeView === 'throne' ? 'throne' : 'exterior';
+  const view = castleState?.activeView || 'exterior';
   const config = castleConfig || {};
   if (view === 'throne') {
     return renderThroneSvg(castleState?.throne || {}, config.throne || {}, options);
+  }
+  if (view === 'bedroom') {
+    return renderBedroomSvg(castleState?.bedroom || {}, config.bedroom || {}, options);
+  }
+  if (view === 'kitchen') {
+    return renderKitchenSvg(castleState?.kitchen || {}, config.kitchen || {}, options);
   }
   return renderExteriorSvg(castleState?.exterior || {}, config.exterior || {});
 }

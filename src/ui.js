@@ -12,9 +12,13 @@ import {
 } from './episodes.js';
 import {
   renderCastleSceneSvg,
+  renderCarriageSvg,
   isCastleItemOwned,
   getShopItems,
-  purchaseCastleItem
+  purchaseCastleItem,
+  ROYAL_DISHES,
+  CARRIAGE_DESTINATIONS,
+  CARRIAGE_FRIENDS
 } from './castle.js';
 import {
   getSubjectLessons,
@@ -46,14 +50,6 @@ const WORLDS = [
     shortLabel: 'Dress Up',
     defaultTab: 'profile',
     tagline: 'Gowns, hair, tiaras, makeup, powers & pals'
-  },
-  {
-    id: 'ballroom',
-    icon: '🏰',
-    label: 'Ballroom',
-    shortLabel: 'Ballroom',
-    defaultTab: 'ballroom',
-    tagline: 'Dance with the Prince & play the Royal Piano'
   },
   {
     id: 'coloring',
@@ -94,17 +90,26 @@ const WORLDS = [
     shortLabel: 'Shop',
     defaultTab: 'shop',
     tagline: 'Spend Royal Stars ⭐ on special castle treasures'
+  },
+  {
+    id: 'carriage',
+    icon: '🐴',
+    label: 'Carriage',
+    shortLabel: 'Carriage',
+    defaultTab: 'carriage',
+    tagline: 'Customize your royal carriage & travel with friends'
   }
 ];
 
 function getActiveWorld(activeTab) {
   if (activeTab === 'hub') return 'hub';
-  if (activeTab === 'ballroom') return 'ballroom';
+  if (activeTab === 'ballroom') return 'castle';
   if (activeTab === 'coloring') return 'coloring';
   if (activeTab === 'academy') return 'academy';
   if (activeTab === 'episodes') return 'stories';
   if (activeTab === 'castle') return 'castle';
   if (activeTab === 'shop') return 'shop';
+  if (activeTab === 'carriage') return 'carriage';
   return 'dressing';
 }
 
@@ -606,44 +611,199 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
   function renderCastleTab(state) {
     const castleState = state.castle || {};
-    const activeView = castleState.activeView === 'throne' ? 'throne' : 'exterior';
+    const validViews = ['exterior', 'throne', 'bedroom', 'kitchen', 'ballroom'];
+    const activeView = validViews.includes(castleState.activeView) ? castleState.activeView : 'exterior';
     const viewConfig = (castleConfig && castleConfig[activeView]) || {};
     const viewState = castleState[activeView] || {};
     const activeChar = getActiveCharacter(state);
-    const princessSvg = activeView === 'throne' ? renderPaperDollSvg(activeChar, config, {}) : '';
-    const sceneSvg = renderCastleSceneSvg(castleState, castleConfig, { princessSvg });
+    const princessSvg =
+      activeView === 'throne' || activeView === 'bedroom' || activeView === 'kitchen'
+        ? renderPaperDollSvg(activeChar, config, {})
+        : '';
+    const sceneSvg =
+      activeView === 'ballroom'
+        ? renderBallroomSvg(state.ballroom, ballroomConfig, activeChar, config)
+        : renderCastleSceneSvg(castleState, castleConfig, { princessSvg });
 
-    const categories =
-      activeView === 'exterior'
-        ? [
-            { key: 'styles', stateKey: 'style', label: '🏰 Castle Style' },
-            { key: 'wallColors', stateKey: 'wallColor', label: '🧱 Wall Color' },
-            { key: 'roofColors', stateKey: 'roofColor', label: '🔺 Roof Color' },
-            { key: 'flags', stateKey: 'flags', label: '🚩 Flags' },
-            { key: 'gates', stateKey: 'gates', label: '🚪 Royal Gate' },
-            { key: 'gardens', stateKey: 'gardens', label: '🌸 Garden & Pond' }
-          ]
-        : [
-            { key: 'wallColors', stateKey: 'wallColor', label: '🎨 Wall Color' },
-            { key: 'rugs', stateKey: 'rugs', label: '🧶 Royal Rug' },
-            { key: 'thrones', stateKey: 'thrones', label: '👑 Throne' },
-            { key: 'chandeliers', stateKey: 'chandeliers', label: '✨ Chandelier' },
-            { key: 'banners', stateKey: 'banners', label: '🎗️ Wall Drapes' },
-            { key: 'windows', stateKey: 'windows', label: '🪟 Window View' }
-          ];
+    const categoriesByView = {
+      exterior: [
+        { key: 'styles', stateKey: 'style', label: '🏰 Castle Style' },
+        { key: 'wallColors', stateKey: 'wallColor', label: '🧱 Wall Color' },
+        { key: 'roofColors', stateKey: 'roofColor', label: '🔺 Roof Color' },
+        { key: 'flags', stateKey: 'flags', label: '🚩 Flags' },
+        { key: 'gates', stateKey: 'gates', label: '🚪 Royal Gate' },
+        { key: 'gardens', stateKey: 'gardens', label: '🌸 Garden & Pond' }
+      ],
+      throne: [
+        { key: 'wallColors', stateKey: 'wallColor', label: '🎨 Wall Color' },
+        { key: 'rugs', stateKey: 'rugs', label: '🧶 Royal Rug' },
+        { key: 'thrones', stateKey: 'thrones', label: '👑 Throne' },
+        { key: 'chandeliers', stateKey: 'chandeliers', label: '✨ Chandelier' },
+        { key: 'banners', stateKey: 'banners', label: '🎗️ Wall Drapes' },
+        { key: 'windows', stateKey: 'windows', label: '🪟 Window View' }
+      ],
+      bedroom: [
+        { key: 'wallColors', stateKey: 'wallColor', label: '🎨 Wall Color' },
+        { key: 'beds', stateKey: 'beds', label: '🛏️ Royal Bed' },
+        { key: 'bedding', stateKey: 'bedding', label: '🛌 Bedding' },
+        { key: 'rugs', stateKey: 'rugs', label: '🧶 Cozy Rug' },
+        { key: 'lamps', stateKey: 'lamps', label: '💡 Night Lamp' },
+        { key: 'plushies', stateKey: 'plushies', label: '🧸 Plushie' }
+      ],
+      kitchen: [
+        { key: 'wallColors', stateKey: 'wallColor', label: '🎨 Wall Color' },
+        { key: 'tables', stateKey: 'tables', label: '🍽️ Dining Table' },
+        { key: 'tablecloths', stateKey: 'tablecloths', label: '🧺 Tablecloth' },
+        { key: 'hearths', stateKey: 'hearths', label: '🔥 Kitchen Hearth' },
+        { key: 'centerpieces', stateKey: 'centerpieces', label: '🫖 Centerpiece' }
+      ]
+    };
+    const categories = categoriesByView[activeView] || [];
+
+    const roomInteractiveControls =
+      activeView === 'bedroom'
+        ? `
+          <div class="control-group" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <button type="button" class="pill-btn ${viewState.sleeping ? 'is-active' : ''}" data-bedroom-toggle="sleeping">
+              ${viewState.sleeping ? '☀️ Wake Up' : '💤 Sleep in Bed'}
+            </button>
+            <button type="button" class="pill-btn ${viewState.lampOn !== false ? 'is-active' : ''}" data-bedroom-toggle="lampOn">
+              ${viewState.lampOn !== false ? '💡 Lamp: On' : '🌙 Lamp: Off'}
+            </button>
+          </div>
+        `
+        : activeView === 'kitchen'
+          ? `
+            <div class="control-group" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+              <button type="button" class="pill-btn" data-kitchen-cook="true">👩‍🍳 Ask Chef to Cook</button>
+              <button type="button" class="pill-btn ${viewState.dining ? 'is-active' : ''}" data-kitchen-eat="true">
+                ${viewState.dining ? '💖 Finish Meal' : '🍽️ Eat at Table'}
+              </button>
+              <span style="font-size:0.88rem;font-weight:700;">
+                ${(ROYAL_DISHES.find((d) => d.id === viewState.currentDish) || ROYAL_DISHES[0]).icon}
+                ${escapeHtml((ROYAL_DISHES.find((d) => d.id === viewState.currentDish) || ROYAL_DISHES[0]).label)}
+              </span>
+            </div>
+          `
+          : '';
+
+    const bodyHtml =
+      activeView === 'ballroom'
+        ? `
+          <div class="ballroom-layout">
+            <section class="stage-card is-ballroom-mode ballroom-hero-stage" aria-label="Royal Ballroom Stage">
+              <div class="princess-banner">${escapeHtml(activeChar.name)}</div>
+              <div class="doll-stage is-ballroom-stage">
+                ${sceneSvg}
+                <div class="sparkle-burst-layer" aria-hidden="true">
+                  <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
+                </div>
+              </div>
+            </section>
+            <div class="ballroom-lower-grid">
+              <section class="controls-card" aria-label="Ballroom Studio">
+                <div class="tab-panel">${renderTabPanel({ ...state, activeTab: 'ballroom' })}</div>
+              </section>
+              <section class="controls-card ballroom-piano-panel" aria-label="Royal Piano">
+                ${renderPianoHtml()}
+              </section>
+            </div>
+          </div>
+        `
+        : `
+          <div class="castle-builder-grid">
+            <div class="castle-preview-card">
+              ${sceneSvg}
+            </div>
+            <div class="castle-controls-list">
+              ${roomInteractiveControls}
+              ${categories
+                .map((cat) => {
+                  const items = viewConfig[cat.key] || [];
+                  const selectedId = viewState[cat.stateKey];
+                  return `
+                    <div class="control-group">
+                      <div class="control-label">${cat.label}</div>
+                      <div class="castle-option-grid">
+                        ${items
+                          .map((item) => {
+                            const owned = isCastleItemOwned(state, item);
+                            const isSelected = selectedId === item.id;
+                            const swatch = item.hex
+                              ? `<span class="castle-swatch" style="background:${item.hex}"></span>`
+                              : `<span class="castle-opt-icon">${item.icon || '✨'}</span>`;
+                            return `
+                              <button
+                                type="button"
+                                class="castle-opt-btn ${isSelected ? 'is-active' : ''} ${!owned ? 'is-locked' : ''}"
+                                data-castle-view-target="${activeView}"
+                                data-castle-cat="${cat.stateKey}"
+                                data-castle-item="${item.id}"
+                                data-castle-owned="${owned ? '1' : '0'}"
+                              >
+                                ${swatch}
+                                <span class="castle-opt-label">${escapeHtml(item.label)}</span>
+                                ${!owned ? `<span class="castle-lock-badge">🔒 ${item.price}⭐</span>` : ''}
+                              </button>
+                            `;
+                          })
+                          .join('')}
+                      </div>
+                    </div>
+                  `;
+                })
+                .join('')}
+            </div>
+          </div>
+        `;
 
     return `
       <div class="castle-builder-layout">
         <div class="castle-builder-header">
           <div>
-            <h2>🏰 Build Your Castle</h2>
-            <p>Customize your royal exterior and throne room!</p>
+            <h2>🏰 My Castle</h2>
+            <p>Customize your castle rooms, kitchen, bedroom & ballroom!</p>
           </div>
           <div class="castle-header-actions">
             <div class="castle-view-toggle" role="tablist" aria-label="Castle View">
               <button type="button" class="pill-btn ${activeView === 'exterior' ? 'is-active' : ''}" data-castle-view="exterior">🏰 Exterior</button>
               <button type="button" class="pill-btn ${activeView === 'throne' ? 'is-active' : ''}" data-castle-view="throne">👑 Throne Room</button>
+              <button type="button" class="pill-btn ${activeView === 'bedroom' ? 'is-active' : ''}" data-castle-view="bedroom">🛏️ Bedroom</button>
+              <button type="button" class="pill-btn ${activeView === 'kitchen' ? 'is-active' : ''}" data-castle-view="kitchen">🍽️ Kitchen & Dining</button>
+              <button type="button" class="pill-btn ${activeView === 'ballroom' ? 'is-active' : ''}" data-castle-view="ballroom">💃 Ballroom</button>
             </div>
+            <button type="button" class="pill-btn castle-shop-shortcut" data-goto-shop="true">🛍️ Visit Shop (⭐ ${state.academy?.stars ?? 0})</button>
+          </div>
+        </div>
+        ${bodyHtml}
+      </div>
+    `;
+  }
+
+  function renderCarriageTab(state) {
+    const cgState = state.carriage || {};
+    const cgConfig = (castleConfig && castleConfig.carriage) || {};
+    const activeChar = getActiveCharacter(state);
+    const princessSvg = renderPaperDollSvg(activeChar, config, {});
+    const sceneSvg = renderCarriageSvg(cgState, cgConfig, { princessSvg });
+    const invited = Array.isArray(cgState.invitedFriends) ? cgState.invitedFriends : [];
+
+    const categories = [
+      { key: 'styles', label: '🎃 Carriage Style' },
+      { key: 'colors', label: '🎨 Carriage Color' },
+      { key: 'wheels', label: '🛞 Trim & Wheels' },
+      { key: 'horses', label: '🐴 Horses & Unicorns' },
+      { key: 'banners', label: '👑 Banner & Decor' }
+    ];
+
+    return `
+      <div class="castle-builder-layout">
+        <div class="castle-builder-header">
+          <div>
+            <h2>🐴 Royal Carriage</h2>
+            <p>Customize your carriage, pick a destination & invite friends!</p>
+          </div>
+          <div class="castle-header-actions">
             <button type="button" class="pill-btn castle-shop-shortcut" data-goto-shop="true">🛍️ Visit Shop (⭐ ${state.academy?.stars ?? 0})</button>
           </div>
         </div>
@@ -652,10 +812,36 @@ export function mountApp({ root, store, config, coloringData, coloringController
             ${sceneSvg}
           </div>
           <div class="castle-controls-list">
+            <div class="control-group">
+              <div class="control-label">🗺️ Travel to Destination</div>
+              <div class="castle-option-grid">
+                ${CARRIAGE_DESTINATIONS.map(
+                  (d) => `
+                    <button type="button" class="castle-opt-btn ${cgState.destination === d.id ? 'is-active' : ''}" data-carriage-dest="${d.id}">
+                      <span class="castle-opt-icon">${d.icon}</span>
+                      <span class="castle-opt-label">${escapeHtml(d.label)}</span>
+                    </button>
+                  `
+                ).join('')}
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="control-label">👯 Invite Friends to Visit</div>
+              <div class="castle-option-grid">
+                ${CARRIAGE_FRIENDS.map(
+                  (f) => `
+                    <button type="button" class="castle-opt-btn ${invited.includes(f.id) ? 'is-active' : ''}" data-carriage-friend="${f.id}">
+                      <span class="castle-opt-icon">${f.icon}</span>
+                      <span class="castle-opt-label">${escapeHtml(f.label)}</span>
+                    </button>
+                  `
+                ).join('')}
+              </div>
+            </div>
             ${categories
               .map((cat) => {
-                const items = viewConfig[cat.key] || [];
-                const selectedId = viewState[cat.stateKey];
+                const items = cgConfig[cat.key] || [];
+                const selectedId = cgState[cat.key];
                 return `
                   <div class="control-group">
                     <div class="control-label">${cat.label}</div>
@@ -671,10 +857,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
                             <button
                               type="button"
                               class="castle-opt-btn ${isSelected ? 'is-active' : ''} ${!owned ? 'is-locked' : ''}"
-                              data-castle-view-target="${activeView}"
-                              data-castle-cat="${cat.stateKey}"
-                              data-castle-item="${item.id}"
-                              data-castle-owned="${owned ? '1' : '0'}"
+                              data-carriage-cat="${cat.key}"
+                              data-carriage-item="${item.id}"
+                              data-carriage-owned="${owned ? '1' : '0'}"
                             >
                               ${swatch}
                               <span class="castle-opt-label">${escapeHtml(item.label)}</span>
@@ -755,6 +940,7 @@ export function mountApp({ root, store, config, coloringData, coloringController
 
   function renderTabPanel(state) {
     if (state.activeTab === 'castle') return renderCastleTab(state);
+    if (state.activeTab === 'carriage') return renderCarriageTab(state);
     if (state.activeTab === 'shop') return renderShopTab(state);
     const p = getActiveCharacter(state);
     const palettes = config.palettes;
@@ -1291,19 +1477,17 @@ export function mountApp({ root, store, config, coloringData, coloringController
       lastDressingTab = state.activeTab;
     }
     const isHub = activeWorld === 'hub';
-    const isBallroom = activeWorld === 'ballroom';
     const isDressing = activeWorld === 'dressing';
     const isFullWidthWorld =
       activeWorld === 'coloring' ||
       activeWorld === 'academy' ||
       activeWorld === 'stories' ||
       activeWorld === 'castle' ||
-      activeWorld === 'shop';
+      activeWorld === 'shop' ||
+      activeWorld === 'carriage';
     const activeChar = getActiveCharacter(state);
     const isEditingPal = Boolean(state.activeCharacterId && state.activeCharacterId !== 'main' && state.pals?.[state.activeCharacterId]);
-    const stageSvg = isBallroom
-      ? renderBallroomSvg(state.ballroom, ballroomConfig, activeChar, config)
-      : renderPaperDollSvg(activeChar, config, { powerBurst: powerBurstActive });
+    const stageSvg = renderPaperDollSvg(activeChar, config, { powerBurst: powerBurstActive });
 
     const activeEl = document.activeElement;
     const savedFocus =
@@ -1314,28 +1498,6 @@ export function mountApp({ root, store, config, coloringData, coloringController
     let mainContent = '';
     if (isHub) {
       mainContent = renderCastleHub(state, activeChar);
-    } else if (isBallroom) {
-      mainContent = `
-        <div class="ballroom-layout">
-          <section class="stage-card is-ballroom-mode ballroom-hero-stage" aria-label="Royal Ballroom Stage">
-            <div class="princess-banner">${escapeHtml(activeChar.name)}</div>
-            <div class="doll-stage is-ballroom-stage">
-              ${stageSvg}
-              <div class="sparkle-burst-layer" aria-hidden="true">
-                <span>✨</span><span>⭐</span><span>💖</span><span>✨</span>
-              </div>
-            </div>
-          </section>
-          <div class="ballroom-lower-grid">
-            <section class="controls-card" aria-label="Ballroom Studio">
-              <div class="tab-panel">${renderTabPanel(state)}</div>
-            </section>
-            <section class="controls-card ballroom-piano-panel" aria-label="Royal Piano">
-              ${renderPianoHtml()}
-            </section>
-          </div>
-        </div>
-      `;
     } else if (isFullWidthWorld) {
       mainContent = `
         <section class="controls-card fullwidth-world-panel" aria-label="${activeWorld} World">
@@ -1879,10 +2041,86 @@ export function mountApp({ root, store, config, coloringData, coloringController
       return;
     }
 
+    if (btn.dataset.carriageDest) {
+      soundPlayer.playCue('sparkle-twinkle');
+      store.update((s) => {
+        s.carriage.destination = btn.dataset.carriageDest;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.carriageFriend) {
+      soundPlayer.playCue('ui-click');
+      const friendId = btn.dataset.carriageFriend;
+      store.update((s) => {
+        const list = Array.isArray(s.carriage.invitedFriends) ? s.carriage.invitedFriends : [];
+        s.carriage.invitedFriends = list.includes(friendId)
+          ? list.filter((id) => id !== friendId)
+          : [...list, friendId];
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.carriageItem) {
+      const cat = btn.dataset.carriageCat;
+      const itemId = btn.dataset.carriageItem;
+      const owned = btn.dataset.carriageOwned === '1';
+      if (!owned) {
+        soundPlayer.playCue('ui-click');
+        store.update((s) => {
+          s.activeTab = 'shop';
+          return s;
+        });
+        return;
+      }
+      soundPlayer.playCue('sparkle-twinkle');
+      store.update((s) => {
+        s.carriage[cat] = itemId;
+        return s;
+      });
+      return;
+    }
+
     if (btn.dataset.castleView) {
+      const nextView = ['exterior', 'throne', 'bedroom', 'kitchen', 'ballroom'].includes(btn.dataset.castleView)
+        ? btn.dataset.castleView
+        : 'exterior';
+      soundPlayer.playCue(nextView === 'ballroom' ? 'ballroom-enter' : 'ui-click');
+      store.update((s) => {
+        s.castle.activeView = nextView;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.bedroomToggle) {
+      const field = btn.dataset.bedroomToggle;
       soundPlayer.playCue('ui-click');
       store.update((s) => {
-        s.castle.activeView = btn.dataset.castleView === 'throne' ? 'throne' : 'exterior';
+        if (field === 'sleeping') s.castle.bedroom.sleeping = !s.castle.bedroom.sleeping;
+        if (field === 'lampOn') s.castle.bedroom.lampOn = s.castle.bedroom.lampOn === false;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.kitchenCook) {
+      soundPlayer.playCue('sparkle-twinkle');
+      store.update((s) => {
+        const idx = ROYAL_DISHES.findIndex((d) => d.id === s.castle.kitchen.currentDish);
+        const next = ROYAL_DISHES[(idx + 1) % ROYAL_DISHES.length];
+        s.castle.kitchen.currentDish = next.id;
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.kitchenEat) {
+      soundPlayer.playCue('sparkle-twinkle');
+      store.update((s) => {
+        s.castle.kitchen.dining = !s.castle.kitchen.dining;
         return s;
       });
       return;
@@ -1899,7 +2137,9 @@ export function mountApp({ root, store, config, coloringData, coloringController
         return;
       }
       soundPlayer.playCue('sparkle');
-      const viewTarget = btn.dataset.castleViewTarget === 'throne' ? 'throne' : 'exterior';
+      const viewTarget = ['exterior', 'throne', 'bedroom', 'kitchen'].includes(btn.dataset.castleViewTarget)
+        ? btn.dataset.castleViewTarget
+        : 'exterior';
       const cat = btn.dataset.castleCat;
       const itemId = btn.dataset.castleItem;
       store.update((s) => {

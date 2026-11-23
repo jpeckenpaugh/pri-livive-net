@@ -350,3 +350,34 @@ test('Phase 7: normalizeState migrates older saves without pals/activeCharacterI
   assert.equal(preserved.pals.maya.makeup.lipstick, 'rose-pink');
   assert.equal(preserved.pals.maya.makeup.blush, 'none');
 });
+
+test('Castle & Carriage: normalizeState migrates activeTab ballroom and normalizes bedroom, kitchen, carriage', () => {
+  const migratedBallroom = normalizeState({ version: 1, activeTab: 'ballroom' });
+  assert.equal(migratedBallroom.activeTab, 'castle');
+  assert.equal(migratedBallroom.castle.activeView, 'ballroom');
+
+  const preserved = normalizeState({
+    version: 1,
+    activeTab: 'carriage',
+    castle: {
+      activeView: 'bedroom',
+      bedroom: { sleeping: true, lampOn: false, beds: 'swan-carriage-bed' },
+      kitchen: { dining: true, currentDish: 'golden-pancakes' }
+    },
+    carriage: {
+      destination: 'cloud-kingdom',
+      invitedFriends: ['maya', 'leo', 'maya', ''],
+      styles: 'crystal-coach'
+    }
+  });
+  assert.equal(preserved.activeTab, 'carriage');
+  assert.equal(preserved.castle.activeView, 'bedroom');
+  assert.equal(preserved.castle.bedroom.sleeping, true);
+  assert.equal(preserved.castle.bedroom.lampOn, false);
+  assert.equal(preserved.castle.bedroom.beds, 'swan-carriage-bed');
+  assert.equal(preserved.castle.kitchen.dining, true);
+  assert.equal(preserved.castle.kitchen.currentDish, 'golden-pancakes');
+  assert.equal(preserved.carriage.destination, 'cloud-kingdom');
+  assert.deepEqual(preserved.carriage.invitedFriends, ['maya', 'leo']);
+  assert.equal(preserved.carriage.styles, 'crystal-coach');
+});
