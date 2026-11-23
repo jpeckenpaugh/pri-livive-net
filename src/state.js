@@ -70,8 +70,9 @@ export const DEFAULT_STATE = {
     danceStyle: 'waltz'
   },
   academy: {
-    stars: 0,
-    completedLessons: []
+    stars: 200,
+    completedLessons: [],
+    bonusStars200Granted: true
   },
   episodes: {
     completed: []
@@ -322,6 +323,10 @@ export function normalizeState(raw) {
     if (typeof a.stars === 'number' && Number.isFinite(a.stars) && a.stars >= 0) {
       base.academy.stars = Math.floor(a.stars);
     }
+    if (a.bonusStars200Granted !== true) {
+      base.academy.stars += 200;
+    }
+    base.academy.bonusStars200Granted = true;
     if (Array.isArray(a.completedLessons)) {
       const seen = new Set();
       base.academy.completedLessons = a.completedLessons.filter((id) => {
