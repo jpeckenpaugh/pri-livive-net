@@ -1626,3 +1626,225 @@ input {
     display: none;
   }
 }
+
+/* === Build Your Castle & Royal Shop === */
+.castle-builder-layout,
+.royal-shop-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.castle-builder-header,
+.royal-shop-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.castle-builder-header h2,
+.royal-shop-header h2 {
+  margin: 0 0 4px;
+}
+
+.castle-builder-header p,
+.royal-shop-header p {
+  margin: 0;
+  opacity: 0.85;
+}
+
+.castle-header-actions,
+.royal-shop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.castle-view-toggle {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.castle-builder-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.15fr) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .castle-builder-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.castle-preview-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  border: 2px solid rgba(255, 112, 166, 0.25);
+}
+
+.castle-scene-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+}
+
+.castle-controls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.castle-option-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.castle-opt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.castle-opt-btn:hover {
+  transform: translateY(-1px);
+  border-color: #f472b6;
+}
+
+.castle-opt-btn.is-active {
+  border-color: #ec4899;
+  background: #fdf2f8;
+  font-weight: 600;
+}
+
+.castle-opt-btn.is-locked {
+  opacity: 0.8;
+  background: #f8fafc;
+}
+
+.castle-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  display: inline-block;
+}
+
+.castle-lock-badge {
+  font-size: 0.78rem;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+
+.shop-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shop-notice {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.shop-notice.is-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.shop-notice.is-warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.royal-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.shop-item-card {
+  background: #fff;
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.shop-item-card.is-owned {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.shop-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shop-item-icon {
+  font-size: 1.5rem;
+}
+
+.shop-item-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  display: inline-block;
+}
+
+.shop-item-cat {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+.shop-item-title {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.shop-item-desc {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  flex: 1;
+}
+
+.shop-item-footer {
+  margin-top: 4px;
+}
+
+.shop-owned-badge {
+  font-weight: 700;
+  color: #15803d;
+  font-size: 0.9rem;
+}
+
+.shop-buy-btn.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

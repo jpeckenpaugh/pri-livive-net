@@ -76,7 +76,27 @@ export const DEFAULT_STATE = {
   episodes: {
     completed: []
   },
-  pals: {}
+  pals: {},
+  castle: {
+    activeView: 'exterior',
+    exterior: {
+      style: 'classic-keep',
+      wallColor: 'ivory-stone',
+      roofColor: 'royal-pink',
+      flags: 'starlight-pennants',
+      gates: 'oak-arch',
+      gardens: 'rose-bushes'
+    },
+    throne: {
+      wallColor: 'warm-cream',
+      rugs: 'royal-crimson',
+      thrones: 'velvet-chair',
+      chandeliers: 'candle-ring',
+      banners: 'crown-tapestries',
+      windows: 'sunny-meadow'
+    }
+  },
+  unlockedCastleItems: []
 };
 
 function pickRandom(items, rng = Math.random) {
@@ -322,6 +342,36 @@ export function normalizeState(raw) {
         return true;
       });
     }
+  }
+
+  if (raw.castle && typeof raw.castle === 'object') {
+    const c = raw.castle;
+    if (c.activeView === 'exterior' || c.activeView === 'throne') {
+      base.castle.activeView = c.activeView;
+    }
+    if (c.exterior && typeof c.exterior === 'object') {
+      for (const key of ['style', 'wallColor', 'roofColor', 'flags', 'gates', 'gardens']) {
+        if (typeof c.exterior[key] === 'string' && c.exterior[key].trim().length > 0) {
+          base.castle.exterior[key] = c.exterior[key];
+        }
+      }
+    }
+    if (c.throne && typeof c.throne === 'object') {
+      for (const key of ['wallColor', 'rugs', 'thrones', 'chandeliers', 'banners', 'windows']) {
+        if (typeof c.throne[key] === 'string' && c.throne[key].trim().length > 0) {
+          base.castle.throne[key] = c.throne[key];
+        }
+      }
+    }
+  }
+
+  if (Array.isArray(raw.unlockedCastleItems)) {
+    const seen = new Set();
+    base.unlockedCastleItems = raw.unlockedCastleItems.filter((id) => {
+      if (typeof id !== 'string' || id.trim().length === 0 || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
   }
 
   return base;

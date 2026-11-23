@@ -11,6 +11,12 @@ import {
   renderEpisodeSceneSvg
 } from './episodes.js';
 import {
+  renderCastleSceneSvg,
+  isCastleItemOwned,
+  getShopItems,
+  purchaseCastleItem
+} from './castle.js';
+import {
   getSubjectLessons,
   getLessonById,
   checkQuizAnswer,
@@ -72,6 +78,22 @@ const WORLDS = [
     shortLabel: 'Stories',
     defaultTab: 'episodes',
     tagline: 'Interactive princess episodes & choices'
+  },
+  {
+    id: 'castle',
+    icon: '🏰',
+    label: 'My Castle',
+    shortLabel: 'Castle',
+    defaultTab: 'castle',
+    tagline: 'Build & decorate your royal exterior & throne room'
+  },
+  {
+    id: 'shop',
+    icon: '🛍️',
+    label: 'Royal Shop',
+    shortLabel: 'Shop',
+    defaultTab: 'shop',
+    tagline: 'Spend Royal Stars ⭐ on special castle treasures'
   }
 ];
 
@@ -81,6 +103,8 @@ function getActiveWorld(activeTab) {
   if (activeTab === 'coloring') return 'coloring';
   if (activeTab === 'academy') return 'academy';
   if (activeTab === 'episodes') return 'stories';
+  if (activeTab === 'castle') return 'castle';
+  if (activeTab === 'shop') return 'shop';
   return 'dressing';
 }
 
@@ -120,7 +144,9 @@ function renderItemButtons(items, selectedId, dataAttr) {
   </div>`;
 }
 
-export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig, lessonsConfig, episodesConfig }) {
+export function mountApp({ root, store, config, coloringData, coloringController, soundPlayer, ballroomConfig, lessonsConfig, episodesConfig, castleConfig }) {
+  let shopFilter = 'all';
+  let shopNotice = null;
   let powerBurstActive = false;
   let powerBurstTimer = null;
   const pianoPlayer = createPianoPlayer();
@@ -578,7 +604,158 @@ export function mountApp({ root, store, config, coloringData, coloringController
     `;
   }
 
+  function renderCastleTab(state) {
+    const castleState = state.castle || {};
+    const activeView = castleState.activeView === 'throne' ? 'throne' : 'exterior';
+    const viewConfig = (castleConfig && castleConfig[activeView]) || {};
+    const viewState = castleState[activeView] || {};
+    const activeChar = getActiveCharacter(state);
+    const princessSvg = activeView === 'throne' ? renderPaperDollSvg(activeChar, config, {}) : '';
+    const sceneSvg = renderCastleSceneSvg(castleState, castleConfig, { princessSvg });
+
+    const categories =
+      activeView === 'exterior'
+        ? [
+            { key: 'styles', stateKey: 'style', label: '🏰 Castle Style' },
+            { key: 'wallColors', stateKey: 'wallColor', label: '🧱 Wall Color' },
+            { key: 'roofColors', stateKey: 'roofColor', label: '🔺 Roof Color' },
+            { key: 'flags', stateKey: 'flags', label: '🚩 Flags' },
+            { key: 'gates', stateKey: 'gates', label: '🚪 Royal Gate' },
+            { key: 'gardens', stateKey: 'gardens', label: '🌸 Garden & Pond' }
+          ]
+        : [
+            { key: 'wallColors', stateKey: 'wallColor', label: '🎨 Wall Color' },
+            { key: 'rugs', stateKey: 'rugs', label: '🧶 Royal Rug' },
+            { key: 'thrones', stateKey: 'thrones', label: '👑 Throne' },
+            { key: 'chandeliers', stateKey: 'chandeliers', label: '✨ Chandelier' },
+            { key: 'banners', stateKey: 'banners', label: '🎗️ Wall Drapes' },
+            { key: 'windows', stateKey: 'windows', label: '🪟 Window View' }
+          ];
+
+    return `
+      <div class="castle-builder-layout">
+        <div class="castle-builder-header">
+          <div>
+            <h2>🏰 Build Your Castle</h2>
+            <p>Customize your royal exterior and throne room!</p>
+          </div>
+          <div class="castle-header-actions">
+            <div class="castle-view-toggle" role="tablist" aria-label="Castle View">
+              <button type="button" class="pill-btn ${activeView === 'exterior' ? 'is-active' : ''}" data-castle-view="exterior">🏰 Exterior</button>
+              <button type="button" class="pill-btn ${activeView === 'throne' ? 'is-active' : ''}" data-castle-view="throne">👑 Throne Room</button>
+            </div>
+            <button type="button" class="pill-btn castle-shop-shortcut" data-goto-shop="true">🛍️ Visit Shop (⭐ ${state.academy?.stars ?? 0})</button>
+          </div>
+        </div>
+        <div class="castle-builder-grid">
+          <div class="castle-preview-card">
+            ${sceneSvg}
+          </div>
+          <div class="castle-controls-list">
+            ${categories
+              .map((cat) => {
+                const items = viewConfig[cat.key] || [];
+                const selectedId = viewState[cat.stateKey];
+                return `
+                  <div class="control-group">
+                    <div class="control-label">${cat.label}</div>
+                    <div class="castle-option-grid">
+                      ${items
+                        .map((item) => {
+                          const owned = isCastleItemOwned(state, item);
+                          const isSelected = selectedId === item.id;
+                          const swatch = item.hex
+                            ? `<span class="castle-swatch" style="background:${item.hex}"></span>`
+                            : `<span class="castle-opt-icon">${item.icon || '✨'}</span>`;
+                          return `
+                            <button
+                              type="button"
+                              class="castle-opt-btn ${isSelected ? 'is-active' : ''} ${!owned ? 'is-locked' : ''}"
+                              data-castle-view-target="${activeView}"
+                              data-castle-cat="${cat.stateKey}"
+                              data-castle-item="${item.id}"
+                              data-castle-owned="${owned ? '1' : '0'}"
+                            >
+                              ${swatch}
+                              <span class="castle-opt-label">${escapeHtml(item.label)}</span>
+                              ${!owned ? `<span class="castle-lock-badge">🔒 ${item.price}⭐</span>` : ''}
+                            </button>
+                          `;
+                        })
+                        .join('')}
+                    </div>
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderShopTab(state) {
+    const stars = state.academy?.stars ?? 0;
+    const allItems = getShopItems(castleConfig);
+    const filtered = shopFilter === 'all' ? allItems : allItems.filter((i) => i.view === shopFilter);
+
+    return `
+      <div class="royal-shop-layout">
+        <div class="royal-shop-header">
+          <div>
+            <h2>🛍️ Royal Shop</h2>
+            <p>Spend your earned Royal Stars on special castle treasures!</p>
+          </div>
+          <div class="royal-shop-actions">
+            <span class="hub-stat-pill shop-star-balance">⭐ ${stars} Royal Stars</span>
+            <button type="button" class="pill-btn" data-goto-castle="true">🏰 Back to Castle</button>
+          </div>
+        </div>
+        ${
+          shopNotice
+            ? `<div class="shop-notice ${shopNotice.ok ? 'is-success' : 'is-warn'}">${escapeHtml(shopNotice.text)}</div>`
+            : ''
+        }
+        <div class="shop-filter-bar">
+          <button type="button" class="pill-btn ${shopFilter === 'all' ? 'is-active' : ''}" data-shop-filter="all">✨ All (${allItems.length})</button>
+          <button type="button" class="pill-btn ${shopFilter === 'exterior' ? 'is-active' : ''}" data-shop-filter="exterior">🏰 Exterior</button>
+          <button type="button" class="pill-btn ${shopFilter === 'throne' ? 'is-active' : ''}" data-shop-filter="throne">👑 Throne Room</button>
+        </div>
+        <div class="royal-shop-grid">
+          ${filtered
+            .map((item) => {
+              const owned = isCastleItemOwned(state, item);
+              const canAfford = stars >= item.price;
+              const preview = item.hex
+                ? `<span class="shop-item-swatch" style="background:${item.hex}"></span>`
+                : `<span class="shop-item-icon">${item.icon || '✨'}</span>`;
+              return `
+                <div class="shop-item-card ${owned ? 'is-owned' : ''}">
+                  <div class="shop-item-top">
+                    ${preview}
+                    <span class="shop-item-cat">${escapeHtml(item.categoryLabel)}</span>
+                  </div>
+                  <div class="shop-item-title">${escapeHtml(item.label)}</div>
+                  <div class="shop-item-desc">${escapeHtml(item.description || 'Special royal castle upgrade')}</div>
+                  <div class="shop-item-footer">
+                    ${
+                      owned
+                        ? `<span class="shop-owned-badge">✅ Owned</span>`
+                        : `<button type="button" class="pill-btn shop-buy-btn ${!canAfford ? 'is-disabled' : ''}" data-shop-buy="${item.id}" ${!canAfford ? 'disabled' : ''}>Buy for ⭐ ${item.price}</button>`
+                    }
+                  </div>
+                </div>
+              `;
+            })
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
   function renderTabPanel(state) {
+    if (state.activeTab === 'castle') return renderCastleTab(state);
+    if (state.activeTab === 'shop') return renderShopTab(state);
     const p = getActiveCharacter(state);
     const palettes = config.palettes;
     const items = config.items;
@@ -1116,7 +1293,12 @@ export function mountApp({ root, store, config, coloringData, coloringController
     const isHub = activeWorld === 'hub';
     const isBallroom = activeWorld === 'ballroom';
     const isDressing = activeWorld === 'dressing';
-    const isFullWidthWorld = activeWorld === 'coloring' || activeWorld === 'academy' || activeWorld === 'stories';
+    const isFullWidthWorld =
+      activeWorld === 'coloring' ||
+      activeWorld === 'academy' ||
+      activeWorld === 'stories' ||
+      activeWorld === 'castle' ||
+      activeWorld === 'shop';
     const activeChar = getActiveCharacter(state);
     const isEditingPal = Boolean(state.activeCharacterId && state.activeCharacterId !== 'main' && state.pals?.[state.activeCharacterId]);
     const stageSvg = isBallroom
@@ -1694,6 +1876,87 @@ export function mountApp({ root, store, config, coloringData, coloringController
         s.activeTab = btn.dataset.tab;
         return s;
       });
+      return;
+    }
+
+    if (btn.dataset.castleView) {
+      soundPlayer.playCue('ui-click');
+      store.update((s) => {
+        s.castle.activeView = btn.dataset.castleView === 'throne' ? 'throne' : 'exterior';
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.castleItem && btn.dataset.castleCat) {
+      if (btn.dataset.castleOwned === '0') {
+        soundPlayer.playCue('ui-click');
+        shopNotice = { ok: false, text: 'Unlock this special item in the Royal Shop using ⭐ Royal Stars!' };
+        store.update((s) => {
+          s.activeTab = 'shop';
+          return s;
+        });
+        return;
+      }
+      soundPlayer.playCue('sparkle');
+      const viewTarget = btn.dataset.castleViewTarget === 'throne' ? 'throne' : 'exterior';
+      const cat = btn.dataset.castleCat;
+      const itemId = btn.dataset.castleItem;
+      store.update((s) => {
+        if (s.castle && s.castle[viewTarget]) {
+          s.castle[viewTarget][cat] = itemId;
+        }
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.gotoShop) {
+      soundPlayer.playCue('ui-click');
+      shopNotice = null;
+      store.update((s) => {
+        s.activeTab = 'shop';
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.gotoCastle) {
+      soundPlayer.playCue('ui-click');
+      shopNotice = null;
+      store.update((s) => {
+        s.activeTab = 'castle';
+        return s;
+      });
+      return;
+    }
+
+    if (btn.dataset.shopFilter) {
+      soundPlayer.playCue('ui-click');
+      shopFilter = btn.dataset.shopFilter;
+      render(store.getState());
+      return;
+    }
+
+    if (btn.dataset.shopBuy) {
+      const allShopItems = getShopItems(castleConfig);
+      const targetItem = allShopItems.find((i) => i.id === btn.dataset.shopBuy);
+      const result = purchaseCastleItem(store.getState(), targetItem);
+      if (result.ok) {
+        soundPlayer.playCue('magic-wand');
+        shopNotice = { ok: true, text: `🎉 Purchased "${targetItem.label}"! You can now use it in My Castle.` };
+        store.update(() => result.nextState);
+      } else {
+        soundPlayer.playCue('ui-click');
+        shopNotice = {
+          ok: false,
+          text:
+            result.reason === 'insufficient-stars'
+              ? 'Not enough Royal Stars ⭐ yet! Complete Academy lessons to earn more.'
+              : 'Item is already owned.'
+        };
+        render(store.getState());
+      }
       return;
     }
 

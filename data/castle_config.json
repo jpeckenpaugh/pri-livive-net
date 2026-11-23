@@ -1,0 +1,80 @@
+{
+  "exterior": {
+    "styles": [
+      { "id": "classic-keep", "label": "Classic Keep", "icon": "🏰", "price": 0 },
+      { "id": "fairy-turrets", "label": "Fairy Turrets", "icon": "🧚", "price": 0 },
+      { "id": "crystal-palace", "label": "Crystal Palace", "icon": "💎", "price": 5, "description": "Shimmering faceted towers" },
+      { "id": "cloud-citadel", "label": "Cloud Citadel", "icon": "☁️", "price": 7, "description": "Floating sky-high spires" }
+    ],
+    "wallColors": [
+      { "id": "ivory-stone", "label": "Ivory Stone", "hex": "#FFF4EA", "shade": "#EBD7C5", "price": 0 },
+      { "id": "blush-marble", "label": "Blush Marble", "hex": "#FFE0EC", "shade": "#F2B8D0", "price": 0 },
+      { "id": "sky-quartz", "label": "Sky Quartz", "hex": "#E0F2FE", "shade": "#BAE6FD", "price": 0 },
+      { "id": "lavender-amethyst", "label": "Lavender Amethyst", "hex": "#EFE2FF", "shade": "#D8B4FE", "price": 3, "description": "Soft enchanted lilac stone" },
+      { "id": "moonlight-pearl", "label": "Moonlight Pearl", "hex": "#F1F5F9", "shade": "#CBD5E1", "price": 4, "description": "Lustrous silver-white walls" }
+    ],
+    "roofColors": [
+      { "id": "royal-pink", "label": "Royal Pink", "hex": "#FF70A6", "shade": "#E04882", "price": 0 },
+      { "id": "sapphire-blue", "label": "Sapphire Blue", "hex": "#4F9CF9", "shade": "#2563EB", "price": 0 },
+      { "id": "gold-leaf", "label": "Gold Leaf", "hex": "#FBBF24", "shade": "#D97706", "price": 0 },
+      { "id": "emerald-enchanted", "label": "Enchanted Emerald", "hex": "#34D399", "shade": "#059669", "price": 3, "description": "Jewel-toned forest spires" },
+      { "id": "amethyst-royal", "label": "Royal Amethyst", "hex": "#A855F7", "shade": "#7E22CE", "price": 4, "description": "Deep violet turret roofs" }
+    ],
+    "flags": [
+      { "id": "starlight-pennants", "label": "Starlight Pennants", "icon": "🚩", "price": 0 },
+      { "id": "heart-banners", "label": "Heart Banners", "icon": "💖", "price": 0 },
+      { "id": "rainbow-ribbons", "label": "Rainbow Ribbons", "icon": "🌈", "price": 3, "description": "Fluttering pastel streamers" },
+      { "id": "unicorn-crests", "label": "Unicorn Crests", "icon": "🦄", "price": 5, "description": "Golden heraldic flags" }
+    ],
+    "gates": [
+      { "id": "oak-arch", "label": "Royal Oak Arch", "icon": "🚪", "price": 0 },
+      { "id": "iron-scroll", "label": "Iron Scroll Gate", "icon": "🗝️", "price": 0 },
+      { "id": "crystal-archway", "label": "Crystal Archway", "icon": "✨", "price": 4, "description": "Sparkling diamond-cut doors" },
+      { "id": "golden-sunburst", "label": "Golden Sunburst", "icon": "☀️", "price": 6, "description": "Grand gilded palace gates" }
+    ],
+    "gardens": [
+      { "id": "rose-bushes", "label": "Rose Bushes", "icon": "🌹", "price": 0 },
+      { "id": "clover-meadow", "label": "Clover Meadow", "icon": "🌸", "price": 0 },
+      { "id": "starlight-fountain", "label": "Starlight Fountain", "icon": "⛲", "price": 5, "description": "Glowing tiered water fountain" },
+      { "id": "crystal-pond", "label": "Crystal Swan Pond", "icon": "🦢", "price": 6, "description": "Shimmering pond with lilies" }
+    ]
+  },
+  "throne": {
+    "wallColors": [
+      { "id": "warm-cream", "label": "Warm Cream", "hex": "#FFF9F2", "trim": "#F3E1D0", "price": 0 },
+      { "id": "soft-rose", "label": "Soft Rose", "hex": "#FFEBF2", "trim": "#F9C6D9", "price": 0 },
+      { "id": "pastel-lilac", "label": "Pastel Lilac", "hex": "#F5EEFF", "trim": "#DEC9FA", "price": 0 },
+      { "id": "royal-teal", "label": "Royal Teal", "hex": "#E0F7FA", "trim": "#80DEEA", "price": 3, "description": "Breezyaquamarine palace walls" },
+      { "id": "starry-indigo", "label": "Starry Indigo", "hex": "#2E2A5E", "trim": "#6366F1", "price": 4, "description": "Deep midnight velvet walls" }
+    ],
+    "rugs": [
+      { "id": "royal-crimson", "label": "Royal Crimson", "hex": "#E11D48", "trim": "#FBBF24", "price": 0 },
+      { "id": "blush-velvet", "label": "Blush Velvet", "hex": "#F472B6", "trim": "#FDE68A", "price": 0 },
+      { "id": "starlight-azure", "label": "Starlight Azure", "hex": "#3B82F6", "trim": "#E0F2FE", "price": 3, "description": "Celestial blue carpet" },
+      { "id": "golden-lotus", "label": "Golden Lotus", "hex": "#F59E0B", "trim": "#FFFBEB", "price": 5, "description": "Woven sunbeam runner" }
+    ],
+    "thrones": [
+      { "id": "velvet-chair", "label": "Velvet Throne", "icon": "🪑", "price": 0 },
+      { "id": "golden-crest", "label": "Golden Crest Throne", "icon": "👑", "price": 0 },
+      { "id": "crystal-butterfly", "label": "Crystal Butterfly", "icon": "🦋", "price": 6, "description": "Iridescent winged seat" },
+      { "id": "moonbeam-seashell", "label": "Moonbeam Seashell", "icon": "🐚", "price": 8, "description": "Pearlescent ocean throne" }
+    ],
+    "chandeliers": [
+      { "id": "candle-ring", "label": "Candle Ring", "icon": "🕯️", "price": 0 },
+      { "id": "crystal-drop", "label": "Crystal Drop", "icon": "💠", "price": 0 },
+      { "id": "fairy-lanterns", "label": "Fairy Lanterns", "icon": "🏮", "price": 4, "description": "Floating glowing orbs" },
+      { "id": "starburst-prism", "label": "Starburst Prism", "icon": "🌟", "price": 6, "description": "Radiant celestial chandelier" }
+    ],
+    "banners": [
+      { "id": "crown-tapestries", "label": "Crown Tapestries", "icon": "🎗️", "price": 0 },
+      { "id": "floral-swags", "label": "Floral Swags", "icon": "💐", "price": 0 },
+      { "id": "galaxy-curtains", "label": "Galaxy Curtains", "icon": "🌌", "price": 4, "description": "Sparkling stardust drapes" }
+    ],
+    "windows": [
+      { "id": "sunny-meadow", "label": "Sunny Meadow", "icon": "🌤️", "price": 0 },
+      { "id": "twilight-sky", "label": "Twilight Sky", "icon": "🌆", "price": 0 },
+      { "id": "aurora-night", "label": "Aurora Night", "icon": "🌠", "price": 5, "description": "Dancing northern lights" },
+      { "id": "rainbow-waterfall", "label": "Rainbow Falls", "icon": "🌈", "price": 6, "description": "Magical waterfall vista" }
+    ]
+  }
+}
